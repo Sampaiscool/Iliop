@@ -9,8 +9,12 @@ add_executable(card_engine
     src/main.cpp
     src/Card.cpp
     src/Deck.cpp
+    src/UIRenderer.cpp
 )
 
-target_include_directories(card_engine PRIVATE ${SDL2_INCLUDE_DIRS} .)
+target_include_directories(card_engine PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
+)
+
 target_link_libraries(card_engine PRIVATE SDL2::SDL2)
 

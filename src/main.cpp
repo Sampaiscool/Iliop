@@ -1,6 +1,8 @@
 #include <SDL2/SDL.h>
 #include <iostream>
 #include "Deck.h"
+#include "CombatState.h"
+#include "UIRenderer.h"
 
 int main(int argc, char* argv[]) {
     SDL_SetHint(SDL_HINT_VIDEODRIVER, "x11");
@@ -30,6 +32,13 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
+    CombatState state {
+        { 30, 30 }, // HP
+        { 3, 3 }    // Mana
+    };
+
+    UIRenderer ui;
+
     Deck deck;
     deck.shuffle();
     deck.drawInitialHand();
@@ -44,14 +53,17 @@ int main(int argc, char* argv[]) {
                 running = false;
         }
 
-        // --- clear screen ---
+        // clear screen
         SDL_SetRenderDrawColor(renderer, 40, 40, 40, 255);
         SDL_RenderClear(renderer);
 
-        // --- render deck ---
+        // render UI
+        ui.render(renderer, state, winW, winH);
+
+        // render deck
         deck.render(renderer, winW, winH);
 
-        // --- present ---
+        // present
         SDL_RenderPresent(renderer);
 
         SDL_Delay(16);
