@@ -1,4 +1,5 @@
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_ttf.h>
 #include <iostream>
 #include "Deck.h"
 #include "CombatState.h"
@@ -10,6 +11,17 @@ int main(int argc, char* argv[]) {
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         std::cerr << "SDL_Init failed: " << SDL_GetError() << "\n";
+        return 1;
+    }
+
+    if (TTF_Init() != 0) {
+        std::cerr << "TTF_Init failed: " << TTF_GetError() << "\n";
+        return 1;
+    }
+
+    TTF_Font* font = TTF_OpenFont("../src/fonts/Monsterrat.ttf", 24); // 24px
+    if (!font) {
+        std::cerr << "Failed to load font: " << TTF_GetError() << "\n";
         return 1;
     }
 
@@ -58,7 +70,7 @@ int main(int argc, char* argv[]) {
         SDL_RenderClear(renderer);
 
         // render UI
-        ui.render(renderer, state, winW, winH);
+        ui.render(renderer, state, winW, winH, font);
 
         // render deck
         deck.render(renderer, winW, winH);
@@ -71,7 +83,9 @@ int main(int argc, char* argv[]) {
 
     SDL_DestroyRenderer(renderer);
     SDL_DestroyWindow(window);
+    TTF_CloseFont(font);
     SDL_Quit();
+    TTF_Quit();
     return 0;
 }
 
