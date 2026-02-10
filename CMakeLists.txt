@@ -3,29 +3,29 @@ project(card_engine)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# Find SDL2 via vcpkg
+# SDL2 core
 find_package(SDL2 REQUIRED)
-find_package(Freetype REQUIRED)
 
-# Paths for SDL2_ttf
-set(SDL2_TTF_INCLUDE_DIR "C:/Users/Sem/vcpkg/installed/x64-mingw-static/include/SDL2")
-set(SDL2_TTF_LIB "C:/Users/Sem/vcpkg/installed/x64-mingw-static/lib/libSDL2_ttf.a")
+# SDL2_ttf (this is the important fix)
+find_package(SDL2_ttf REQUIRED)
 
 # Add executable
 add_executable(card_engine
     src/main.cpp
-    src/Card.cpp
-    src/Deck.cpp
-    src/UIRenderer.cpp
+    src/Card/Card.cpp
+    src/Deck/Deck.cpp
+    src/UI/UIRenderer.cpp
+    src/Enemy/Enemy.cpp
 )
 
-# Include your own headers + SDL2 headers
+# Include directories
 target_include_directories(card_engine PRIVATE
     ${SDL2_INCLUDE_DIRS}
-    ${SDL2_TTF_INCLUDE_DIR}
-    ${FREETYPE_INCLUDE_DIRS}
 )
 
 # Link libraries
-target_link_libraries(card_engine PRIVATE ${SDL2_LIBRARIES} ${SDL2_TTF_LIB} ${FREETYPE_LIBRARIES})
+target_link_libraries(card_engine PRIVATE
+    SDL2::SDL2
+    SDL2_ttf::SDL2_ttf
+)
 

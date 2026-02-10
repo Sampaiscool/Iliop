@@ -2,11 +2,28 @@
 #include <algorithm>
 #include <random>
 
+int deckCardAmount = 40;
+int initialHandSize = 4;
+
 Deck::Deck() {
-    // Build 40 cards
-    for (int i = 0; i < 40; ++i) {
+    // build deck
+    for (int i = 0; i < deckCardAmount; ++i) {
         Card card;
         card.type = static_cast<CardType>(i % 3);
+        switch (card.type) {
+          case CardType::Damage:
+                card.name = "Magic Blast";
+                card.effect = CardEffect::DealDamage;
+                break;
+          case CardType::Heal:
+                card.name = "Healing Winds";
+                card.effect = CardEffect::Heal;
+                break;
+          case CardType::Shield:
+                card.name = "Protecting Barrier";
+                card.effect = CardEffect::GainShield;
+                break;
+        }
         card.value = 5 + (i % 5);
         drawPile.push_back(card);
     }
@@ -19,7 +36,7 @@ void Deck::shuffle() {
 }
 
 void Deck::drawInitialHand() {
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < initialHandSize; ++i) {
         hand.push_back(drawPile.back());
         drawPile.pop_back();
     }

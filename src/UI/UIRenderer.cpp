@@ -1,7 +1,14 @@
 #include "UIRenderer.h"
 #include <string>
 
-void drawText(SDL_Renderer* renderer, TTF_Font* font, const std::string& text, int x, int y, SDL_Color color) {
+void drawText(
+    SDL_Renderer* renderer,
+    TTF_Font* font,
+    const std::string& text,
+    int x,
+    int y,
+    SDL_Color color)
+{
     SDL_Surface* surface = TTF_RenderText_Blended(font, text.c_str(), color);
     SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
 
@@ -19,18 +26,18 @@ static void drawBar(
     SDL_Color fill,
     SDL_Color back)
 {
-    // Background
+    // background
     SDL_Rect bg { x, y, w, h };
     SDL_SetRenderDrawColor(renderer, back.r, back.g, back.b, 255);
     SDL_RenderFillRect(renderer, &bg);
 
-    // Fill
+    // fill
     float pct = (float)current / (float)max;
     SDL_Rect fg { x, y, (int)(w * pct), h };
     SDL_SetRenderDrawColor(renderer, fill.r, fill.g, fill.b, 255);
     SDL_RenderFillRect(renderer, &fg);
 
-    // Border
+    // border
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderDrawRect(renderer, &bg);
 }
@@ -43,7 +50,7 @@ void UIRenderer::render(SDL_Renderer* renderer, const CombatState& state, int wi
     int x = winW - barWidth - margin;
     int y = margin;
 
-    // HP bar
+    // hp bar
     drawBar(
         renderer,
         x,
@@ -52,15 +59,16 @@ void UIRenderer::render(SDL_Renderer* renderer, const CombatState& state, int wi
         barHeight,
         state.hp.current,
         state.hp.max,
-        {200, 50, 50, 255},
-        {60, 20, 20, 255}
+        {200, 50, 50, 255},       // fill
+        {60, 20, 20, 255}         // border
     );
 
+    // hp text
     drawText(renderer, font, 
          std::to_string(state.hp.current) + "/" + std::to_string(state.hp.max),
-         x + 5, // small padding
+         x + 5,
          y + 2,
-         {255, 255, 255, 255});
+         {255, 255, 255, 255});   // fill
 
 
     // mana bar
@@ -72,13 +80,14 @@ void UIRenderer::render(SDL_Renderer* renderer, const CombatState& state, int wi
         barHeight,
         state.mana.current,
         state.mana.max,
-        {50, 50, 200, 255},
-        {20, 20, 60, 255}
+        {50, 50, 200, 255},       // fill
+        {20, 20, 60, 255}         // border
     );
 
+    // mana text
     drawText(renderer, font,
          std::to_string(state.mana.current) + "/" + std::to_string(state.mana.max),
          x + 5,
          y + barHeight + margin / 2 + 2,
-         {255, 255, 255, 255});
+         {255, 255, 255, 255});   // fill
 }

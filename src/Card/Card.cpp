@@ -3,6 +3,7 @@
 void Card::draw(SDL_Renderer* renderer) {
     SDL_Rect rect{ x, y, w, h };
 
+    // set correct data based on cardtype
     switch (type) {
         case CardType::Damage:
             SDL_SetRenderDrawColor(renderer, 200, 50, 50, 255);
