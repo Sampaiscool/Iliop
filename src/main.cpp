@@ -1,13 +1,19 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
+#include <string>
 #include "Deck.h"
 #include "CombatState.h"
 #include "UIRenderer.h"
 
 int main(int argc, char* argv[]) {
+#if defined(_WIN32) || defined(_WIN64)
+    SDL_SetHint(SDL_HINT_RENDER_DRIVER, "software");
+#else
+    // Linux/Wayland/X11
     SDL_SetHint(SDL_HINT_VIDEODRIVER, "x11");
     SDL_SetHint(SDL_HINT_RENDER_DRIVER, "software");
+#endif
 
     if (SDL_Init(SDL_INIT_VIDEO) != 0) {
         std::cerr << "SDL_Init failed: " << SDL_GetError() << "\n";
@@ -19,7 +25,22 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    TTF_Font* font = TTF_OpenFont("../src/fonts/Monsterrat.ttf", 24); // 24px
+    std::string basePath;
+#if defined(_WIN32) || defined(_WIN64)
+    char* path = SDL_GetBasePath();
+    if (path) {
+        basePath = path;
+        SDL_free(path);
+    } else {
+        basePath = ".\\";
+    }
+#else
+    char* path = SDL_GetBasePath();
+    basePath = path ? path : "./";
+    if (path) SDL_free(path);
+#endif
+
+    TTF_Font* font = TTF_OpenFont((basePath + "../src/fonts/Monsterrat.ttf").c_str(), 24);
     if (!font) {
         std::cerr << "Failed to load font: " << TTF_GetError() << "\n";
         return 1;
@@ -37,20 +58,23 @@ int main(int argc, char* argv[]) {
         SDL_WINDOW_SHOWN | SDL_WINDOW_ALWAYS_ON_TOP
     );
 
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
+    if (!window) {
+        std::cerr << "Failed to create window: " << SDL_GetError() << "\n";
+        return 1;
+    }
 
+    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
     if (!renderer) {
-        std::cerr << "Renderer failed\n";
+        std::cerr << "Renderer failed: " << SDL_GetError() << "\n";
         return 1;
     }
 
     CombatState state {
         { 30, 30 }, // HP
-        { 3, 3 }    // Mana
+        { 3, 3 } // Mana
     };
 
     UIRenderer ui;
-
     Deck deck;
     deck.shuffle();
     deck.drawInitialHand();
@@ -59,25 +83,17 @@ int main(int argc, char* argv[]) {
     SDL_Event event;
 
     while (running) {
-        // --- handle events ---
         while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT)
-                running = false;
+            if (event.type == SDL_QUIT) running = false;
         }
 
-        // clear screen
         SDL_SetRenderDrawColor(renderer, 40, 40, 40, 255);
         SDL_RenderClear(renderer);
 
-        // render UI
         ui.render(renderer, state, winW, winH, font);
-
-        // render deck
         deck.render(renderer, winW, winH);
 
-        // present
         SDL_RenderPresent(renderer);
-
         SDL_Delay(16);
     }
 
@@ -86,6 +102,7 @@ int main(int argc, char* argv[]) {
     TTF_CloseFont(font);
     SDL_Quit();
     TTF_Quit();
+
     return 0;
 }
 

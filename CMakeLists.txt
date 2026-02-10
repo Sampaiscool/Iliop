@@ -3,11 +3,15 @@ project(card_engine)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# Find SDL2 and TTF
+# Find SDL2 via vcpkg
 find_package(SDL2 REQUIRED)
-find_package(SDL2_ttf REQUIRED)
+find_package(Freetype REQUIRED)
 
-# Add your executable
+# Paths for SDL2_ttf
+set(SDL2_TTF_INCLUDE_DIR "C:/Users/Sem/vcpkg/installed/x64-mingw-static/include/SDL2")
+set(SDL2_TTF_LIB "C:/Users/Sem/vcpkg/installed/x64-mingw-static/lib/libSDL2_ttf.a")
+
+# Add executable
 add_executable(card_engine
     src/main.cpp
     src/Card.cpp
@@ -15,12 +19,13 @@ add_executable(card_engine
     src/UIRenderer.cpp
 )
 
-# Include your own headers
-target_include_directories(card_engine PRIVATE ${CMAKE_SOURCE_DIR}/src)
+# Include your own headers + SDL2 headers
+target_include_directories(card_engine PRIVATE
+    ${SDL2_INCLUDE_DIRS}
+    ${SDL2_TTF_INCLUDE_DIR}
+    ${FREETYPE_INCLUDE_DIRS}
+)
 
-# Include SDL2 and SDL2_ttf headers
-target_include_directories(card_engine PRIVATE ${SDL2_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIRS})
-
-# Link SDL2 and SDL2_ttf
-target_link_libraries(card_engine PRIVATE ${SDL2_LIBRARIES} SDL2_ttf)
+# Link libraries
+target_link_libraries(card_engine PRIVATE ${SDL2_LIBRARIES} ${SDL2_TTF_LIB} ${FREETYPE_LIBRARIES})
 
