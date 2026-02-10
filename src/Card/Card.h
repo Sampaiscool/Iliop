@@ -12,6 +12,10 @@ struct Card {
     CardType type;
     CardEffect effect;
     int value;
+    bool contains(int mx, int my) const {
+        return mx >= x && mx <= x + w &&
+               my >= y && my <= y + h;
+    }
 
     void draw(SDL_Renderer* renderer);
 };

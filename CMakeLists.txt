@@ -16,6 +16,7 @@ add_executable(card_engine
     src/Deck/Deck.cpp
     src/UI/UIRenderer.cpp
     src/Enemy/Enemy.cpp
+    src/Managers/CardResolver.cpp
 )
 
 # Include directories

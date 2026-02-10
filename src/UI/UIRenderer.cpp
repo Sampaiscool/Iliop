@@ -48,8 +48,10 @@ void UIRenderer::render(SDL_Renderer* renderer, const CombatState& state, int wi
     int margin    = winW / 40;
 
     int x = winW - barWidth - margin;
-    int y = margin;
+    int y = winH - (barHeight * 2) - margin * 2;
 
+
+    // PLAYER:
     // hp bar
     drawBar(
         renderer,
@@ -85,9 +87,22 @@ void UIRenderer::render(SDL_Renderer* renderer, const CombatState& state, int wi
     );
 
     // mana text
-    drawText(renderer, font,
-         std::to_string(state.mana.current) + "/" + std::to_string(state.mana.max),
-         x + 5,
-         y + barHeight + margin / 2 + 2,
-         {255, 255, 255, 255});   // fill
+    drawText(
+        renderer,
+        font,
+        std::to_string(state.mana.current) + "/" + std::to_string(state.mana.max),
+        x + 5,
+        y + barHeight + margin / 2 + 2,
+        {255, 255, 255, 255});   // fill
+    
+    // ENEMY:
+    // healt bar
+    // drawBar(
+    //     renderer,
+    //     x,
+    //
+    //     )
+    // drawText(
+    //
+    //     )
 }

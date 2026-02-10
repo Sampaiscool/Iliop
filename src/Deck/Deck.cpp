@@ -3,7 +3,6 @@
 #include <random>
 
 int deckCardAmount = 40;
-int initialHandSize = 4;
 
 Deck::Deck() {
     // build deck
@@ -29,27 +28,47 @@ Deck::Deck() {
     }
 }
 
+std::vector<Card>& Deck::getHand() {
+    return hand;
+}
+
+
 void Deck::shuffle() {
     std::random_device rd;
     std::mt19937 g(rd());
     std::shuffle(drawPile.begin(), drawPile.end(), g);
 }
 
-void Deck::drawInitialHand() {
-    for (int i = 0; i < initialHandSize; ++i) {
+void Deck::drawCard(int amount) {
+    for (int i = 0; i < amount; ++i) {
         hand.push_back(drawPile.back());
         drawPile.pop_back();
     }
 }
 
+void Deck::discardCard(const Card& card) {
+    auto it = std::find_if(hand.begin(), hand.end(),
+        [&](const Card& c) { return &c == &card; });
+
+    if (it != hand.end()) {
+        discardPile.push_back(*it);
+        hand.erase(it);
+    }
+}
+
+
 void Deck::render(SDL_Renderer* renderer, int winW, int winH) {
     int cardW = winW / 10;
     int cardH = winH / 6;
-    int spacing = winW / (hand.size() + 1);
+
+    int handAreaW = winW * 0.6f;
+    int handStartX = 40;
     int handY = winH - cardH - 40;
 
+    int spacing = handAreaW / (hand.size() + 1);
+
     for (size_t i = 0; i < hand.size(); ++i) {
-        hand[i].x = spacing * (i + 1) - cardW / 2;
+        hand[i].x = handStartX + spacing * (i + 1) - cardW / 2;
         hand[i].y = handY;
         hand[i].w = cardW;
         hand[i].h = cardH;
@@ -57,3 +76,4 @@ void Deck::render(SDL_Renderer* renderer, int winW, int winH) {
         hand[i].draw(renderer);
     }
 }
+

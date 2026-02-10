@@ -1,8 +1,9 @@
 #include "Enemy.h"
 
-Enemy::Enemy(int hp, int mana) {
+Enemy::Enemy(int hp, int sh, int mana) {
     state = {
         {hp, hp},     // hp
+        {0, sh},     // shield
         {mana, mana}  // mana
     };
 }
@@ -29,5 +30,8 @@ void Enemy::render(SDL_Renderer* renderer, int winW, int winH) {
     // border
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderDrawRect(renderer, &bg);
+}
 
+CombatState& Enemy::getState() {
+    return state;
 }

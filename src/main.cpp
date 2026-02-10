@@ -2,6 +2,7 @@
 #include <SDL2/SDL_ttf.h>
 #include <iostream>
 #include <string>
+#include "Managers/CardResolver.h"
 #include "Deck/Deck.h"
 #include "Other/CombatState.h"
 #include "UI/UIRenderer.h"
@@ -79,18 +80,21 @@ int main(int argc, char* argv[]) {
     }
 
     // set the players stats
-    CombatState state {
+    CombatState playerState {
         { 30, 30 }, // hp
+        {0, 10},    // shield
         { 3, 3 }    // mana
     };
 
     UIRenderer ui;
     Deck deck;
+
     deck.shuffle();
-    deck.drawInitialHand();
+    deck.drawCard(4);
 
-    Enemy enemy(10, 1);
+    Enemy enemy(10, 10, 1);
 
+    int mouseX, mouseY;
     bool running = true;
     SDL_Event event;
 
@@ -103,9 +107,21 @@ int main(int argc, char* argv[]) {
         SDL_SetRenderDrawColor(renderer, 40, 40, 40, 255);
         SDL_RenderClear(renderer);
 
-        ui.render(renderer, state, winW, winH, font);
+        ui.render(renderer, playerState, winW, winH, font);
         deck.render(renderer, winW, winH);
         enemy.render(renderer, winW, winH);
+
+        if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
+            SDL_GetMouseState(&mouseX, &mouseY);
+
+            for (Card& card : deck.getHand()) {
+                if (card.contains(mouseX, mouseY)) {
+                    CardResolver::play(card, playerState, enemy.getState());
+                    deck.discardCard(card);
+                    break;
+                }
+            }
+        }
 
         SDL_RenderPresent(renderer);
         SDL_Delay(16); // game is set to 60 fps
