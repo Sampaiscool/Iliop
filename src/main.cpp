@@ -1,89 +1,35 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
+#include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Font.hpp>
 #include <iostream>
-#include <string>
+
 #include "Managers/CardResolver.h"
 #include "Deck/Deck.h"
 #include "Other/CombatState.h"
 #include "UI/UIRenderer.h"
 #include "Enemy/Enemy.h"
 
-int main(int argc, char* argv[]) {
+int main() {
 
-  // get the correct software of the OS to be able to render without errors
-#if defined(_WIN32) || defined(_WIN64)
-    SDL_SetHint(SDL_HINT_RENDER_DRIVER, "software");
-#else
-    SDL_SetHint(SDL_HINT_VIDEODRIVER, "x11");
-    SDL_SetHint(SDL_HINT_RENDER_DRIVER, "software");
-#endif
-
-    // check if sld worked
-    if (SDL_Init(SDL_INIT_VIDEO) != 0) {
-        std::cerr << "SDL_Init failed: " << SDL_GetError() << "\n";
-        return 1;
-    }
-
-    // check if ttf worked
-    if (TTF_Init() != 0) {
-        std::cerr << "TTF_Init failed: " << TTF_GetError() << "\n";
-        return 1;
-    }
-
-    // get the correct basepath of the OS
-    std::string basePath;
-#if defined(_WIN32) || defined(_WIN64)
-    char* path = SDL_GetBasePath();
-    if (path) {
-        basePath = path;
-        SDL_free(path);
-    } else {
-        basePath = ".\\";
-    }
-#else
-    char* path = SDL_GetBasePath();
-    basePath = path ? path : "./";
-    if (path) SDL_free(path);
-#endif
-
-    // load font from correct path based on OS using the basepath
-    TTF_Font* font = TTF_OpenFont((basePath + "../src/fonts/Monsterrat.ttf").c_str(), 24);
-    if (!font) {
-        std::cerr << "Failed to load font: " << TTF_GetError() << "\n";
-        return 1;
-    }
-
-    // width and height of the game
-    // maybe make it an array later for more reselutions?
-    const int winW = 800;
-    const int winH = 800;
-
-    // spawn the window
-    SDL_Window* window = SDL_CreateWindow(
+    // startup the window
+    sf::RenderWindow window(
+        sf::VideoMode(sf::Vector2u{800, 800}),
         "Card Engine",
-        SDL_WINDOWPOS_CENTERED,
-        SDL_WINDOWPOS_CENTERED,
-        winW,
-        winH,
-        SDL_WINDOW_SHOWN | SDL_WINDOW_ALWAYS_ON_TOP
+        sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close
     );
 
-    if (!window) {
-        std::cerr << "Failed to create window: " << SDL_GetError() << "\n";
+    window.setFramerateLimit(60);
+
+    // load the font
+    sf::Font font;
+    if (!font.openFromFile("assets/fonts/Monsterrat.ttf")) {
+        std::cerr << "Failed to load font\n";
         return 1;
     }
 
-    SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_SOFTWARE);
-    if (!renderer) {
-        std::cerr << "Renderer failed: " << SDL_GetError() << "\n";
-        return 1;
-    }
-
-    // set the players stats
-    CombatState playerState {
-        { 30, 30 }, // hp
-        {0, 10},    // shield
-        { 3, 3 }    // mana
+    CombatState playerState{
+        {30, 30}, // hp
+        {0, 10},  // shield
+        {3, 3}    // mana
     };
 
     UIRenderer ui;
@@ -94,44 +40,62 @@ int main(int argc, char* argv[]) {
 
     Enemy enemy(10, 10, 1);
 
-    int mouseX, mouseY;
     bool running = true;
-    SDL_Event event;
 
-    // game is running:
-    while (running) {
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) running = false;
-        }
+    // main gameplay loop:
+    while (window.isOpen()) {
 
-        SDL_SetRenderDrawColor(renderer, 40, 40, 40, 255);
-        SDL_RenderClear(renderer);
+        // events
+        while (auto event = window.pollEvent()) {
 
-        ui.render(renderer, playerState, winW, winH, font);
-        deck.render(renderer, winW, winH);
-        enemy.render(renderer, winW, winH);
+            if (event->is<sf::Event::Closed>()) {
+                window.close();
+            }
 
-        if (event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
-            SDL_GetMouseState(&mouseX, &mouseY);
+            if (auto resized = event->getIf<sf::Event::Resized>()) {
+                sf::View view(sf::FloatRect(
+                    {0.f, 0.f},
+                    {static_cast<float>(resized->size.x),
+                     static_cast<float>(resized->size.y)}
+                ));
+                window.setView(view);
+            }
 
-            for (Card& card : deck.getHand()) {
-                if (card.contains(mouseX, mouseY)) {
-                    CardResolver::play(card, playerState, enemy.getState());
-                    deck.discardCard(card);
-                    break;
+            if (auto mouse = event->getIf<sf::Event::MouseButtonPressed>()) {
+                if (mouse->button == sf::Mouse::Button::Left) {
+
+                    sf::Vector2i mousePos =
+                        sf::Mouse::getPosition(window);
+
+                    for (Card& card : deck.getHand()) {
+                        if (card.contains(mousePos.x, mousePos.y)) {
+                            CardResolver::play(
+                                card,
+                                playerState,
+                                enemy.getState()
+                            );
+                            deck.discardCard(card);
+                            break;
+                        }
+                    }
                 }
             }
         }
 
-        SDL_RenderPresent(renderer);
-        SDL_Delay(16); // game is set to 60 fps
-    }
+        // draw the cards
+        window.clear(sf::Color(40, 40, 40));
 
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    TTF_CloseFont(font);
-    SDL_Quit();
-    TTF_Quit();
+        sf::Vector2u size = window.getSize();
+        int winW = size.x;
+        int winH = size.y;
+
+        ui.render(window, playerState, winW, winH, font);
+        deck.render(window, winW, winH, font);
+        enemy.render(window, winW, winH);
+
+        window.display();
+    }
 
     return 0;
 }
+

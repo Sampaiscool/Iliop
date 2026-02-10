@@ -1,108 +1,62 @@
 #include "UIRenderer.h"
 #include <string>
 
-void drawText(
-    SDL_Renderer* renderer,
-    TTF_Font* font,
-    const std::string& text,
-    int x,
-    int y,
-    SDL_Color color)
-{
-    SDL_Surface* surface = TTF_RenderText_Blended(font, text.c_str(), color);
-    SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
-
-    SDL_Rect dst { x, y, surface->w, surface->h };
-    SDL_RenderCopy(renderer, texture, nullptr, &dst);
-
-    SDL_FreeSurface(surface);
-    SDL_DestroyTexture(texture);
-}
-
 static void drawBar(
-    SDL_Renderer* renderer,
+    sf::RenderWindow& window,
     int x, int y, int w, int h,
     int current, int max,
-    SDL_Color fill,
-    SDL_Color back)
+    sf::Color fill,
+    sf::Color back)
 {
     // background
-    SDL_Rect bg { x, y, w, h };
-    SDL_SetRenderDrawColor(renderer, back.r, back.g, back.b, 255);
-    SDL_RenderFillRect(renderer, &bg);
+    sf::RectangleShape bg(sf::Vector2f(static_cast<float>(w), static_cast<float>(h)));
+    bg.setPosition(static_cast<float>(x), static_cast<float>(y));
+    bg.setFillColor(back);
+    bg.setOutlineColor(sf::Color::Black);
+    bg.setOutlineThickness(2.f);
+    window.draw(bg);
 
     // fill
-    float pct = (float)current / (float)max;
-    SDL_Rect fg { x, y, (int)(w * pct), h };
-    SDL_SetRenderDrawColor(renderer, fill.r, fill.g, fill.b, 255);
-    SDL_RenderFillRect(renderer, &fg);
-
-    // border
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderDrawRect(renderer, &bg);
+    float pct = static_cast<float>(current) / static_cast<float>(max);
+    sf::RectangleShape fg(sf::Vector2f(w * pct, static_cast<float>(h)));
+    fg.setPosition(static_cast<float>(x), static_cast<float>(y));
+    fg.setFillColor(fill);
+    window.draw(fg);
 }
 
-void UIRenderer::render(SDL_Renderer* renderer, const CombatState& state, int winW, int winH, TTF_Font* font) {
+static void drawText(sf::RenderWindow& window, const sf::Font& font, const std::string& text, int x, int y, int charSize, sf::Color color)
+{
+    sf::Text t;
+    t.setFont(font);
+    t.setString(text);
+    t.setCharacterSize(charSize);
+    t.setFillColor(color);
+    t.setPosition(static_cast<float>(x), static_cast<float>(y));
+    window.draw(t);
+}
+
+void UIRenderer::render(sf::RenderWindow& window, const CombatState& state, int winW, int winH, const sf::Font& font)
+{
     int barWidth  = winW / 4;
     int barHeight = winH / 25;
     int margin    = winW / 40;
 
+    // PLAYER: bottom right
     int x = winW - barWidth - margin;
     int y = winH - (barHeight * 2) - margin * 2;
 
+    drawBar(window, x, y, barWidth, barHeight, state.hp.current, state.hp.max, sf::Color(200,50,50), sf::Color(60,20,20));
+    drawText(window, font, std::to_string(state.hp.current) + "/" + std::to_string(state.hp.max), x + 5, y + 2, barHeight * 0.6, sf::Color::White);
 
-    // PLAYER:
-    // hp bar
-    drawBar(
-        renderer,
-        x,
-        y,
-        barWidth,
-        barHeight,
-        state.hp.current,
-        state.hp.max,
-        {200, 50, 50, 255},       // fill
-        {60, 20, 20, 255}         // border
-    );
+    drawBar(window, x, y + barHeight + margin / 2, barWidth, barHeight, state.mana.current, state.mana.max, sf::Color(50,50,200), sf::Color(20,20,60));
+    drawText(window, font, std::to_string(state.mana.current) + "/" + std::to_string(state.mana.max), x + 5, y + barHeight + margin / 2 + 2, barHeight * 0.6, sf::Color::White);
 
-    // hp text
-    drawText(renderer, font, 
-         std::to_string(state.hp.current) + "/" + std::to_string(state.hp.max),
-         x + 5,
-         y + 2,
-         {255, 255, 255, 255});   // fill
+    // ENEMY health: above enemy
+    int enemyBarWidth  = winW / 4;
+    int enemyBarHeight = barHeight;
+    int enemyX = winW / 2 - enemyBarWidth / 2;
+    int enemyY = winH / 4 - enemyBarHeight - margin;
 
-
-    // mana bar
-    drawBar(
-        renderer,
-        x,
-        y + barHeight + margin / 2,
-        barWidth,
-        barHeight,
-        state.mana.current,
-        state.mana.max,
-        {50, 50, 200, 255},       // fill
-        {20, 20, 60, 255}         // border
-    );
-
-    // mana text
-    drawText(
-        renderer,
-        font,
-        std::to_string(state.mana.current) + "/" + std::to_string(state.mana.max),
-        x + 5,
-        y + barHeight + margin / 2 + 2,
-        {255, 255, 255, 255});   // fill
-    
-    // ENEMY:
-    // healt bar
-    // drawBar(
-    //     renderer,
-    //     x,
-    //
-    //     )
-    // drawText(
-    //
-    //     )
+    drawBar(window, enemyX, enemyY, enemyBarWidth, enemyBarHeight, state.hp.current, state.hp.max, sf::Color(255,0,0), sf::Color(60,20,20));
+    drawText(window, font, std::to_string(state.hp.current) + "/" + std::to_string(state.hp.max), enemyX + 5, enemyY + 2, enemyBarHeight * 0.6, sf::Color::White);
 }

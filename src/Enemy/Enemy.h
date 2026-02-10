@@ -1,11 +1,11 @@
 #pragma once
-#include <SDL2/SDL.h>
+#include <SFML/Graphics.hpp>
 #include "../Other/CombatState.h"
 
 class Enemy {
 public:
     Enemy(int hp, int sh, int mana);
-    void render(SDL_Renderer* renderer, int winW, int winH);
+    void render(sf::RenderWindow& window, int winW, int winH);
     CombatState& getState();
 
 private:

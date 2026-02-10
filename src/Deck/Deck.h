@@ -1,7 +1,8 @@
 #pragma once
 #include <vector>
-#include <list>
 #include "../Card/Card.h"
+#include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Font.hpp>
 
 class Deck {
 public:
@@ -9,7 +10,7 @@ public:
     void shuffle();
     void drawCard(int amount);
     void discardCard(const Card& card);
-    void render(SDL_Renderer* renderer, int winW, int winH);
+    void render(sf::RenderWindow& window, int winW, int winH, const sf::Font& font);
 
     std::vector<Card>& getHand();
 
@@ -18,3 +19,4 @@ private:
     std::vector<Card> hand;
     std::vector<Card> discardPile;
 };
+

@@ -1,37 +1,30 @@
 #include "Enemy.h"
 
-Enemy::Enemy(int hp, int sh, int mana) {
+Enemy::Enemy(int hp, int sh, int mana)
+{
     state = {
-        {hp, hp},     // hp
-        {0, sh},     // shield
-        {mana, mana}  // mana
+        {hp, hp},    // hp
+        {0, sh},    // shield
+        {mana, mana} // mana
     };
 }
 
-void Enemy::render(SDL_Renderer* renderer, int winW, int winH) {
+void Enemy::render(sf::RenderWindow& window, int winW, int winH)
+{
     int w = winW / 4;
     int h = winH / 4;
-    int x = winW / 2 - (w / 2);
+    int x = winW / 2 - w / 2;
     int y = winH / 4;
 
-    SDL_Color fill = {255, 0, 255, 255};     // fill
-    SDL_Color back = {0, 0, 0, 255};         // border
-
-    // background
-    SDL_Rect bg { x, y, w, h };
-    SDL_SetRenderDrawColor(renderer, back.r, back.g, back.b, 255);
-    SDL_RenderFillRect(renderer, &bg);
-
-    // fill
-    SDL_Rect fg { x, y, w, h };
-    SDL_SetRenderDrawColor(renderer, fill.r, fill.g, fill.b, 255);
-    SDL_RenderFillRect(renderer, &fg);
-
-    // border
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderDrawRect(renderer, &bg);
+    sf::RectangleShape rect(sf::Vector2f(static_cast<float>(w), static_cast<float>(h)));
+    rect.setPosition(static_cast<float>(x), static_cast<float>(y));
+    rect.setFillColor(sf::Color(255,0,255));
+    rect.setOutlineColor(sf::Color::Black);
+    rect.setOutlineThickness(2.f);
+    window.draw(rect);
 }
 
 CombatState& Enemy::getState() {
     return state;
 }
+

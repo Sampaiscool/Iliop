@@ -5,20 +5,19 @@
 int deckCardAmount = 40;
 
 Deck::Deck() {
-    // build deck
     for (int i = 0; i < deckCardAmount; ++i) {
         Card card;
         card.type = static_cast<CardType>(i % 3);
         switch (card.type) {
-          case CardType::Damage:
+            case CardType::Damage:
                 card.name = "Magic Blast";
                 card.effect = CardEffect::DealDamage;
                 break;
-          case CardType::Heal:
+            case CardType::Heal:
                 card.name = "Healing Winds";
                 card.effect = CardEffect::Heal;
                 break;
-          case CardType::Shield:
+            case CardType::Shield:
                 card.name = "Protecting Barrier";
                 card.effect = CardEffect::GainShield;
                 break;
@@ -28,10 +27,64 @@ Deck::Deck() {
     }
 }
 
+void Deck::render(sf::RenderWindow& window, int winW, int winH, const sf::Font& font) {
+    int cardW = winW / 10;
+    int cardH = winH / 6;
+
+    int handAreaW = winW * 0.6f;
+    int handStartX = 40;
+    int handY = winH - cardH - 40;
+
+    int spacing = handAreaW / (hand.size() + 1);
+
+    for (size_t i = 0; i < hand.size(); ++i) {
+        Card& card = hand[i];
+
+        card.x = handStartX + spacing * (i + 1) - cardW / 2;
+        card.y = handY;
+        card.w = cardW;
+        card.h = cardH;
+
+        // Draw rectangle
+        sf::RectangleShape rect(sf::Vector2f(cardW, cardH));
+        rect.setPosition(static_cast<float>(card.x), static_cast<float>(card.y));
+        rect.setFillColor(sf::Color(200, 200, 200));
+        rect.setOutlineColor(sf::Color::Black);
+        rect.setOutlineThickness(2.f);
+
+        window.draw(rect);
+
+        // Draw card name
+        sf::Text text;
+        text.setFont(font);
+        text.setString(card.name);
+        text.setCharacterSize(cardH / 5); // scale with card height
+        text.setFillColor(sf::Color::Black);
+        text.setPosition(
+            static_cast<float>(card.x + 5),
+            static_cast<float>(card.y + 5)
+        );
+
+        window.draw(text);
+
+        // Draw card value
+        sf::Text valueText;
+        valueText.setFont(font);
+        valueText.setString(std::to_string(card.value));
+        valueText.setCharacterSize(cardH / 6);
+        valueText.setFillColor(sf::Color::Red);
+        valueText.setPosition(
+            static_cast<float>(card.x + 5),
+            static_cast<float>(card.y + cardH - cardH / 4)
+        );
+
+        window.draw(valueText);
+    }
+}
+
 std::vector<Card>& Deck::getHand() {
     return hand;
 }
-
 
 void Deck::shuffle() {
     std::random_device rd;
@@ -40,7 +93,7 @@ void Deck::shuffle() {
 }
 
 void Deck::drawCard(int amount) {
-    for (int i = 0; i < amount; ++i) {
+    for (int i = 0; i < amount && !drawPile.empty(); ++i) {
         hand.push_back(drawPile.back());
         drawPile.pop_back();
     }
@@ -53,27 +106,6 @@ void Deck::discardCard(const Card& card) {
     if (it != hand.end()) {
         discardPile.push_back(*it);
         hand.erase(it);
-    }
-}
-
-
-void Deck::render(SDL_Renderer* renderer, int winW, int winH) {
-    int cardW = winW / 10;
-    int cardH = winH / 6;
-
-    int handAreaW = winW * 0.6f;
-    int handStartX = 40;
-    int handY = winH - cardH - 40;
-
-    int spacing = handAreaW / (hand.size() + 1);
-
-    for (size_t i = 0; i < hand.size(); ++i) {
-        hand[i].x = handStartX + spacing * (i + 1) - cardW / 2;
-        hand[i].y = handY;
-        hand[i].w = cardW;
-        hand[i].h = cardH;
-
-        hand[i].draw(renderer);
     }
 }
 

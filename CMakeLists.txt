@@ -1,32 +1,22 @@
 cmake_minimum_required(VERSION 3.10)
-project(card_engine)
+project(card_engine_sfml)
 
 set(CMAKE_CXX_STANDARD 17)
 
-# SDL2 core
-find_package(SDL2 REQUIRED)
+# SFML 3
+find_package(SFML 3 REQUIRED COMPONENTS graphics window system)
 
-# SDL2_ttf (this is the important fix)
-find_package(SDL2_ttf REQUIRED)
-
-# Add executable
-add_executable(card_engine
+add_executable(card_engine_sfml
     src/main.cpp
-    src/Card/Card.cpp
     src/Deck/Deck.cpp
-    src/UI/UIRenderer.cpp
+    src/Card/Card.cpp
     src/Enemy/Enemy.cpp
+    src/UI/UIRenderer.cpp
     src/Managers/CardResolver.cpp
 )
 
-# Include directories
-target_include_directories(card_engine PRIVATE
-    ${SDL2_INCLUDE_DIRS}
-)
+target_include_directories(card_engine_sfml PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
-# Link libraries
-target_link_libraries(card_engine PRIVATE
-    SDL2::SDL2
-    SDL2_ttf::SDL2_ttf
-)
+# Link SFML correctly
+target_link_libraries(card_engine_sfml PRIVATE SFML::graphics SFML::window SFML::system)
 

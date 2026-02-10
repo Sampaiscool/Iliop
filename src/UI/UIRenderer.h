@@ -1,9 +1,9 @@
 #pragma once
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_ttf.h>
+#include <SFML/Graphics.hpp>
 #include "../Other/CombatState.h"
 
 class UIRenderer {
 public:
-    void render(SDL_Renderer* renderer, const CombatState& state, int winW, int winH, TTF_Font* font);
+    void render(sf::RenderWindow& window, const CombatState& state, int winW, int winH, const sf::Font& font);
 };
+
