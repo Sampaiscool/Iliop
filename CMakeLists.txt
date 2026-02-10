@@ -1,12 +1,15 @@
-cmake_minimum_required(VERSION 3.10)
-project(card_engine_sfml)
+cmake_minimum_required(VERSION 3.15)
+project(CardEngineSFML)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# SFML 3
-find_package(SFML 3 REQUIRED COMPONENTS graphics window system)
+set(SFML_DIR "C:/Libraries/SFML3/lib/cmake/SFML")
 
-add_executable(card_engine_sfml
+# SFML 3: no components needed
+find_package(SFML 3 COMPONENTS Graphics Window System REQUIRED)
+
+add_executable(card_engine
     src/main.cpp
     src/Deck/Deck.cpp
     src/Card/Card.cpp
@@ -15,8 +18,10 @@ add_executable(card_engine_sfml
     src/Managers/CardResolver.cpp
 )
 
-target_include_directories(card_engine_sfml PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_link_libraries(card_engine
+    SFML::Graphics
+    SFML::Window
+    SFML::System
+)
 
-# Link SFML correctly
-target_link_libraries(card_engine_sfml PRIVATE SFML::graphics SFML::window SFML::system)
 

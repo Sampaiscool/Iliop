@@ -2,7 +2,6 @@
 #include <vector>
 #include "../Card/Card.h"
 #include <SFML/Graphics.hpp>
-#include <SFML/Graphics/Font.hpp>
 
 class Deck {
 public:

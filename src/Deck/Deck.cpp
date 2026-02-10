@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <random>
 
-int deckCardAmount = 40;
+static const int deckCardAmount = 40;
 
 Deck::Deck() {
     for (int i = 0; i < deckCardAmount; ++i) {
@@ -27,65 +27,6 @@ Deck::Deck() {
     }
 }
 
-void Deck::render(sf::RenderWindow& window, int winW, int winH, const sf::Font& font) {
-    int cardW = winW / 10;
-    int cardH = winH / 6;
-
-    int handAreaW = winW * 0.6f;
-    int handStartX = 40;
-    int handY = winH - cardH - 40;
-
-    int spacing = handAreaW / (hand.size() + 1);
-
-    for (size_t i = 0; i < hand.size(); ++i) {
-        Card& card = hand[i];
-
-        card.x = handStartX + spacing * (i + 1) - cardW / 2;
-        card.y = handY;
-        card.w = cardW;
-        card.h = cardH;
-
-        // Draw rectangle
-        sf::RectangleShape rect(sf::Vector2f(cardW, cardH));
-        rect.setPosition(static_cast<float>(card.x), static_cast<float>(card.y));
-        rect.setFillColor(sf::Color(200, 200, 200));
-        rect.setOutlineColor(sf::Color::Black);
-        rect.setOutlineThickness(2.f);
-
-        window.draw(rect);
-
-        // Draw card name
-        sf::Text text;
-        text.setFont(font);
-        text.setString(card.name);
-        text.setCharacterSize(cardH / 5); // scale with card height
-        text.setFillColor(sf::Color::Black);
-        text.setPosition(
-            static_cast<float>(card.x + 5),
-            static_cast<float>(card.y + 5)
-        );
-
-        window.draw(text);
-
-        // Draw card value
-        sf::Text valueText;
-        valueText.setFont(font);
-        valueText.setString(std::to_string(card.value));
-        valueText.setCharacterSize(cardH / 6);
-        valueText.setFillColor(sf::Color::Red);
-        valueText.setPosition(
-            static_cast<float>(card.x + 5),
-            static_cast<float>(card.y + cardH - cardH / 4)
-        );
-
-        window.draw(valueText);
-    }
-}
-
-std::vector<Card>& Deck::getHand() {
-    return hand;
-}
-
 void Deck::shuffle() {
     std::random_device rd;
     std::mt19937 g(rd());
@@ -101,11 +42,58 @@ void Deck::drawCard(int amount) {
 
 void Deck::discardCard(const Card& card) {
     auto it = std::find_if(hand.begin(), hand.end(),
-        [&](const Card& c) { return &c == &card; });
-
+        [&](const Card& c){ return &c == &card; });
     if (it != hand.end()) {
         discardPile.push_back(*it);
         hand.erase(it);
     }
 }
 
+std::vector<Card>& Deck::getHand() {
+    return hand;
+}
+
+void Deck::render(sf::RenderWindow& window, int winW, int winH, const sf::Font& font) {
+    int cardW = winW / 10;
+    int cardH = winH / 6;
+
+    int handAreaW = winW * 0.6f;
+    int handStartX = 40;
+    int handY = winH - cardH - 40;
+
+    int spacing = hand.size() > 0 ? handAreaW / hand.size() : 0;
+
+    for (size_t i = 0; i < hand.size(); ++i) {
+        Card& card = hand[i];
+        card.x = handStartX + spacing * i;
+        card.y = handY;
+        card.w = cardW;
+        card.h = cardH;
+
+        // Rectangle for the card
+        sf::RectangleShape rect(sf::Vector2f(static_cast<float>(cardW),
+                                             static_cast<float>(cardH)));
+        rect.setPosition(sf::Vector2f(static_cast<float>(card.x),
+                                      static_cast<float>(card.y)));
+        rect.setFillColor(sf::Color(200, 200, 200));
+        rect.setOutlineColor(sf::Color::Black);
+        rect.setOutlineThickness(2.f);
+        window.draw(rect);
+
+        // Card name text
+        sf::Text text(font, sf::String(card.name),
+                      static_cast<unsigned int>(cardH / 5));
+        text.setFillColor(sf::Color::Black);
+        text.setPosition(sf::Vector2f(static_cast<float>(card.x + 5),
+                                      static_cast<float>(card.y + 5)));
+        window.draw(text);
+
+        // Card value text
+        sf::Text valueText(font, sf::String(std::to_string(card.value)),
+                           static_cast<unsigned int>(cardH / 6));
+        valueText.setFillColor(sf::Color::Red);
+        valueText.setPosition(sf::Vector2f(static_cast<float>(card.x + 5),
+                                           static_cast<float>(card.y + cardH - cardH / 4)));
+        window.draw(valueText);
+    }
+}
