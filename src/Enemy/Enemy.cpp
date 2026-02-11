@@ -1,12 +1,13 @@
 #include "Enemy.h"
 
-Enemy::Enemy(int hp, int sh, int mana, int cor) {
+Enemy::Enemy(int hp, int sh, int mana, int cor, EnemyType chosenType) {
     state = {
         {hp, hp},     // hp
         {0, sh},      // shield
         {mana, mana}, // mana
         {0, cor}      // corruption
     };
+    type = chosenType;
 }
 
 void Enemy::render(sf::RenderWindow& window, int winW, int winH) {
@@ -25,4 +26,42 @@ void Enemy::render(sf::RenderWindow& window, int winW, int winH) {
 
 CombatState& Enemy::getState() {
     return state;
+}
+
+void Enemy::playTurn(CombatState& playerState)
+{
+    int damage = intendedDamage;
+    int block  = intendedBlock;
+
+    state.shield.current += block;
+    if (state.shield.current > state.shield.max)
+        state.shield.current = state.shield.max;
+
+    if (playerState.shield.current > 0)
+    {
+        int absorbed = std::min(playerState.shield.current, damage);
+        playerState.shield.current -= absorbed;
+        damage -= absorbed;
+    }
+
+    playerState.hp.current -= damage;
+
+    rollIntent(); // prepare next turn
+}
+
+
+void Enemy::rollIntent()
+{
+    switch (type)
+    {
+        case EnemyType::MisterEraser:
+            intendedDamage = 5;
+            intendedBlock  = 0;
+            break;
+
+        case EnemyType::Menta:
+            intendedDamage = 3;
+            intendedBlock  = 4;
+            break;
+    }
 }

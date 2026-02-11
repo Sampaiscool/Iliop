@@ -66,6 +66,13 @@ void Deck::discardCard(const Card& card) {
     }
 }
 
+void Deck::discardHand()
+{
+    discardPile.insert(discardPile.end(), hand.begin(), hand.end());
+    hand.clear();
+}
+
+
 void Deck::render(sf::RenderWindow& window, int winW, int winH, const sf::Font& font) {
     int cardW = winW / 10;
     int cardH = winH / 6;

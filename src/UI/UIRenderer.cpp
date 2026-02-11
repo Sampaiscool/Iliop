@@ -86,11 +86,33 @@ void UIRenderer::render(sf::RenderWindow& window,
     int endButtonX = x + endButtonW / 3;
     int endButtonY = corruptionY - endButtonH - (winH / 40);
 
+    endTurnBounds = sf::FloatRect(
+        sf::Vector2f(
+            static_cast<float>(endButtonX),
+            static_cast<float>(endButtonY)),
+        sf::Vector2f(
+            static_cast<float>(endButtonW),
+            static_cast<float>(endButtonH))
+    );
 
-    sf::RectangleShape rect(sf::Vector2f(static_cast<float>(endButtonW), static_cast<float>(endButtonH)));
-    rect.setPosition(sf::Vector2f(static_cast<float>(endButtonX), static_cast<float>(endButtonY)));
+
+    sf::RectangleShape rect(sf::Vector2f(
+        static_cast<float>(endButtonW),
+        static_cast<float>(endButtonH)));
+
+    rect.setPosition(sf::Vector2f(
+        static_cast<float>(endButtonX),
+        static_cast<float>(endButtonY)));
+
+
     rect.setFillColor(sf::Color(50, 50, 50));
     rect.setOutlineColor(sf::Color::Black);
     rect.setOutlineThickness(2.f);
     window.draw(rect);
+
+    drawText(window, font, "End", endButtonX + 20, endButtonY + endButtonH / 3, barHeight * 0.8, sf::Color::White);
+}
+
+sf::FloatRect UIRenderer::getEndTurnBounds() const {
+    return endTurnBounds;
 }

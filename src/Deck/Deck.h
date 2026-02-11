@@ -9,6 +9,7 @@ public:
     void shuffle();
     void drawCard(int amount);
     void discardCard(const Card& card);
+    void discardHand();
     void render(sf::RenderWindow& window, int winW, int winH, const sf::Font& font);
 
     std::vector<Card>& getHand();
