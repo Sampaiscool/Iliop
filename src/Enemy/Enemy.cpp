@@ -1,10 +1,11 @@
 #include "Enemy.h"
 
-Enemy::Enemy(int hp, int sh, int mana) {
+Enemy::Enemy(int hp, int sh, int mana, int cor) {
     state = {
-        {hp, hp},    // hp
-        {0, sh},     // shield
-        {mana, mana} // mana
+        {hp, hp},     // hp
+        {0, sh},      // shield
+        {mana, mana}, // mana
+        {0, cor}      // corruption
     };
 }
 

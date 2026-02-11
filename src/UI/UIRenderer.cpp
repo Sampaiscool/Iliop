@@ -1,8 +1,14 @@
 #include "UIRenderer.h"
 #include <string>
 
-static void drawBar(sf::RenderWindow& window, int x, int y, int w, int h, int current, int max,
-                    sf::Color fill, sf::Color back)
+static void drawBar(sf::RenderWindow& window,
+    int x,
+    int y,
+    int w,
+    int h,
+    int current,
+    int max,
+    sf::Color fill, sf::Color back)
 {
     sf::RectangleShape bg(sf::Vector2f(static_cast<float>(w), static_cast<float>(h)));
     bg.setPosition(sf::Vector2f(static_cast<float>(x), static_cast<float>(y)));
@@ -18,8 +24,13 @@ static void drawBar(sf::RenderWindow& window, int x, int y, int w, int h, int cu
     window.draw(fg);
 }
 
-static void drawText(sf::RenderWindow& window, const sf::Font& font, const std::string& str,
-                     int x, int y, int charSize, sf::Color color)
+static void drawText(sf::RenderWindow& window,
+    const sf::Font& font,
+    const std::string& str,
+    int x,
+    int y,
+    int charSize,
+    sf::Color color)
 {
     sf::Text text(font, sf::String(str), static_cast<unsigned int>(charSize));
     text.setFillColor(color);
@@ -27,8 +38,12 @@ static void drawText(sf::RenderWindow& window, const sf::Font& font, const std::
     window.draw(text);
 }
 
-void UIRenderer::render(sf::RenderWindow& window, const CombatState& state,
-                        int winW, int winH, const sf::Font& font)
+void UIRenderer::render(sf::RenderWindow& window,
+    const CombatState& playerState,
+    const CombatState& enemyState,
+    int winW,
+    int winH,
+    const sf::Font& font)
 {
     int barWidth  = winW / 4;
     int barHeight = winH / 25;
@@ -38,11 +53,19 @@ void UIRenderer::render(sf::RenderWindow& window, const CombatState& state,
     int x = winW - barWidth - margin;
     int y = winH - (barHeight * 2) - margin * 2;
 
-    drawBar(window, x, y, barWidth, barHeight, state.hp.current, state.hp.max, sf::Color(200,50,50), sf::Color(60,20,20));
-    drawText(window, font, std::to_string(state.hp.current) + "/" + std::to_string(state.hp.max), x + 5, y + 2, barHeight * 0.6, sf::Color::White);
+    // player corruption
+    drawBar(window, x, y - (barHeight + 5), barWidth, barHeight, playerState.corruption.current, playerState.corruption.max, sf::Color(118, 50, 121), sf::Color(68, 50, 66));
+    drawText(window, font, std::to_string(playerState.corruption.current) + "/" + std::to_string(playerState.corruption.max), x + 5, y - (barHeight + 4), barHeight * 0.6, sf::Color::White);
 
-    drawBar(window, x, y + barHeight + margin / 2, barWidth, barHeight, state.mana.current, state.mana.max, sf::Color(50,50,200), sf::Color(20,20,60));
-    drawText(window, font, std::to_string(state.mana.current) + "/" + std::to_string(state.mana.max), x + 5, y + barHeight + margin / 2 + 2, barHeight * 0.6, sf::Color::White);
+    // player hp
+    drawBar(window, x, y, barWidth, barHeight, playerState.hp.current, playerState.hp.max, sf::Color(200,50,50), sf::Color(60,20,20));
+    drawText(window, font, std::to_string(playerState.hp.current) + "/" + std::to_string(playerState.hp.max), x + 5, y + 2, barHeight * 0.6, sf::Color::White);
+    // player shield
+    drawText(window, font, std::to_string(playerState.shield.current), x + 90, y + 2, barHeight * 0.6, sf::Color::White);
+
+    // player mana
+    drawBar(window, x, y + barHeight + margin / 2, barWidth, barHeight, playerState.mana.current, playerState.mana.max, sf::Color(50,50,200), sf::Color(20,20,60));
+    drawText(window, font, std::to_string(playerState.mana.current) + "/" + std::to_string(playerState.mana.max), x + 5, y + barHeight + margin / 2 + 2, barHeight * 0.6, sf::Color::White);
 
     // enemy
     int enemyBarWidth  = winW / 4;
@@ -50,7 +73,10 @@ void UIRenderer::render(sf::RenderWindow& window, const CombatState& state,
     int enemyX = winW / 2 - enemyBarWidth / 2;
     int enemyY = winH / 4 - enemyBarHeight - margin;
 
-    drawBar(window, enemyX, enemyY, enemyBarWidth, enemyBarHeight, state.hp.current, state.hp.max, sf::Color(255,0,0), sf::Color(60,20,20));
-    drawText(window, font, std::to_string(state.hp.current) + "/" + std::to_string(state.hp.max), enemyX + 5, enemyY + 2, enemyBarHeight * 0.6, sf::Color::White);
+    // enemy hp
+    drawBar(window, enemyX, enemyY, enemyBarWidth, enemyBarHeight, enemyState.hp.current, enemyState.hp.max, sf::Color(255,0,0), sf::Color(60,20,20));
+    drawText(window, font, std::to_string(enemyState.hp.current) + "/" + std::to_string(enemyState.hp.max), enemyX + 5, enemyY + 2, enemyBarHeight * 0.6, sf::Color::White);
+    // enemy shield
+    drawText(window, font, std::to_string(enemyState.shield.current), enemyX + 90, enemyY + 2, enemyBarHeight * 0.6, sf::Color::White);
 }
 

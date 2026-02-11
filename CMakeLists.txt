@@ -4,7 +4,8 @@ project(CardEngineSFML)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(SFML_DIR "C:/Libraries/SFML3/lib/cmake/SFML")
+set(SFML_STATIC_LIBRARIES ON)
+#set(SFML_DIR "C:/Libraries/SFML3/lib/cmake/SFML")
 
 # SFML 3: no components needed
 find_package(SFML 3 COMPONENTS Graphics Window System REQUIRED)
@@ -23,5 +24,3 @@ target_link_libraries(card_engine
     SFML::Window
     SFML::System
 )
-
-

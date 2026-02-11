@@ -4,5 +4,5 @@
 
 class CardResolver {
 public:
-    static void play(const Card& card, CombatState& player, CombatState& enemy);
+    static bool play(const Card& card, CombatState& player, CombatState& enemy);
 };

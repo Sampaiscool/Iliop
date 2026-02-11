@@ -4,6 +4,6 @@
 
 class UIRenderer {
 public:
-    void render(sf::RenderWindow& window, const CombatState& state, int winW, int winH, const sf::Font& font);
+    void render(sf::RenderWindow& window, const CombatState& playerState, const CombatState& enemyState, int winW, int winH, const sf::Font& font);
 };
 

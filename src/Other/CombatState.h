@@ -5,4 +5,5 @@ struct CombatState {
     Resource hp;
     Resource shield;
     Resource mana;
+    Resource corruption;
 };

@@ -15,6 +15,7 @@ struct Card {
     CardType type;
     CardEffect effect;
     int value = 0;
+    int cost;
 
     bool contains(int mx, int my) const {
         return mx >= x && mx <= x + w &&

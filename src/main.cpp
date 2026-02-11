@@ -11,7 +11,7 @@
 int main() {
     sf::RenderWindow window;
     window.create(sf::VideoMode({800u, 800u}),
-        "Card Engine",
+        "Iliop",
         sf::Style::Titlebar | sf::Style::Resize | sf::Style::Close);
 
     if (!window.isOpen()) {
@@ -22,28 +22,39 @@ int main() {
     window.setFramerateLimit(60);
 
     sf::Font font;
-    if (!font.openFromFile("../assets/fonts/Monsterrat.ttf")) {
+    if (!font.openFromFile("../assets/fonts/Knewave.ttf")) {
         std::cerr << "Failed to load font\n";
         return 1;
     }
 
-    CombatState playerState{{30,30}, {0,10}, {3,3}};
+    CombatState playerState{
+        {30,30},    // hp
+        {0,10},     // shield
+        {3,3},      // mana
+        {0,10}      // corruption
+    };
+    Enemy enemy(
+        10,         // hp
+        10,         // shield
+        1,          // mana
+        10          // corruption
+    );
+
     UIRenderer ui;
     Deck deck;
     deck.shuffle();
     deck.drawCard(4);
-    Enemy enemy(10, 10, 1);
 
     while (window.isOpen()) {
         while (auto eventOpt = window.pollEvent()) {
             if (!eventOpt.has_value()) continue;
             sf::Event& event = *eventOpt;
 
-            // Check for Closed event
+            // check for closed event
             if (auto closed = event.getIf<sf::Event::Closed>()) {
                 window.close();
             }
-
+            // make windows resizable
             if (auto resized = event.getIf<sf::Event::Resized>()) {
                 window.setView(sf::View(sf::FloatRect(
                 {0.f, 0.f},
@@ -52,15 +63,16 @@ int main() {
             }
 
 
-            // Check for Mouse Button Pressed
+            // check for mouse
             if (auto mouse = event.getIf<sf::Event::MouseButtonPressed>()) {
                 if (mouse->button == sf::Mouse::Button::Left) {
                     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
                     for (Card& card : deck.getHand()) {
                         if (card.contains(mousePos.x, mousePos.y)) {
-                            CardResolver::play(card, playerState, enemy.getState());
-                            deck.discardCard(card);
-                            break;
+                            if (CardResolver::play(card, playerState, enemy.getState())) {
+                                deck.discardCard(card);
+                                break;
+                            }
                         }
                     }
                 }
@@ -71,7 +83,7 @@ int main() {
         int winW = window.getSize().x;
         int winH = window.getSize().y;
 
-        ui.render(window, playerState, winW, winH, font);
+        ui.render(window, playerState, enemy.getState(), winW, winH, font);
         deck.render(window, winW, winH, font);
         enemy.render(window, winW, winH);
 
@@ -80,5 +92,3 @@ int main() {
 
     return 0;
 }
-
-
