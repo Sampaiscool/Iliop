@@ -54,8 +54,9 @@ void UIRenderer::render(sf::RenderWindow& window,
     int y = winH - (barHeight * 2) - margin * 2;
 
     // player corruption
-    drawBar(window, x, y - (barHeight + 5), barWidth, barHeight, playerState.corruption.current, playerState.corruption.max, sf::Color(118, 50, 121), sf::Color(68, 50, 66));
-    drawText(window, font, std::to_string(playerState.corruption.current) + "/" + std::to_string(playerState.corruption.max), x + 5, y - (barHeight + 4), barHeight * 0.6, sf::Color::White);
+    int corruptionY = y - (barHeight + 5);
+    drawBar(window, x, corruptionY, barWidth, barHeight, playerState.corruption.current, playerState.corruption.max, sf::Color(118, 50, 121), sf::Color(68, 50, 66));
+    drawText(window, font, std::to_string(playerState.corruption.current) + "/" + std::to_string(playerState.corruption.max), x + 5, corruptionY + 2, barHeight * 0.6, sf::Color::White);
 
     // player hp
     drawBar(window, x, y, barWidth, barHeight, playerState.hp.current, playerState.hp.max, sf::Color(200,50,50), sf::Color(60,20,20));
@@ -78,5 +79,18 @@ void UIRenderer::render(sf::RenderWindow& window,
     drawText(window, font, std::to_string(enemyState.hp.current) + "/" + std::to_string(enemyState.hp.max), enemyX + 5, enemyY + 2, enemyBarHeight * 0.6, sf::Color::White);
     // enemy shield
     drawText(window, font, std::to_string(enemyState.shield.current), enemyX + 90, enemyY + 2, enemyBarHeight * 0.6, sf::Color::White);
-}
 
+    // end turn button
+    int endButtonW = winW / 7;
+    int endButtonH = endButtonW;
+    int endButtonX = x + endButtonW / 3;
+    int endButtonY = corruptionY - endButtonH - (winH / 40);
+
+
+    sf::RectangleShape rect(sf::Vector2f(static_cast<float>(endButtonW), static_cast<float>(endButtonH)));
+    rect.setPosition(sf::Vector2f(static_cast<float>(endButtonX), static_cast<float>(endButtonY)));
+    rect.setFillColor(sf::Color(50, 50, 50));
+    rect.setOutlineColor(sf::Color::Black);
+    rect.setOutlineThickness(2.f);
+    window.draw(rect);
+}

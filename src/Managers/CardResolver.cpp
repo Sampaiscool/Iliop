@@ -14,7 +14,7 @@ bool CardResolver::play(const Card& card, CombatState& player, CombatState& enem
                 player.shield.current += card.value;
                 break;
         }
-        player.mana.current - card.value;
+        player.mana.current = player.mana.current - card.cost;
         player.corruption.current = std::min(player.corruption.current + 1, player.corruption.max);
 
         return true;
