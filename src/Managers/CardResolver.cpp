@@ -12,8 +12,11 @@ bool CardResolver::play(
     // pay cost
     player.mana.current -= card.cost;
 
+    // check if current corruption amount is enough for a transformation
+    bool isCorrupted = (player.corruption.current >= player.transformThreshold);
+
     // trigger card behavior
-    card.play(player, enemy);
+    card.play(player, enemy, isCorrupted);
 
     // global rules
     player.corruption.current =

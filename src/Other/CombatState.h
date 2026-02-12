@@ -6,4 +6,5 @@ struct CombatState {
     Resource shield;
     Resource mana;
     Resource corruption;
+    int transformThreshold;
 };

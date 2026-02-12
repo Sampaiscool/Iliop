@@ -8,7 +8,12 @@ class HealEffect : public Effect {
 public:
     HealEffect(int heal) : amount(heal) {}
 
-    void apply(CombatState& self, CombatState& target) override {
+    void apply(CombatState& self, CombatState& target, bool isCorrupted) override {
+
+        if (isCorrupted) {
+          amount = static_cast<int>(amount * 1.5f);
+        }
+
         self.hp.current += amount;
         if (self.hp.current > self.hp.max)
             self.hp.current = self.hp.max;

@@ -1,10 +1,17 @@
 #include "Card.h"
 
-void Card::draw(sf::RenderWindow& window, const sf::Font& font) const {
-    sf::RectangleShape rect(sf::Vector2f(static_cast<float>(w),
-                                         static_cast<float>(h)));
-    rect.setPosition(sf::Vector2f(static_cast<float>(x),
-                                  static_cast<float>(y)));
+void Card::draw(sf::RenderWindow& window, const sf::Font& font, bool isCorrupted) const {
+    sf::RectangleShape rect(sf::Vector2f(static_cast<float>(w), static_cast<float>(h)));
+    rect.setPosition(sf::Vector2f(static_cast<float>(x), static_cast<float>(y)));
+
+    if (isCorrupted) {
+        // Thick purple outline for corrupted cards
+        rect.setOutlineThickness(4.f);
+        rect.setOutlineColor(sf::Color(180, 0, 255)); 
+    } else {
+        rect.setOutlineThickness(1.f);
+        rect.setOutlineColor(sf::Color::Black);
+    }
 
     switch (type) {
         case CardType::Damage:

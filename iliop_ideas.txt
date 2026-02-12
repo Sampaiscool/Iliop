@@ -6,11 +6,13 @@ You have a starting hand of 4
 
 Each turn you have 3 mana to spend
 
-You have a corrupted status: It goes up by 1 for each card you play in 1 turn; if its 2 or higher all cards in your hand transform
+You have a corrupted status: It goes up by 1 for each card you play in 1 turn; if its 3 or higher all cards in your hand transform (check if it works for enemies too)
 
 Enemies have simple attacks
 
 Start of each turn you regain all your mana and 4 new cards
+
+
 
 TODO:
     - Update game loop to -> Start - Fight enemy - Collect cards - Fight enemy - ??? --- Fight boss

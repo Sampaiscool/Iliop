@@ -4,10 +4,13 @@
 
 #include "Managers/CardResolver.h"
 #include "Managers/EnemyFactory.h"
+#include "Managers/CharacterFactory.h"
 #include "Deck/Deck.h"
 #include "Other/CombatState.h"
+#include "Other/Particle.h"
 #include "UI/UIRenderer.h"
 #include "Enemy/Enemy.h"
+#include "Character/Character.h"
 
 enum class GameState {
     StartScreen,
@@ -41,27 +44,30 @@ int main() {
         return 1;
     }
 
-    CombatState playerState{
-        {30,30},    // hp
-        {0,10},     // shield
-        {3,3},      // mana
-        {0,10}      // corruption
-    };
-
     GameState gameState = GameState::StartScreen;
     TurnState turnState = TurnState::PlayerTurn;
 
     UIRenderer ui;
-    Deck deck;
+
+    sf::Clock particleClock;
+    ParticleSystem corruptionParticles;
+
+    Character character = CharacterFactory::create(CharacterClass::Mage);
+
+    CombatState playerState = character.baseStats;
+
+    Deck deck(std::move(character.starterDeck));
+
     deck.shuffle();
- 
     deck.drawCard(4);
+
 
     int currentFloor = 1;
 
     Enemy enemy = EnemyFactory::create(currentFloor);
 
     while (window.isOpen()) {
+        float dt = particleClock.restart().asSeconds();
 
         while (auto eventOpt = window.pollEvent()) {
             if (!eventOpt.has_value()) continue;
@@ -76,8 +82,11 @@ int main() {
                     {static_cast<float>(resized->size.x),
                      static_cast<float>(resized->size.y)}
                 )));
+                float scale = resized->size.x / 800.f; // 800 is base width
+                    corruptionParticles.setScale(scale);
             }
 
+            // mouse wordt geklikt
             if (auto mouse = event.getIf<sf::Event::MouseButtonPressed>()) {
                 if (mouse->button != sf::Mouse::Button::Left)
                     continue;
@@ -86,7 +95,7 @@ int main() {
                     window.mapPixelToCoords(
                         sf::Mouse::getPosition(window));
 
-                // start screen
+                // checkt of je klikt op de start knop
                 if (gameState == GameState::StartScreen) {
 
                     sf::FloatRect startButton(
@@ -110,7 +119,6 @@ int main() {
                     enemy.rollIntent();
 
                     if (turnState == TurnState::PlayerTurn) {
-                        
                         // end Turn button
                         if (ui.getEndTurnBounds().contains(mousePos)) {
 
@@ -226,7 +234,11 @@ int main() {
                 font
             );
 
-            deck.render(window, winW, winH, font);
+            corruptionParticles.update(dt);
+
+            corruptionParticles.draw(window);
+
+            deck.render(window, winW, winH, font, playerState, corruptionParticles);
             enemy.render(window, winW, winH);
         }
         // render game over screen

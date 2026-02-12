@@ -31,7 +31,7 @@ CombatState& Enemy::getState() {
 void Enemy::playTurn(CombatState& playerState)
 {
     if (intent)
-        intent->apply(state, playerState);
+        intent->apply(state, playerState, false);
 
     rollIntent();
 }
@@ -41,20 +41,28 @@ void Enemy::rollIntent()
     switch (type)
     {
         case EnemyType::MisterEraser:
+        {
             intent = std::make_unique<DamageEffect>(5);
             break;
+        }
 
         case EnemyType::Menta:
+        {
             auto multi = std::make_unique<MultiEffect>();
             multi->add(std::make_unique<DamageEffect>(5));
             multi->add(std::make_unique<ShieldEffect>(2));
             intent = std::move(multi);
             break;
+        }
+
         case EnemyType::CursedKing:
-            auto multi = std:make_unique<MultiEffect>();
+        {
+            auto multi = std::make_unique<MultiEffect>();
             multi->add(std::make_unique<DamageEffect>(10));
             multi->add(std::make_unique<HealEffect>(5));
-            intent = std:move(multi);
+            intent = std::move(multi);
             break;
+        }
     }
 }
+

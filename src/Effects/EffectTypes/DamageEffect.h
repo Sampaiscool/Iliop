@@ -8,7 +8,12 @@ class DamageEffect : public Effect {
 public:
     DamageEffect(int dmg) : amount(dmg) {}
 
-    void apply(CombatState& self, CombatState& target) override {
+    void apply(CombatState& self, CombatState& target, bool isCorrupted) override {
+
+        if (isCorrupted) {
+            amount = static_cast<int>(amount * 1.5f);
+        }
+
         int damage = amount;
 
         if (target.shield.current > 0) {

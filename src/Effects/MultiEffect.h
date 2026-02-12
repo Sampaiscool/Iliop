@@ -9,8 +9,8 @@ public:
         effects.push_back(std::move(e));
     }
 
-    void apply(CombatState& self, CombatState& target) override {
+    void apply(CombatState& self, CombatState& target, bool isCorrupted) override {
         for (auto& e : effects)
-            e->apply(self, target);
+            e->apply(self, target, isCorrupted);
     }
 };

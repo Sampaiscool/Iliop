@@ -34,11 +34,11 @@ struct Card {
                my >= y && my <= y + h;
     }
 
-    void play(CombatState& self, CombatState& target) const {
+    void play(CombatState& self, CombatState& target, bool isCorrupted) const {
     if (effect)
-        effect->apply(self, target);
+        effect->apply(self, target, isCorrupted);
     }
 
-    void draw(sf::RenderWindow& window, const sf::Font& font) const;
+    void draw(sf::RenderWindow& window, const sf::Font& font, bool isCorrupted) const;
 
 };

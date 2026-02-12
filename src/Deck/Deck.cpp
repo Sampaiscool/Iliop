@@ -2,37 +2,19 @@
 #include "../Effects/EffectTypes/DamageEffect.h"
 #include "../Effects/EffectTypes/HealEffect.h"
 #include "../Effects/EffectTypes/ShieldEffect.h"
-
 #include <algorithm>
 #include <random>
 
 int deckCardAmount = 40;
 
-Deck::Deck() {
-    // build deck
-    for (int i = 0; i < deckCardAmount; ++i) {
-        Card card;
-        card.type = static_cast<CardType>(i % 3);
-        switch (card.type) {
-            case CardType::Damage:
-                card.name = "Magic Blast";
-                card.effect = std::make_unique<DamageEffect>(4);
-                card.cost = 1;
-                break;
-            case CardType::Heal:
-                card.name = "Healing Winds";
-                card.effect = std::make_unique<HealEffect>(5);
-                card.cost = 1;
-                break;
-            case CardType::Shield:
-                card.name = "Protecting Barrier";
-                card.effect = std::make_unique<ShieldEffect>(5);
-                card.cost = 1;
-                break;
-        }
-        card.value = 5 + (i % 5);
-        drawPile.push_back(std::move(card));
-    }
+Deck::Deck(std::vector<Card> startingCards) {
+    drawPile = std::move(startingCards);
+}
+
+void Deck::setDeck(std::vector<Card> cards) {
+    drawPile = std::move(cards);
+    discardPile.clear();
+    hand.clear();
 }
 
 std::vector<Card>& Deck::getHand() {
@@ -69,6 +51,9 @@ void Deck::discardCard(Card& card) {
     }
 }
 
+// void Deck::addCard(Card card) {
+//     discardPile.push_back(std::move(card));
+// }
 
 void Deck::discardHand()
 {
@@ -78,18 +63,21 @@ void Deck::discardHand()
     hand.clear();
 }
 
-void Deck::render(sf::RenderWindow& window, int winW, int winH, const sf::Font& font) {
+void Deck::render(sf::RenderWindow& window, int winW, int winH, const sf::Font& font, const CombatState& player, ParticleSystem& particles) {
     int cardW = winW / 10;
     int cardH = winH / 6;
     int handAreaWidth = static_cast<int>(winW * 0.6f);
     int startX = 20;
     int spacing = 0;
+
     if (hand.size() > 1)
         spacing = (handAreaWidth - cardW) / (hand.size() - 1);
     else
         spacing = 0;
-    
+
     int handY = winH - cardH - 40;
+
+    bool isCorrupted = (player.corruption.current >= player.transformThreshold);
 
     for (size_t i = 0; i < hand.size(); ++i) {
         Card& card = hand[i];
@@ -98,6 +86,14 @@ void Deck::render(sf::RenderWindow& window, int winW, int winH, const sf::Font& 
         card.w = cardW;
         card.h = cardH;
 
-        card.draw(window, font);
+        card.draw(window, font, isCorrupted);
+
+        if (isCorrupted) {
+            // Pick a random spot along the top edge of the card
+            float spawnX = card.x + (rand() % card.w);
+            float spawnY = card.y; 
+            // Emit 1 or 2 particles per frame per card
+            particles.emit({spawnX, spawnY}, 1);
+        }
     }
 }
