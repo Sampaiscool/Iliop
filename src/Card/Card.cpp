@@ -26,4 +26,3 @@ void Card::draw(sf::RenderWindow& window, const sf::Font& font) const {
     costText.setFillColor(sf::Color::Black);
     window.draw(costText);
 }
-

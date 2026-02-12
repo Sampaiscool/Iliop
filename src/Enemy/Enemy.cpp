@@ -30,38 +30,31 @@ CombatState& Enemy::getState() {
 
 void Enemy::playTurn(CombatState& playerState)
 {
-    int damage = intendedDamage;
-    int block  = intendedBlock;
+    if (intent)
+        intent->apply(state, playerState);
 
-    state.shield.current += block;
-    if (state.shield.current > state.shield.max)
-        state.shield.current = state.shield.max;
-
-    if (playerState.shield.current > 0)
-    {
-        int absorbed = std::min(playerState.shield.current, damage);
-        playerState.shield.current -= absorbed;
-        damage -= absorbed;
-    }
-
-    playerState.hp.current -= damage;
-
-    rollIntent(); // prepare next turn
+    rollIntent();
 }
-
 
 void Enemy::rollIntent()
 {
     switch (type)
     {
         case EnemyType::MisterEraser:
-            intendedDamage = 5;
-            intendedBlock  = 0;
+            intent = std::make_unique<DamageEffect>(5);
             break;
 
         case EnemyType::Menta:
-            intendedDamage = 3;
-            intendedBlock  = 4;
+            auto multi = std::make_unique<MultiEffect>();
+            multi->add(std::make_unique<DamageEffect>(5));
+            multi->add(std::make_unique<ShieldEffect>(2));
+            intent = std::move(multi);
+            break;
+        case EnemyType::CursedKing:
+            auto multi = std:make_unique<MultiEffect>();
+            multi->add(std::make_unique<DamageEffect>(10));
+            multi->add(std::make_unique<HealEffect>(5));
+            intent = std:move(multi);
             break;
     }
 }

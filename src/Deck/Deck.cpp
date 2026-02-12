@@ -1,7 +1,10 @@
 #include "Deck.h"
+#include "../Effects/EffectTypes/DamageEffect.h"
+#include "../Effects/EffectTypes/HealEffect.h"
+#include "../Effects/EffectTypes/ShieldEffect.h"
+
 #include <algorithm>
 #include <random>
-#include <iostream>
 
 int deckCardAmount = 40;
 
@@ -13,22 +16,22 @@ Deck::Deck() {
         switch (card.type) {
             case CardType::Damage:
                 card.name = "Magic Blast";
-                card.effect = CardEffect::DealDamage;
+                card.effect = std::make_unique<DamageEffect>(4);
                 card.cost = 1;
                 break;
             case CardType::Heal:
                 card.name = "Healing Winds";
-                card.effect = CardEffect::Heal;
+                card.effect = std::make_unique<HealEffect>(5);
                 card.cost = 1;
                 break;
             case CardType::Shield:
                 card.name = "Protecting Barrier";
-                card.effect = CardEffect::GainShield;
+                card.effect = std::make_unique<ShieldEffect>(5);
                 card.cost = 1;
                 break;
         }
         card.value = 5 + (i % 5);
-        drawPile.push_back(card);
+        drawPile.push_back(std::move(card));
     }
 }
 
@@ -51,27 +54,29 @@ void Deck::drawCard(int amount) {
             shuffle();
             if (drawPile.empty()) break;
         }
-        hand.push_back(drawPile.back());
+        hand.push_back(std::move(drawPile.back()));
         drawPile.pop_back();
     }
 }
 
-void Deck::discardCard(const Card& card) {
-    // remove card from hand
+void Deck::discardCard(Card& card) {
     auto it = std::find_if(hand.begin(), hand.end(),
         [&](const Card& c) { return &c == &card; });
+
     if (it != hand.end()) {
-        discardPile.push_back(*it);
+        discardPile.push_back(std::move(*it));
         hand.erase(it);
     }
 }
 
+
 void Deck::discardHand()
 {
-    discardPile.insert(discardPile.end(), hand.begin(), hand.end());
+    for (auto& card : hand)
+        discardPile.push_back(std::move(card));
+
     hand.clear();
 }
-
 
 void Deck::render(sf::RenderWindow& window, int winW, int winH, const sf::Font& font) {
     int cardW = winW / 10;
@@ -96,5 +101,3 @@ void Deck::render(sf::RenderWindow& window, int winW, int winH, const sf::Font& 
         card.draw(window, font);
     }
 }
-
-

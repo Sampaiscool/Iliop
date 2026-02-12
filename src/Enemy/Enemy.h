@@ -1,8 +1,17 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "../Other/CombatState.h"
+#include "../Effects/Effect.h"
+#include "../Effects/EffectTypes/DamageEffect.h"
+#include "../Effects/EffectTypes/HealEffect.h"
+#include "../Effects/EffectTypes/ShieldEffect.h"
+#include "../Effects/MultiEffect.h"
 
-enum class EnemyType { MisterEraser, Menta };
+enum class EnemyType {
+    MisterEraser,
+    Menta,
+    CursedKing
+};
 
 class Enemy {
 public:
@@ -17,7 +26,5 @@ public:
 private:
     CombatState state;
     EnemyType type;
-    int intendedDamage = 0;
-    int intendedBlock  = 0;
-
+    std::unique_ptr<Effect> intent;
 };

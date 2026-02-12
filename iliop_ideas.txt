@@ -1,8 +1,8 @@
-Deckbuilder roughelike
+Deckbuilder rougelike
 
-Cards have different types, and random values
+Cards have different types, and effects
 
-You have a starting hand of 5
+You have a starting hand of 4
 
 Each turn you have 3 mana to spend
 
@@ -10,4 +10,15 @@ You have a corrupted status: It goes up by 1 for each card you play in 1 turn; i
 
 Enemies have simple attacks
 
-Start of each turn you regain all your mana and 5 new cards
+Start of each turn you regain all your mana and 4 new cards
+
+TODO:
+    - Update game loop to -> Start - Fight enemy - Collect cards - Fight enemy - ??? --- Fight boss
+    - Character selection and custom deck per character
+    - Deck that can be modified easy
+    - More EffectTypes
+    - More Enemies
+    - Card corruption logic
+    - Upgrades(?)
+    - Custom events between fighting enemies and collecting cards(?)
+    - Update UI and make actual sprites
