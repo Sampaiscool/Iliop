@@ -14,6 +14,7 @@
 
 enum class GameState {
     StartScreen,
+    CharacterSelect,
     Combat,
     Victory,
     Looting,
@@ -47,20 +48,13 @@ int main() {
     GameState gameState = GameState::StartScreen;
     TurnState turnState = TurnState::PlayerTurn;
 
+    CombatState playerState;
+    Deck deck;
+
     UIRenderer ui;
 
     sf::Clock particleClock;
     ParticleSystem corruptionParticles;
-
-    Character character = CharacterFactory::create(CharacterClass::Mage);
-
-    CombatState playerState = character.baseStats;
-
-    Deck deck(std::move(character.starterDeck));
-
-    deck.shuffle();
-    deck.drawCard(4);
-
 
     int currentFloor = 1;
 
@@ -105,14 +99,52 @@ int main() {
                         sf::Vector2f(200.f, 60.f));
 
                     if (startButton.contains(mousePos)) {
-                        gameState = GameState::Combat;
-                        turnState = TurnState::PlayerTurn;
-
-                        playerState.mana.current = playerState.mana.max;
-                        deck.shuffle();
+                        gameState = GameState::CharacterSelect;
+                        // gameState = GameState::Combat;
+                        // turnState = TurnState::PlayerTurn;
+                        //
+                        // playerState.mana.current = playerState.mana.max;
+                        // deck.shuffle();
                     }
                 }
+                else if (gameState == GameState::CharacterSelect) {
+                    int winW = window.getSize().x;
+                    int winH = window.getSize().y;
 
+                    float buttonWidth = 220.f;
+                    float buttonHeight = 70.f;
+                    float centerX = winW / 2.f - buttonWidth / 2.f;
+                    float startY = winH / 2.f - 120.f;
+                    float spacing = 100.f;
+
+                    std::vector<CharacterClass> classList = {
+                        CharacterClass::Mage,
+                        CharacterClass::Warrior,
+                        CharacterClass::Cleric
+                    };
+
+                    for (int i = 0; i < classList.size(); ++i) {
+
+                        sf::FloatRect bounds(
+                            sf::Vector2f(centerX, startY + i * spacing),
+                            sf::Vector2f(buttonWidth, buttonHeight)
+                        );
+
+                        if (bounds.contains(mousePos)) {
+
+                            Character character = CharacterFactory::create(classList[i]);
+
+                            playerState = character.baseStats;
+
+                            deck.setDeck(std::move(character.starterDeck));
+                            deck.shuffle();
+                            deck.drawCard(4);
+
+                            gameState = GameState::Combat;
+                            break;
+                        }
+                    }
+                }
                 // combat
                 else if (gameState == GameState::Combat) {
 
@@ -223,6 +255,34 @@ int main() {
             start.setPosition({winW / 2.f - 40.f, winH / 2.f + 10.f});
             start.setFillColor(sf::Color::White);
             window.draw(start);
+        }
+        else if (gameState == GameState::CharacterSelect) {
+            float buttonWidth = 220.f;
+            float buttonHeight = 70.f;
+            float centerX = winW / 2.f - buttonWidth / 2.f;
+            float startY = winH / 2.f - 120.f;
+            float spacing = 100.f;
+
+            std::vector<std::pair<std::string, CharacterClass>> classes = {
+                {"Mage", CharacterClass::Mage},
+                {"Warrior", CharacterClass::Warrior},
+                {"Cleric", CharacterClass::Cleric}
+            };
+
+            for (int i = 0; i < classes.size(); ++i) {
+
+                sf::RectangleShape button({buttonWidth, buttonHeight});
+                button.setPosition({centerX, startY + i * spacing});
+                button.setFillColor(sf::Color(60,60,80));
+                button.setOutlineColor(sf::Color::Black);
+                button.setOutlineThickness(3.f);
+                window.draw(button);
+
+                sf::Text text(font, classes[i].first, 28);
+                text.setPosition({centerX + 40.f, startY + i * spacing + 18.f});
+                text.setFillColor(sf::Color::White);
+                window.draw(text);
+            }
         }
         // render combat screen
         else if (gameState == GameState::Combat) {

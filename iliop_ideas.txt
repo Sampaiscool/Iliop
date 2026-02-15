@@ -16,7 +16,8 @@ Start of each turn you regain all your mana and 4 new cards
 
 TODO:
     - Update game loop to -> Start - Fight enemy - Collect cards - Fight enemy - ??? --- Fight boss
-    - Character selection and custom deck per character
+    - Class selection and custom deck per class
+    - Unique characters wich can be merged with a class
     - Deck that can be modified easy
     - More EffectTypes
     - More Enemies

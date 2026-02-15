@@ -5,10 +5,10 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # linux
-set(SFML_STATIC_LIBRARIES ON)
+#set(SFML_STATIC_LIBRARIES ON)
 
 # windows
-#set(SFML_DIR "C:/Libraries/SFML3/lib/cmake/SFML")
+set(SFML_DIR "C:/Libraries/SFML3/lib/cmake/SFML")
 
 find_package(SFML 3 COMPONENTS Graphics Window System REQUIRED)
 
