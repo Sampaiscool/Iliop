@@ -86,7 +86,7 @@ void Deck::render(sf::RenderWindow& window, int winW, int winH, const sf::Font& 
         card.w = cardW;
         card.h = cardH;
 
-        card.draw(window, font, isCorrupted);
+        card.draw(window, font, isCorrupted, player);
 
         if (isCorrupted) {
             // Pick a random spot along the top edge of the card

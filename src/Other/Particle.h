@@ -13,11 +13,11 @@ class ParticleSystem {
 private:
     std::vector<Particle> particles;
     sf::VertexArray vertices;
-    float particleSize = 2.0f; 
+    float particleSize = 2.0f;
 
 public:
     ParticleSystem() {
-      // why sfml... why dont you have squares
+        // why sfml... why dont you have squares
         vertices.setPrimitiveType(sf::PrimitiveType::Triangles);
     }
 
@@ -67,7 +67,7 @@ private:
         sf::Vertex v3{.position = {p.position.x + particleSize, p.position.y + particleSize}, .color = color};
         sf::Vertex v4{.position = {p.position.x, p.position.y + particleSize}, .color = color};
 
-        // making squared from triangles :)
+        // making squares from triangles :)
         vertices.append(v1); vertices.append(v2); vertices.append(v3);
         vertices.append(v1); vertices.append(v3); vertices.append(v4);
     }

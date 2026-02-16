@@ -25,22 +25,29 @@ public:
     CombatState baseStats;
 
     Character(Class type,
-              CharacterName identity,
-              std::string nameStr,
-              std::vector<Card> deck,
-              CombatState stats,
-              int threshold)
-        : type(type),
-          identity(identity),
-          nameStr(nameStr),
-          starterDeck(std::move(deck)),
-          baseStats(stats),
-          transformCorruption(threshold) {
-              baseStats.transformThreshold = threshold;
-          }
-
+          CharacterName identity,
+          std::string nameStr,
+          std::vector<Card> deck,
+          CombatState stats,
+          int threshold,
+          int duration)
+    : type(type),
+      identity(identity),
+      nameStr(nameStr),
+      starterDeck(std::move(deck)),
+      baseStats(std::move(stats))
+    {
+        // Assign these to the stats struct so they are tracked in one place
+        baseStats.transformThreshold = threshold;
+        baseStats.transformTime = duration;
+        baseStats.transformGain = duration;
+        baseStats.isTransformed = false; // You should add this flag to CombatState
+    }
     int getTransformCorruption() const { return transformCorruption; }
+    int getTransformTime() const { return transformTime; }
+    void reduceTransformTime(int amount) { transformTime -= amount; }
 
 private:
     int transformCorruption;
+    int transformTime;
 };

@@ -18,6 +18,10 @@ bool CardResolver::play(
     // trigger card behavior
     card.play(player, enemy, isCorrupted);
 
+    if (player.isTransformed) {
+        player.transformationProc->apply(player, enemy, true);
+    }
+
     // global rules
     player.corruption.current =
         std::min(player.corruption.current + 1,

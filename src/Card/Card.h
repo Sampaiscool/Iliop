@@ -39,6 +39,6 @@ struct Card {
         effect->apply(self, target, isCorrupted);
     }
 
-    void draw(sf::RenderWindow& window, const sf::Font& font, bool isCorrupted) const;
+    void draw(sf::RenderWindow& window, const sf::Font& font, bool isCorrupted, const CombatState& playerState) const;
 
 };

@@ -82,39 +82,55 @@ void UIRenderer::render(sf::RenderWindow& window,
     // enemy shield
     drawText(window, font, std::to_string(enemyState.shield.current), enemyX + (winW / 7), enemyY + 2, enemyBarHeight * 0.6, sf::Color::White);
 
+    int btnW = winW / 10;
+    int btnH = barHeight * 2;
+    int buttonsY = corruptionY - btnH - (winH / 60);
+    int btnSpacing = 10;
+
     // end turn button
-    int endButtonW = winW / 7;
-    int endButtonH = endButtonW;
-    int endButtonX = x + endButtonW / 3;
-    int endButtonY = corruptionY - endButtonH - (winH / 40);
+    int endX = x + barWidth - btnW;
 
     endTurnBounds = sf::FloatRect(
-        sf::Vector2f(
-            static_cast<float>(endButtonX),
-            static_cast<float>(endButtonY)),
-        sf::Vector2f(
-            static_cast<float>(endButtonW),
-            static_cast<float>(endButtonH))
+        sf::Vector2f(static_cast<float>(endX), static_cast<float>(buttonsY)),
+        sf::Vector2f(static_cast<float>(btnW), static_cast<float>(btnH))
     );
 
+    sf::RectangleShape rectEnd(sf::Vector2f(btnW, btnH));
+    rectEnd.setPosition(sf::Vector2f(static_cast<float>(endX), static_cast<float>(buttonsY)));
+    rectEnd.setFillColor(sf::Color(100, 100, 100)); 
+    rectEnd.setOutlineColor(sf::Color::Black);
+    rectEnd.setOutlineThickness(2.f);
+    window.draw(rectEnd);
 
-    sf::RectangleShape rect(sf::Vector2f(
-        static_cast<float>(endButtonW),
-        static_cast<float>(endButtonH)));
+    drawText(window, font, "End", endX + (btnW / 4), buttonsY + (btnH / 4), btnH * 0.5, sf::Color::White);
 
-    rect.setPosition(sf::Vector2f(
-        static_cast<float>(endButtonX),
-        static_cast<float>(endButtonY)));
+    // transform button
+    int transX = x;
 
+    transformBounds = sf::FloatRect(
+        sf::Vector2f(static_cast<float>(transX), static_cast<float>(buttonsY)),
+        sf::Vector2f(static_cast<float>(btnW), static_cast<float>(btnH))
+    );
 
-    rect.setFillColor(sf::Color(50, 50, 50));
-    rect.setOutlineColor(sf::Color::Black);
-    rect.setOutlineThickness(2.f);
-    window.draw(rect);
+    sf::RectangleShape rectTransform(sf::Vector2f(static_cast<float>(btnW), static_cast<float>(btnH)));
+    rectTransform.setPosition(sf::Vector2f(static_cast<float>(transX), static_cast<float>(buttonsY)));
 
-    drawText(window, font, "End", endButtonX + (winW / 23), endButtonY + endButtonH / 3, barHeight * 0.8, sf::Color::White);
+    if (playerState.mana.current == playerState.mana.max) {
+        rectTransform.setFillColor(sf::Color(244, 198, 68));
+    } else {
+        rectTransform.setFillColor(sf::Color(100, 80, 20));
+    }
+
+    rectTransform.setOutlineColor(sf::Color::Black);
+    rectTransform.setOutlineThickness(2.f);
+    window.draw(rectTransform);
+    drawText(window, font, "Form", transX + (btnW / 6), buttonsY + (btnH / 5), btnH * 0.6, sf::Color::Black);
 }
 
 sf::FloatRect UIRenderer::getEndTurnBounds() const {
     return endTurnBounds;
+}
+
+sf::FloatRect UIRenderer::getTransformBounds() const {
+    return transformBounds;
 }

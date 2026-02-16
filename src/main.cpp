@@ -153,8 +153,7 @@ int main() {
 
                             Character character = CharacterFactory::create(selectedClass, charactersList[i]);
 
-                            playerState = character.baseStats;
-
+                            playerState = std::move(character.baseStats);
                             deck.setDeck(std::move(character.starterDeck));
                             deck.shuffle();
                             deck.drawCard(4);
@@ -170,10 +169,17 @@ int main() {
                     enemy.rollIntent();
 
                     if (turnState == TurnState::PlayerTurn) {
-                        // end Turn button
+                        // end turn button
                         if (ui.getEndTurnBounds().contains(mousePos)) {
-
                             turnState = TurnState::EnemyTurn;
+                        }
+                        // transform button
+                        else if (ui.getTransformBounds().contains(mousePos) && playerState.mana.current == playerState.mana.max) {
+                            if (playerState.isTransformed != true) {
+                                playerState.mana.current -= playerState.mana.max;
+                                playerState.isTransformed = true;
+                                playerState.transformTime += playerState.transformGain;
+                            }
                         }
                         else {
                             // card clicks
@@ -213,6 +219,9 @@ int main() {
                         playerState.mana.current = playerState.mana.max;
                         playerState.corruption.current = 0;
 
+                        playerState.transformTime = 0;
+                        playerState.isTransformed = false;
+
                         enemy = EnemyFactory::create(currentFloor);
 
                         gameState = GameState::Combat;
@@ -233,6 +242,12 @@ int main() {
             deck.drawCard(4);
             playerState.mana.current = playerState.mana.max;
             playerState.corruption.current = 0;
+            if (playerState.isTransformed) {
+                playerState.transformTime--;
+                if (playerState.transformTime <= 0) {
+                    playerState.isTransformed = false;
+                }
+            }
         }
 
         // check for victory / loss
@@ -249,7 +264,6 @@ int main() {
         if (gameState == GameState::Victory) {
             currentFloor++;
 
-            // al last set gamestate to looting
             gameState = GameState::Looting;
         }
 
@@ -376,8 +390,6 @@ int main() {
             cont.setFillColor(sf::Color::White);
             window.draw(cont);
         }
-        
-
         window.display();
     }
 
