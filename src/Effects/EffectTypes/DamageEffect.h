@@ -10,11 +10,13 @@ public:
 
     void apply(CombatState& self, CombatState& target, bool isCorrupted) override {
 
+        int bonus = 0;
+
         if (isCorrupted) {
-            amount = static_cast<int>(amount * 1.5f);
+            bonus = static_cast<int>(amount * 0.5f);
         }
 
-        int damage = amount;
+        int damage = amount + bonus;
 
         if (target.shield.current > 0) {
             int absorbed = std::min(target.shield.current, damage);

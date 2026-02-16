@@ -61,8 +61,9 @@ void UIRenderer::render(sf::RenderWindow& window,
     // player hp
     drawBar(window, x, y, barWidth, barHeight, playerState.hp.current, playerState.hp.max, sf::Color(200,50,50), sf::Color(60,20,20));
     drawText(window, font, std::to_string(playerState.hp.current) + "/" + std::to_string(playerState.hp.max), x + 5, y + 2, barHeight * 0.6, sf::Color::White);
+
     // player shield
-    drawText(window, font, std::to_string(playerState.shield.current), x + 90, y + 2, barHeight * 0.6, sf::Color::White);
+    drawText(window, font, std::to_string(playerState.shield.current) + "/" + std::to_string(playerState.shield.max), x + (winW / 7), y + 2, barHeight * 0.6, sf::Color::White);
 
     // player mana
     drawBar(window, x, y + barHeight + margin / 2, barWidth, barHeight, playerState.mana.current, playerState.mana.max, sf::Color(50,50,200), sf::Color(20,20,60));
@@ -77,8 +78,9 @@ void UIRenderer::render(sf::RenderWindow& window,
     // enemy hp
     drawBar(window, enemyX, enemyY, enemyBarWidth, enemyBarHeight, enemyState.hp.current, enemyState.hp.max, sf::Color(255,0,0), sf::Color(60,20,20));
     drawText(window, font, std::to_string(enemyState.hp.current) + "/" + std::to_string(enemyState.hp.max), enemyX + 5, enemyY + 2, enemyBarHeight * 0.6, sf::Color::White);
+
     // enemy shield
-    drawText(window, font, std::to_string(enemyState.shield.current), enemyX + 90, enemyY + 2, enemyBarHeight * 0.6, sf::Color::White);
+    drawText(window, font, std::to_string(enemyState.shield.current), enemyX + (winW / 7), enemyY + 2, enemyBarHeight * 0.6, sf::Color::White);
 
     // end turn button
     int endButtonW = winW / 7;
@@ -110,7 +112,7 @@ void UIRenderer::render(sf::RenderWindow& window,
     rect.setOutlineThickness(2.f);
     window.draw(rect);
 
-    drawText(window, font, "End", endButtonX + 20, endButtonY + endButtonH / 3, barHeight * 0.8, sf::Color::White);
+    drawText(window, font, "End", endButtonX + (winW / 23), endButtonY + endButtonH / 3, barHeight * 0.8, sf::Color::White);
 }
 
 sf::FloatRect UIRenderer::getEndTurnBounds() const {

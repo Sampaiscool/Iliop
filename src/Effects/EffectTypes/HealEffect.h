@@ -10,11 +10,14 @@ public:
 
     void apply(CombatState& self, CombatState& target, bool isCorrupted) override {
 
+        int bonus = 0;
+
         if (isCorrupted) {
-          amount = static_cast<int>(amount * 1.5f);
+            bonus = static_cast<int>(amount * 0.5f);
         }
 
-        self.hp.current += amount;
+        self.hp.current += amount + bonus;
+
         if (self.hp.current > self.hp.max)
             self.hp.current = self.hp.max;
     }
