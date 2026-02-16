@@ -6,25 +6,12 @@
 #include "Managers/EnemyFactory.h"
 #include "Managers/CharacterFactory.h"
 #include "Deck/Deck.h"
+#include "Other/GameState.h"
 #include "Other/CombatState.h"
 #include "Other/Particle.h"
 #include "UI/UIRenderer.h"
 #include "Enemy/Enemy.h"
 #include "Character/Character.h"
-
-enum class GameState {
-    StartScreen,
-    CharacterSelect,
-    Combat,
-    Victory,
-    Looting,
-    GameOver
-};
-
-enum class TurnState {
-    PlayerTurn,
-    EnemyTurn
-};
 
 int main() {
     sf::RenderWindow window;
@@ -47,6 +34,8 @@ int main() {
 
     GameState gameState = GameState::StartScreen;
     TurnState turnState = TurnState::PlayerTurn;
+
+    Class selectedClass;
 
     CombatState playerState;
     Deck deck;
@@ -99,12 +88,42 @@ int main() {
                         sf::Vector2f(200.f, 60.f));
 
                     if (startButton.contains(mousePos)) {
-                        gameState = GameState::CharacterSelect;
+                        gameState = GameState::ClassSelect;
                         // gameState = GameState::Combat;
                         // turnState = TurnState::PlayerTurn;
                         //
                         // playerState.mana.current = playerState.mana.max;
                         // deck.shuffle();
+                    }
+                }
+                else if (gameState == GameState::ClassSelect) {
+                    int winW = window.getSize().x;
+                    int winH = window.getSize().y;
+
+                    float buttonWidth = 220.f;
+                    float buttonHeight = 70.f;
+                    float centerX = winW / 2.f - buttonWidth / 2.f;
+                    float startY = winH / 2.f - 120.f;
+                    float spacing = 100.f;
+
+                    std::vector<Class> classList = {
+                        Class::Mage,
+                        Class::Warrior,
+                        Class::Cleric
+                    };
+
+                    for (int i = 0; i < classList.size(); ++i) {
+
+                        sf::FloatRect bounds(
+                            sf::Vector2f(centerX, startY + i * spacing),
+                            sf::Vector2f(buttonWidth, buttonHeight)
+                        );
+
+                        if (bounds.contains(mousePos)) {
+                            selectedClass = classList[i];
+                            gameState = GameState::CharacterSelect;
+                            break;
+                        }
                     }
                 }
                 else if (gameState == GameState::CharacterSelect) {
@@ -117,13 +136,13 @@ int main() {
                     float startY = winH / 2.f - 120.f;
                     float spacing = 100.f;
 
-                    std::vector<CharacterClass> classList = {
-                        CharacterClass::Mage,
-                        CharacterClass::Warrior,
-                        CharacterClass::Cleric
+                    std::vector<CharacterName> charactersList = {
+                        CharacterName::Hiroshi,
+                        CharacterName::Phlox,
+                        CharacterName::MightyFire
                     };
 
-                    for (int i = 0; i < classList.size(); ++i) {
+                    for (int i = 0; i < charactersList.size(); ++i) {
 
                         sf::FloatRect bounds(
                             sf::Vector2f(centerX, startY + i * spacing),
@@ -132,7 +151,7 @@ int main() {
 
                         if (bounds.contains(mousePos)) {
 
-                            Character character = CharacterFactory::create(classList[i]);
+                            Character character = CharacterFactory::create(selectedClass, charactersList[i]);
 
                             playerState = character.baseStats;
 
@@ -256,17 +275,17 @@ int main() {
             start.setFillColor(sf::Color::White);
             window.draw(start);
         }
-        else if (gameState == GameState::CharacterSelect) {
+        else if (gameState == GameState::ClassSelect) {
             float buttonWidth = 220.f;
             float buttonHeight = 70.f;
             float centerX = winW / 2.f - buttonWidth / 2.f;
             float startY = winH / 2.f - 120.f;
             float spacing = 100.f;
 
-            std::vector<std::pair<std::string, CharacterClass>> classes = {
-                {"Mage", CharacterClass::Mage},
-                {"Warrior", CharacterClass::Warrior},
-                {"Cleric", CharacterClass::Cleric}
+            std::vector<std::pair<std::string, Class>> classes = {
+                {"Mage", Class::Mage},
+                {"Warrior", Class::Warrior},
+                {"Cleric", Class::Cleric}
             };
 
             for (int i = 0; i < classes.size(); ++i) {
@@ -279,6 +298,34 @@ int main() {
                 window.draw(button);
 
                 sf::Text text(font, classes[i].first, 28);
+                text.setPosition({centerX + 40.f, startY + i * spacing + 18.f});
+                text.setFillColor(sf::Color::White);
+                window.draw(text);
+            }
+        }
+        else if (gameState == GameState::CharacterSelect) {
+            float buttonWidth = 220.f;
+            float buttonHeight = 70.f;
+            float centerX = winW / 2.f - buttonWidth / 2.f;
+            float startY = winH / 2.f - 120.f;
+            float spacing = 100.f;
+
+            std::vector<std::pair<std::string, CharacterName>> characters = {
+                {"Hiroshi", CharacterName::Hiroshi},
+                {"Phlox", CharacterName::Phlox},
+                {"MightyFire", CharacterName::MightyFire}
+            };
+
+            for (int i = 0; i < characters.size(); ++i) {
+
+                sf::RectangleShape button({buttonWidth, buttonHeight});
+                button.setPosition({centerX, startY + i * spacing});
+                button.setFillColor(sf::Color(60,60,80));
+                button.setOutlineColor(sf::Color::Black);
+                button.setOutlineThickness(3.f);
+                window.draw(button);
+
+                sf::Text text(font, characters[i].first, 28);
                 text.setPosition({centerX + 40.f, startY + i * spacing + 18.f});
                 text.setFillColor(sf::Color::White);
                 window.draw(text);

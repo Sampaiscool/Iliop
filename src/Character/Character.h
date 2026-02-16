@@ -4,23 +4,35 @@
 #include "../Deck/Deck.h"
 #include "../Other/CombatState.h"
 
-enum class CharacterClass {
+enum class Class {
     Mage,
     Warrior,
     Cleric
 };
 
+enum class CharacterName {
+    Hiroshi,
+    Phlox,
+    MightyFire
+};
+
 class Character {
 public:
-    CharacterClass type;
+    Class type;
+    CharacterName identity;
+    std::string nameStr;
     std::vector<Card> starterDeck;
     CombatState baseStats;
 
-    Character(CharacterClass type,
+    Character(Class type,
+              CharacterName identity,
+              std::string nameStr,
               std::vector<Card> deck,
               CombatState stats,
               int threshold)
         : type(type),
+          identity(identity),
+          nameStr(nameStr),
           starterDeck(std::move(deck)),
           baseStats(stats),
           transformCorruption(threshold) {
