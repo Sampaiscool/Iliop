@@ -24,7 +24,7 @@ int main() {
         return 1;
     }
 
-    window.setFramerateLimit(60);
+    window.setFramerateLimit(30);
 
     sf::Font font;
     if (!font.openFromFile("../assets/fonts/Knewave.ttf")) {
@@ -39,6 +39,8 @@ int main() {
 
     CombatState playerState;
     Deck deck;
+
+    std::vector<Card> lootOptions;
 
     UIRenderer ui;
 
@@ -200,13 +202,22 @@ int main() {
                 }
                 // looting screen
                 else if (gameState == GameState::Looting) {
-
                     sf::FloatRect continueButton(
                         sf::Vector2f(
                             window.getSize().x / 2.f - 100.f,
                             window.getSize().y / 2.f),
                         sf::Vector2f(200.f, 60.f));
 
+                    for (size_t i = 0; i < lootOptions.size(); ++i) {
+                        sf::FloatRect cardRect({(float)lootOptions[i].x, (float)lootOptions[i].y},
+                                              {(float)lootOptions[i].w, (float)lootOptions[i].h});
+
+                        if (cardRect.contains(mousePos)) {
+                            deck.addCardToPermanentCollection(std::move(lootOptions[i]));
+                            lootOptions.clear();
+                            break;
+                        }
+                    }
                     if (continueButton.contains(mousePos)) {
 
                         // reset combat state
@@ -263,6 +274,11 @@ int main() {
 
         if (gameState == GameState::Victory) {
             currentFloor++;
+
+            std::vector<std::string> lootNames = CharacterFactory::getRandomLootOptions(3);
+            for(auto& name : lootNames) {
+                lootOptions.push_back(CharacterFactory::createCardByName(name));
+            }
 
             gameState = GameState::Looting;
         }
@@ -389,6 +405,24 @@ int main() {
             cont.setPosition({winW / 2.f - 80.f, winH / 2.f + 10.f});
             cont.setFillColor(sf::Color::White);
             window.draw(cont);
+
+            // Render the 3 cards in the middle of the screen
+            int cardW = winW / 10;
+            int cardH = winH / 6;
+            float gap = cardW + 20.f;
+            float totalWidth = (lootOptions.size() * gap) - 20.f;
+
+            float startX = (winW - totalWidth) / 2.f;
+            float cardY = winH * 0.7f;
+
+            for (size_t i = 0; i < lootOptions.size(); ++i) {
+                lootOptions[i].x = startX + (i * gap);
+                lootOptions[i].y = cardY;
+                lootOptions[i].w = cardW;
+                lootOptions[i].h = cardH;
+
+                lootOptions[i].draw(window, font, false, playerState);
+            }
         }
         window.display();
     }

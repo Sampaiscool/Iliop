@@ -55,6 +55,10 @@ void Deck::discardCard(Card& card) {
 //     discardPile.push_back(std::move(card));
 // }
 
+void Deck::addCardToPermanentCollection(Card card) {
+    drawPile.push_back(std::move(card));
+}
+
 void Deck::discardHand()
 {
     for (auto& card : hand)

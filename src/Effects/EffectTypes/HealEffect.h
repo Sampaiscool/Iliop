@@ -10,15 +10,14 @@ public:
 
     void apply(CombatState& self, CombatState& target, bool isCorrupted) override {
 
-        int bonus = 0;
 
+        // check raw heal
+        int finalHeal = amount;
         if (isCorrupted) {
-            bonus = static_cast<int>(amount * 0.5f);
+            finalHeal += static_cast<int>(amount * 0.5f);
         }
 
-        self.hp.current += amount + bonus;
-
-        if (self.hp.current > self.hp.max)
-            self.hp.current = self.hp.max;
+        // pipleline it up
+        self.heal(finalHeal);
     }
 };

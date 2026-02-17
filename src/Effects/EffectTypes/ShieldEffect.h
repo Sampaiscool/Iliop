@@ -10,15 +10,13 @@ public:
 
     void apply(CombatState& self, CombatState& target, bool isCorrupted) override {
 
-        int bonus = 0;
-
+        // raw shield
+        int finalShield = amount;
         if (isCorrupted) {
-            bonus = static_cast<int>(amount * 0.5f);
+            finalShield += static_cast<int>(amount * 0.5f);
         }
 
-        self.shield.current += amount + bonus;
-
-        if (self.shield.current > self.shield.max)
-            self.shield.current = self.shield.max;
+        // send to pipline
+        self.addShield(finalShield);
     }
 };
