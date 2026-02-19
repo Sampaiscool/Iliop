@@ -1,5 +1,16 @@
 #include "Card.h"
 
+static sf::Color themeToColor(CardTheme theme) {
+    switch(theme) {
+        case CardTheme::Red:    return sf::Color(200, 50, 50);
+        case CardTheme::Blue:   return sf::Color(50, 50, 200);
+        case CardTheme::Green:  return sf::Color(50, 180, 50);
+        case CardTheme::Purple: return sf::Color(140, 50, 200);
+        case CardTheme::Gold:   return sf::Color(224, 198, 68);
+        default:                return sf::Color(100, 100, 100);
+    }
+}
+
 void Card::draw(sf::RenderWindow& window, const sf::Font& font, bool isCorrupted, const CombatState& playerState) const {
     sf::RectangleShape rect(sf::Vector2f(static_cast<float>(w), static_cast<float>(h)));
     rect.setPosition(sf::Vector2f(static_cast<float>(x), static_cast<float>(y)));
@@ -24,14 +35,7 @@ void Card::draw(sf::RenderWindow& window, const sf::Font& font, bool isCorrupted
         window.draw(innerBorder);
     }
 
-    switch (type) {
-        case CardType::Damage:
-          rect.setFillColor(sf::Color(200, 50, 50)); break;
-        case CardType::Heal:
-          rect.setFillColor(sf::Color(50, 200, 50)); break;
-        case CardType::Shield:
-          rect.setFillColor(sf::Color(50, 50, 200)); break;
-    }
+   rect.setFillColor(themeToColor(this->theme));
 
     rect.setOutlineColor(sf::Color::Black);
     rect.setOutlineThickness(1.f);
@@ -45,4 +49,9 @@ void Card::draw(sf::RenderWindow& window, const sf::Font& font, bool isCorrupted
 
     costText.setFillColor(sf::Color::Black);
     window.draw(costText);
+
+    sf::Text nameText(font, name, static_cast<unsigned int>(h / 10));
+    nameText.setPosition({(float)x + 5, (float)y + 5});
+    nameText.setFillColor(sf::Color::White);
+    window.draw(nameText);
 }

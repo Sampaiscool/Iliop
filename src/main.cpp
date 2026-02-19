@@ -5,6 +5,7 @@
 #include "Managers/CardResolver.h"
 #include "Managers/EnemyFactory.h"
 #include "Managers/CharacterFactory.h"
+#include "Managers/CardFactory.h"
 #include "Deck/Deck.h"
 #include "Other/GameState.h"
 #include "Other/CombatState.h"
@@ -277,7 +278,7 @@ int main() {
 
             std::vector<std::string> lootNames = CharacterFactory::getRandomLootOptions(3);
             for(auto& name : lootNames) {
-                lootOptions.push_back(CharacterFactory::createCardByName(name));
+                lootOptions.push_back(CardFactory::create(name));
             }
 
             gameState = GameState::Looting;
@@ -377,6 +378,24 @@ int main() {
 
             deck.render(window, winW, winH, font, playerState, corruptionParticles);
             enemy.render(window, winW, winH);
+
+            sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
+            sf::Vector2f mousePos = window.mapPixelToCoords(pixelPos);
+
+            Card* hoveredCard = nullptr;
+            // check cards in hand
+            for (Card& card : deck.getHand()) {
+                if (card.getBounds().contains(mousePos)) {
+                    hoveredCard = &card;
+                }
+            }
+
+            // if you are hovering draw the tooltip ontop
+            if (hoveredCard) {
+                ui.drawTooltip(window, font, *hoveredCard, mousePos.x, mousePos.y);
+            }
+
+            //window.display();
         }
         // render game over screen
         else if (gameState == GameState::GameOver) {

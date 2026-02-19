@@ -3,21 +3,14 @@
 #include <algorithm>
 
 class HealEffect : public Effect {
-    int amount;
-
+    int amount = 0;
 public:
-    HealEffect(int heal) : amount(heal) {}
+    HealEffect(int value) : amount(value) {}
+    HealEffect() = default;
 
-    void apply(CombatState& self, CombatState& target, bool isCorrupted) override {
-
-
-        // check raw heal
-        int finalHeal = amount;
-        if (isCorrupted) {
-            finalHeal += static_cast<int>(amount * 0.5f);
-        }
-
-        // pipleline it up
-        self.heal(finalHeal);
+    void apply(CombatState& self, CombatState& target, int value) override {
+        // if value is passed use that value else use internal mount
+        int finalVal = (value != 0) ? value : amount;
+        self.heal(finalVal);
     }
 };

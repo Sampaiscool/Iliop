@@ -1,5 +1,6 @@
 #include "UIRenderer.h"
 #include <string>
+#include <sstream>
 
 static void drawBar(sf::RenderWindow& window,
     int x,
@@ -125,6 +126,47 @@ void UIRenderer::render(sf::RenderWindow& window,
     rectTransform.setOutlineThickness(2.f);
     window.draw(rectTransform);
     drawText(window, font, "Form", transX + (btnW / 6), buttonsY + (btnH / 5), btnH * 0.6, sf::Color::Black);
+}
+
+void UIRenderer::drawTooltip(sf::RenderWindow& window, const sf::Font& font, const Card& card, float mouseX, float mouseY) {
+    std::ostringstream oss;
+    oss << card.name << "\n";
+    oss << "Cost: " << card.cost << " | Value: " << card.value;
+    // if you are corrupted show the corrupted value
+    if (card.corruptedValue > 0) {
+        oss << " (+" << card.corruptedValue << " Corrupted)";
+    }
+    
+    oss << "\n------------------\n" 
+        << card.description;
+
+    sf::Text descText(font, sf::String(oss.str()), 16);
+    descText.setFillColor(sf::Color::White);
+
+    // get the background and shape
+    sf::FloatRect bounds = descText.getLocalBounds();
+    sf::Vector2f boxSize(bounds.size.x + 20.f, bounds.size.y + 25.f);
+    sf::RectangleShape bg(boxSize);
+
+    sf::Vector2f position(mouseX + 15.f, mouseY + 15.f);
+    
+    // this way the toolbox cant get out of bounds
+    if (position.x + boxSize.x > window.getSize().x) {
+        position.x = mouseX - boxSize.x - 15.f;
+    }
+    if (position.y + boxSize.y > window.getSize().y) {
+        position.y = mouseY - boxSize.y - 15.f;
+    }
+
+    bg.setPosition(position);
+    bg.setFillColor(sf::Color(15, 15, 20, 240)); // blue-tinted dark grey
+    bg.setOutlineColor(sf::Color(118, 50, 121)); // purple corruption color
+    bg.setOutlineThickness(2.f);
+
+    descText.setPosition({position.x + 10.f, position.y + 5.f});
+
+    window.draw(bg);
+    window.draw(descText);
 }
 
 sf::FloatRect UIRenderer::getEndTurnBounds() const {

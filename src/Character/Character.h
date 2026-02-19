@@ -37,11 +37,10 @@ public:
       starterDeck(std::move(deck)),
       baseStats(std::move(stats))
     {
-        // Assign these to the stats struct so they are tracked in one place
         baseStats.transformThreshold = threshold;
         baseStats.transformTime = 0;
         baseStats.transformGain = duration;
-        baseStats.isTransformed = false; // You should add this flag to CombatState
+        baseStats.isTransformed = false;
     }
     int getTransformCorruption() const { return transformCorruption; }
     int getTransformTime() const { return transformTime; }

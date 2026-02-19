@@ -1,6 +1,9 @@
 #pragma once
 #include "Resource.h"
+#include "Status.h"
 #include <memory>
+#include <vector>
+#include <algorithm>
 
 class Effect;
 
@@ -15,6 +18,7 @@ struct CombatState {
     int transformGain;
 
     std::unique_ptr<Effect> transformationProc;
+    std::vector<std::unique_ptr<Status>> statuses;
 
     void takeDamage(int amount) {
         if (amount <= 0) return;
@@ -43,5 +47,24 @@ struct CombatState {
         if (amount <= 0) return;
         shield.current += amount;
         if (shield.current > shield.max) shield.current = shield.max;
+    }
+
+    void applyStatus(std::unique_ptr<Status> newStatus) {
+      // if it exists add duration else push back
+        for (auto& s : statuses) {
+            if (s->name == newStatus->name) {
+                s->duration += newStatus->duration;
+                return;
+            }
+        }
+        statuses.push_back(std::move(newStatus));
+    }
+
+    void updateStatuses() {
+        for (auto it = statuses.begin(); it != statuses.end(); ) {
+            (*it)->onTurnStart(*this);
+            if ((*it)->duration <= 0) it = statuses.erase(it);
+            else ++it;
+        }
     }
 };

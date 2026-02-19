@@ -4,5 +4,5 @@
 class Effect {
 public:
     virtual ~Effect() = default;
-    virtual void apply(CombatState& self, CombatState& target, bool isCorrupted) = 0;
+    virtual void apply(CombatState& self, CombatState& target, int value) = 0;
 };

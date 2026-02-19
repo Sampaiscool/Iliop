@@ -18,8 +18,8 @@ bool CardResolver::play(
     // trigger card behavior
     card.play(player, enemy, isCorrupted);
 
-    if (player.isTransformed) {
-        player.transformationProc->apply(player, enemy, true);
+    if (player.isTransformed && player.transformationProc) {
+        player.transformationProc->apply(player, enemy, 0);
     }
 
     // global rules

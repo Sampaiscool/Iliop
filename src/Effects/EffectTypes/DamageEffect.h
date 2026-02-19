@@ -3,20 +3,14 @@
 #include <algorithm>
 
 class DamageEffect : public Effect {
-    int amount;
-
+    int amount = 0;
 public:
-    DamageEffect(int dmg) : amount(dmg) {}
+    DamageEffect(int value) : amount(value) {}
+    DamageEffect() = default;
 
-    void apply(CombatState& self, CombatState& target, bool isCorrupted) override {
-
-        // check raw damage
-        int finalDamage = amount;
-        if (isCorrupted) {
-            finalDamage += static_cast<int>(amount * 0.5f);
-        }
-
-        // send to pipline ples
-        target.takeDamage(finalDamage);
+    void apply(CombatState& self, CombatState& target, int value) override {
+        // if value is passed use that value else use internal mount
+        int finalVal = (value != 0) ? value : amount;
+        target.takeDamage(finalVal);
     }
 };

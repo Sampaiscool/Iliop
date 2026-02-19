@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <memory>
 #include "../Other/CombatState.h"
 #include "../Effects/Effect.h"
 #include "../Effects/EffectTypes/DamageEffect.h"

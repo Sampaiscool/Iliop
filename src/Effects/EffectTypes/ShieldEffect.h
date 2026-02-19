@@ -3,20 +3,14 @@
 #include <algorithm>
 
 class ShieldEffect : public Effect {
-    int amount;
-
+    int amount = 0;
 public:
-    ShieldEffect(int shield) : amount(shield) {}
+    ShieldEffect(int value) : amount(value) {}
+    ShieldEffect() = default;
 
-    void apply(CombatState& self, CombatState& target, bool isCorrupted) override {
-
-        // raw shield
-        int finalShield = amount;
-        if (isCorrupted) {
-            finalShield += static_cast<int>(amount * 0.5f);
-        }
-
-        // send to pipline
-        self.addShield(finalShield);
+    void apply(CombatState& self, CombatState& target, int value) override {
+        // if value is passed use that value else use internal mount
+        int finalVal = (value != 0) ? value : amount;
+        self.addShield(finalVal);
     }
 };
