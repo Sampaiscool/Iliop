@@ -276,6 +276,8 @@ int main() {
         if (gameState == GameState::Victory) {
             currentFloor++;
 
+            lootOptions.clear();
+
             std::vector<std::string> lootNames = CharacterFactory::getRandomLootOptions(3);
             for(auto& name : lootNames) {
                 lootOptions.push_back(CardFactory::create(name));
@@ -394,8 +396,6 @@ int main() {
             if (hoveredCard) {
                 ui.drawTooltip(window, font, *hoveredCard, mousePos.x, mousePos.y);
             }
-
-            //window.display();
         }
         // render game over screen
         else if (gameState == GameState::GameOver) {
@@ -425,7 +425,7 @@ int main() {
             cont.setFillColor(sf::Color::White);
             window.draw(cont);
 
-            // Render the 3 cards in the middle of the screen
+            // render the 3 cards in the middle of the screen
             int cardW = winW / 10;
             int cardH = winH / 6;
             float gap = cardW + 20.f;

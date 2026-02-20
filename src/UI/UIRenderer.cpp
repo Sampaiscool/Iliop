@@ -134,7 +134,7 @@ void UIRenderer::drawTooltip(sf::RenderWindow& window, const sf::Font& font, con
     oss << "Cost: " << card.cost << " | Value: " << card.value;
     // if you are corrupted show the corrupted value
     if (card.corruptedValue > 0) {
-        oss << " (+" << card.corruptedValue << " Corrupted)";
+        oss << " (+" << card.corruptedValue << ")";
     }
     
     oss << "\n------------------\n" 
