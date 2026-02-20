@@ -1,6 +1,7 @@
 #include "UIRenderer.h"
 #include <string>
 #include <sstream>
+#include <iostream>
 
 static void drawBar(sf::RenderWindow& window,
     int x,
@@ -39,7 +40,82 @@ static void drawText(sf::RenderWindow& window,
     window.draw(text);
 }
 
+sf::Color getClassColor(Class type) {
+    switch (type) {
+        case Class::Mage:    return sf::Color(50, 150, 255); // blue
+        case Class::Warrior: return sf::Color(255, 50, 50);  // red
+        case Class::Cleric:  return sf::Color(255, 255, 150); // gold/yellow
+        default:             return sf::Color::White;
+    }
+}
+
+void drawPlayerPortrait(sf::RenderWindow& window, const sf::Font& font, const Character& player, int winW, int winH, const std::map<CharacterName, sf::Texture>& portraitTextures) {
+    float boxW = winW / 8.f;
+    float boxH = winW / 8.f;
+    float margin = 20.f;
+
+    float x = margin;
+    float y = winH - boxH - (winH / 3.f); 
+
+    sf::RectangleShape rect(sf::Vector2f(boxW, boxH));
+    rect.setPosition(sf::Vector2f(x, y));
+
+    // set border based on class
+    rect.setOutlineColor(getClassColor(player.type));
+    rect.setOutlineThickness(4.f);
+
+    // set texture based on sprite
+    auto it = portraitTextures.find(player.identity);
+    if (it != portraitTextures.end()) {
+        rect.setTexture(&it->second);
+        rect.setFillColor(sf::Color::White);
+    } else {
+        rect.setFillColor(sf::Color(30, 30, 30)); // fallback
+    }
+
+    window.draw(rect);
+
+    drawText(window, font, player.nameStr, x, y - 25, 18, sf::Color::White);
+}
+
+static const Status* drawStatusIcons(sf::RenderWindow& window, const sf::Font& font,
+    const std::vector<std::unique_ptr<Status>>& statuses,
+    int x, int y, sf::Vector2f mousePos, const std::map<StatusType, sf::Texture>& textures)
+{
+    float iconSize = 24.f;
+    float spacing = 6.f;
+    const Status* hoveredStatus = nullptr;
+
+    for (size_t i = 0; i < statuses.size(); ++i) {
+        sf::Vector2f pos(static_cast<float>(x) + (i * (iconSize + spacing)), static_cast<float>(y));
+        sf::RectangleShape box(sf::Vector2f(iconSize, iconSize));
+        box.setPosition(pos);
+
+        // sprite handling
+        auto it = textures.find(statuses[i]->getType());
+        if (it != textures.end()) {
+            box.setTexture(&it->second);
+        } else {
+            box.setFillColor(sf::Color(50, 50, 50)); // fallback
+        }
+
+        window.draw(box);
+
+        if (box.getGlobalBounds().contains(mousePos)) {
+            hoveredStatus = statuses[i].get();
+        }
+
+        sf::Text intensText(font, sf::String(std::to_string(statuses[i]->intensity)), 12);
+        intensText.setFillColor(sf::Color::Yellow);
+        intensText.setOutlineColor(sf::Color::Black);
+        intensText.setOutlineThickness(1.f);
+        intensText.setPosition(sf::Vector2f(pos.x + iconSize - 12.f, pos.y + iconSize - 14.f));
+        window.draw(intensText);
+    }
+    return hoveredStatus;
+}
 void UIRenderer::render(sf::RenderWindow& window,
+    const Character& player,
     const CombatState& playerState,
     const CombatState& enemyState,
     int winW,
@@ -87,6 +163,30 @@ void UIRenderer::render(sf::RenderWindow& window,
     int btnH = barHeight * 2;
     int buttonsY = corruptionY - btnH - (winH / 60);
     int btnSpacing = 10;
+
+    drawPlayerPortrait(window, font, player, winW, winH, portraitTextures);
+
+    // get thah mouse position
+    sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+
+    // player status TODO: check if it works?
+    int playerStatusX = x;
+    int playerStatusY = corruptionY - barHeight - 10; 
+    const Status* hovered = drawStatusIcons(window, font, playerState.statuses, 
+                                           playerStatusX, playerStatusY, mousePos, statusTextures);
+
+    // enemy status
+    int enemyStatusX = enemyX;
+    int enemyStatusY = enemyY - (enemyY / 2 - 10);
+    const Status* enemyHovered = drawStatusIcons(window, font, enemyState.statuses, 
+                                                enemyStatusX, enemyStatusY, mousePos, statusTextures);
+
+    // if we are hovering draw tooltip last
+    if (hovered) {
+        drawStatusTooltip(window, font, *hovered, mousePos);
+    } else if (enemyHovered) {
+        drawStatusTooltip(window, font, *enemyHovered, mousePos);
+    }
 
     // end turn button
     int endX = x + barWidth - btnW;
@@ -136,7 +236,7 @@ void UIRenderer::drawTooltip(sf::RenderWindow& window, const sf::Font& font, con
     if (card.corruptedValue > 0) {
         oss << " (+" << card.corruptedValue << ")";
     }
-    
+
     oss << "\n------------------\n" 
         << card.description;
 
@@ -149,7 +249,7 @@ void UIRenderer::drawTooltip(sf::RenderWindow& window, const sf::Font& font, con
     sf::RectangleShape bg(boxSize);
 
     sf::Vector2f position(mouseX + 15.f, mouseY + 15.f);
-    
+
     // this way the toolbox cant get out of bounds
     if (position.x + boxSize.x > window.getSize().x) {
         position.x = mouseX - boxSize.x - 15.f;
@@ -167,6 +267,57 @@ void UIRenderer::drawTooltip(sf::RenderWindow& window, const sf::Font& font, con
 
     window.draw(bg);
     window.draw(descText);
+}
+
+void UIRenderer::drawStatusTooltip(sf::RenderWindow& window, const sf::Font& font, const Status& status, sf::Vector2f mousePos) {
+    // works almost the same as card tooltip
+    std::ostringstream oss;
+    oss << status.name << "\n";
+    oss << "Duration: " << status.duration << "\n";
+    oss << "Intensity: " << status.intensity << "\n";
+    oss << "--------------------\n";
+    oss << status.getDescription();
+
+    sf::Text text(font, sf::String(oss.str()), 14);
+    text.setFillColor(sf::Color::White);
+
+    sf::FloatRect bounds = text.getGlobalBounds();
+    sf::RectangleShape bg(sf::Vector2f(bounds.size.x + 20.f, bounds.size.y + 20.f));
+
+    sf::Vector2f pos = mousePos + sf::Vector2f(15.f, 15.f);
+    if (pos.x + bg.getSize().x > window.getSize().x) pos.x = mousePos.x - bg.getSize().x - 15.f;
+    if (pos.y + bg.getSize().y > window.getSize().y) pos.y = mousePos.y - bg.getSize().y - 15.f;
+
+    bg.setPosition(pos);
+    bg.setFillColor(sf::Color(30, 30, 30, 245));
+    bg.setOutlineColor(sf::Color::White);
+    bg.setOutlineThickness(1.f);
+
+    text.setPosition(pos + sf::Vector2f(10.f, 10.f));
+
+    window.draw(bg);
+    window.draw(text);
+}
+
+void UIRenderer::loadStatusTextures() {
+    std::string pathBleed = "../assets/statusIcons/BleedIcon.png";
+    if (!statusTextures[StatusType::Bleed].loadFromFile(pathBleed)) {
+    }
+    std::string pathDefenceDown = "../assets/statusIcons/DefenceDown.png";
+    if (!statusTextures[StatusType::DefenceDown].loadFromFile(pathDefenceDown)) {
+    }
+    std::string pathDefenceUp = "../assets/statusIcons/DefenceUp.png";
+    if (!statusTextures[StatusType::DefenceUp].loadFromFile(pathDefenceUp)) {
+    }
+    std::string pathDamageUp = "../assets/statusIcons/StrenghtenIcon.png";
+    if (!statusTextures[StatusType::DamageUp].loadFromFile(pathDamageUp)) {
+    }
+    std::string pathDamageDown = "../assets/statusIcons/WeakenIcon.png";
+    if (!statusTextures[StatusType::DamageDown].loadFromFile(pathDamageDown)) {
+    }
+    std::string pathStun = "../assets/statusIcons/StunIcon.png";
+    if (!statusTextures[StatusType::Stun].loadFromFile(pathStun)) {
+    }
 }
 
 sf::FloatRect UIRenderer::getEndTurnBounds() const {

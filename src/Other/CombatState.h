@@ -50,21 +50,33 @@ struct CombatState {
     }
 
     void applyStatus(std::unique_ptr<Status> newStatus) {
-      // if it exists add duration else push back
-        for (auto& s : statuses) {
-            if (s->name == newStatus->name) {
-                s->duration += newStatus->duration;
-                return;
-            }
+    // if it exists add duration + intensity else push back
+    for (auto& s : statuses) {
+        if (s->name == newStatus->name) {
+            s->duration  += newStatus->duration;
+            s->intensity += newStatus->intensity;
+            return;
         }
-        statuses.push_back(std::move(newStatus));
     }
+    statuses.push_back(std::move(newStatus));
+}
 
     void updateStatuses() {
         for (auto it = statuses.begin(); it != statuses.end(); ) {
             (*it)->onTurnStart(*this);
             if ((*it)->duration <= 0) it = statuses.erase(it);
             else ++it;
+        }
+    }
+
+    void endTurn(CombatState& currentActor) {
+        for (auto it = currentActor.statuses.begin(); it != currentActor.statuses.end(); ) {
+            (*it)->duration--;
+            if ((*it)->duration <= 0) {
+                it = currentActor.statuses.erase(it);
+            } else {
+                ++it;
+            }
         }
     }
 };

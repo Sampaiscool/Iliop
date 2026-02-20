@@ -37,6 +37,7 @@ int main() {
     TurnState turnState = TurnState::PlayerTurn;
 
     Class selectedClass;
+    std::optional<Character> player;
 
     CombatState playerState;
     Deck deck;
@@ -44,6 +45,8 @@ int main() {
     std::vector<Card> lootOptions;
 
     UIRenderer ui;
+    ui.loadPlayerTextures();
+    ui.loadStatusTextures();
 
     sf::Clock particleClock;
     ParticleSystem corruptionParticles;
@@ -68,7 +71,7 @@ int main() {
                     {static_cast<float>(resized->size.x),
                      static_cast<float>(resized->size.y)}
                 )));
-                float scale = resized->size.x / 800.f; // 800 is base width
+                float scale = resized->size.x / 800.f;
                     corruptionParticles.setScale(scale);
             }
 
@@ -161,6 +164,8 @@ int main() {
                             deck.shuffle();
                             deck.drawCard(4);
 
+                            player.emplace(std::move(character));
+
                             gameState = GameState::Combat;
                             break;
                         }
@@ -201,7 +206,7 @@ int main() {
                         }
                     }
                 }
-                // looting screen
+                // looting screen:
                 else if (gameState == GameState::Looting) {
                     sf::FloatRect continueButton(
                         sf::Vector2f(
@@ -246,9 +251,14 @@ int main() {
         if (gameState == GameState::Combat &&
             turnState == TurnState::EnemyTurn)
         {
-            enemy.playTurn(playerState);
+            enemy.getState().updateStatuses();
 
+            if (enemy.getState().hp.current > 0) {
+                enemy.playTurn(playerState);
+            }
             turnState = TurnState::PlayerTurn;
+
+            playerState.updateStatuses();
 
             deck.discardHand();
             deck.drawCard(4);
@@ -366,33 +376,24 @@ int main() {
         }
         // render combat screen
         else if (gameState == GameState::Combat) {
-
-            ui.render(window,
-                playerState,
-                enemy.getState(),
-                winW, winH,
-                font
-            );
-
             corruptionParticles.update(dt);
 
-            corruptionParticles.draw(window);
-
-            deck.render(window, winW, winH, font, playerState, corruptionParticles);
             enemy.render(window, winW, winH);
+            corruptionParticles.draw(window);
+            deck.render(window, winW, winH, font, playerState, corruptionParticles);
 
-            sf::Vector2i pixelPos = sf::Mouse::getPosition(window);
-            sf::Vector2f mousePos = window.mapPixelToCoords(pixelPos);
+            if (player.has_value()) {
+                ui.render(window, *player, playerState, enemy.getState(), winW, winH, font);
+            }
 
+            sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
             Card* hoveredCard = nullptr;
-            // check cards in hand
             for (Card& card : deck.getHand()) {
                 if (card.getBounds().contains(mousePos)) {
                     hoveredCard = &card;
                 }
             }
 
-            // if you are hovering draw the tooltip ontop
             if (hoveredCard) {
                 ui.drawTooltip(window, font, *hoveredCard, mousePos.x, mousePos.y);
             }

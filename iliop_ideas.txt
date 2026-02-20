@@ -25,3 +25,14 @@ TODO:
     - Upgrades(?)
     - Custom events between fighting enemies and collecting cards(?)
     - Update UI and make actual sprites
+
+
+Classes:
+    - Mage:
+    - Warrior:
+    - Cleric:
+          Healing,
+          Buffs,
+          While not transformed deal very little damage, if transformed lose most healing and deal more damage,
+          Corruption cards transform him, but also deal damage to him.
+    - Ranger:

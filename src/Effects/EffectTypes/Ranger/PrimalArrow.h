@@ -19,7 +19,7 @@ public:
         } else {
             for (int i = 0; i < 5; ++i) {
                 target.takeDamage(finalVal / 2);
-                if ((rand() % 100) < 10) {
+                if ((rand() % 100) < 25) {
                     target.applyStatus(std::make_unique<BleedStatus>(2, 3));
                 }
             }
