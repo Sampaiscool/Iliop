@@ -88,7 +88,7 @@ void CombatState::endTurn(CombatState& currentActor) {
 
     for (auto& s : currentActor.statuses) {
         if (s->name == "Stun") {
-            s->duration = 0; 
+            s->duration = 0;
         }
     }
 }

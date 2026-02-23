@@ -71,7 +71,7 @@ private:
         {"Warrior Pact",    {"Warrior Pact", "Sacrifice HP for 2 Mana.", 5, 0, 0, CardType::WarriorPact, CardTheme::Purple}},
 
         // cleric
-        {"Holy Light",      {"Holy Light", "Restore health.", 7, 3, 1, CardType::Heal, CardTheme::Gold}},
+        {"Holy Light",      {"Holy Light", "Restore health.", 7, 3, 1, CardType::Heal, CardTheme::Green}},
         {"Blinding Light",  {"Blinding Light", "Deal damage and apply Damage Down.\nIf target has 2+ statuses:\nstun and damage becomes increased.", 4, 6, 1, CardType::BlindingLight, CardTheme::Gold}},
         {"Condemn",         {"Condemn", "Apply Bleed and Defense Down.\nIf transformed: give Judged + Bleed self.", 4, 4, 1, CardType::Condemn, CardTheme::Gold}},
         {"Purge",           {"Purge", "Deal damage for every\nstatus effect on the target.", 6, 5, 2, CardType::Purge, CardTheme::Gold}},
