@@ -13,12 +13,12 @@ public:
         int finalVal = (value != 0) ? value : amount;
 
         if (!self.isTransformed) {
-            target.takeDamage(finalVal);
+            target.takeDamage(self.getModifiedDamage(finalVal));
             self.isTransformed = true;
             self.transformTime += self.transformGain;
         } else {
             for (int i = 0; i < 5; ++i) {
-                target.takeDamage(finalVal / 2);
+                target.takeDamage(self.getModifiedDamage(finalVal / 2));
                 if ((rand() % 100) < 25) {
                     target.applyStatus(std::make_unique<BleedStatus>(2, 3));
                 }

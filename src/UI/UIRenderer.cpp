@@ -171,7 +171,7 @@ void UIRenderer::render(sf::RenderWindow& window,
 
     // player status TODO: check if it works?
     int playerStatusX = x;
-    int playerStatusY = corruptionY - barHeight - 10; 
+    int playerStatusY = corruptionY - barHeight - (winH / 8); 
     const Status* hovered = drawStatusIcons(window, font, playerState.statuses, 
                                            playerStatusX, playerStatusY, mousePos, statusTextures);
 
@@ -226,6 +226,53 @@ void UIRenderer::render(sf::RenderWindow& window,
     rectTransform.setOutlineThickness(2.f);
     window.draw(rectTransform);
     drawText(window, font, "Form", transX + (btnW / 6), buttonsY + (btnH / 5), btnH * 0.6, sf::Color::Black);
+}
+
+void UIRenderer::spawnFCT(sf::Vector2f pos, std::string str, sf::Color color, const sf::Font& font) {
+    // SFML 3 fix: Initialize the struct and its sf::Text member with the font immediately
+    FloatingText ft{
+        .text = sf::Text(font, sf::String(str), 24), // Font, String, CharSize
+        .position = pos,
+        .color = color,
+        .lifetime = 1.0f
+    };
+
+    // Add your styling
+    ft.text.setFillColor(color);
+    ft.text.setOutlineColor(sf::Color::Black);
+    ft.text.setOutlineThickness(2.f);
+
+    // Apply the random offset
+    float offsetX = static_cast<float>((rand() % 40) - 20);
+    ft.position += sf::Vector2f(offsetX, -20.f);
+
+    // Make sure the internal vector name matches your header (fcts vs floatingTexts)
+    floatingTexts.push_back(std::move(ft));
+}
+
+void UIRenderer::updateAndDrawFCT(sf::RenderWindow& window, float dt) {
+    for (auto it = floatingTexts.begin(); it != floatingTexts.end(); ) {
+        it->lifetime -= dt;
+        it->position.y -= 60.f * dt; 
+
+        sf::Color c = it->color;
+        // Correct SFML 3 / C++ cast
+        float alpha = std::max(0.f, it->lifetime);
+        c.a = static_cast<uint8_t>(255 * alpha);
+
+        it->text.setFillColor(c);
+        
+        sf::Color outline = sf::Color::Black;
+        outline.a = c.a;
+        it->text.setOutlineColor(outline);
+
+        it->text.setPosition(it->position);
+
+        window.draw(it->text);
+
+        if (it->lifetime <= 0) it = floatingTexts.erase(it);
+        else ++it;
+    }
 }
 
 void UIRenderer::drawTooltip(sf::RenderWindow& window, const sf::Font& font, const Card& card, float mouseX, float mouseY) {
@@ -303,10 +350,10 @@ void UIRenderer::loadStatusTextures() {
     std::string pathBleed = "../assets/statusIcons/BleedIcon.png";
     if (!statusTextures[StatusType::Bleed].loadFromFile(pathBleed)) {
     }
-    std::string pathDefenceDown = "../assets/statusIcons/DefenceDown.png";
+    std::string pathDefenceDown = "../assets/statusIcons/DefenceDownIcon.png";
     if (!statusTextures[StatusType::DefenceDown].loadFromFile(pathDefenceDown)) {
     }
-    std::string pathDefenceUp = "../assets/statusIcons/DefenceUp.png";
+    std::string pathDefenceUp = "../assets/statusIcons/DefenceUpIcon.png";
     if (!statusTextures[StatusType::DefenceUp].loadFromFile(pathDefenceUp)) {
     }
     std::string pathDamageUp = "../assets/statusIcons/StrenghtenIcon.png";
@@ -315,8 +362,11 @@ void UIRenderer::loadStatusTextures() {
     std::string pathDamageDown = "../assets/statusIcons/WeakenIcon.png";
     if (!statusTextures[StatusType::DamageDown].loadFromFile(pathDamageDown)) {
     }
-    std::string pathStun = "../assets/statusIcons/StunIcon.png";
+    std::string pathStun = "../assets/statusIcons/StunnedIcon.png";
     if (!statusTextures[StatusType::Stun].loadFromFile(pathStun)) {
+    }
+    std::string pathVoidMark = "../assets/statusIcons/VoidMarkIcon.png";
+    if (!statusTextures[StatusType::VoidMark].loadFromFile(pathVoidMark)) {
     }
 }
 

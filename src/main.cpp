@@ -179,6 +179,9 @@ int main() {
                     if (turnState == TurnState::PlayerTurn) {
                         // end turn button
                         if (ui.getEndTurnBounds().contains(mousePos)) {
+
+                            playerState.endTurn(playerState);
+
                             turnState = TurnState::EnemyTurn;
                         }
                         // transform button
@@ -193,12 +196,24 @@ int main() {
                             // card clicks
                             for (Card& card : deck.getHand()) {
                                 if (card.contains(mousePos.x, mousePos.y)) {
+                                    int oldEnemyHP = enemy.getState().hp.current;
                                     if (CardResolver::play(
                                             card,
                                             playerState,
                                             enemy.getState()))
                                     {
                                         deck.discardCard(card);
+
+                                        int diff = oldEnemyHP - enemy.getState().hp.current;
+                                        if (diff > 0) {
+                                            float w = static_cast<float>(window.getSize().x);
+                                            float h = static_cast<float>(window.getSize().y);
+
+                                            sf::Vector2f enemyPos(w / 2.f, h / 4.f);
+
+                                            ui.spawnFCT(enemyPos, "-" + std::to_string(diff), sf::Color::Red, font);
+                                        }
+
                                         break;
                                     }
                                 }
@@ -253,11 +268,28 @@ int main() {
         {
             enemy.getState().updateStatuses();
 
-            if (enemy.getState().hp.current > 0) {
-                enemy.playTurn(playerState);
+            bool isStunned = false;
+            for (auto& s : enemy.getState().statuses) {
+                if (s->getType() == StatusType::Stun) {
+                    isStunned = true;
+                    break;
+                }
             }
-            turnState = TurnState::PlayerTurn;
 
+            if (enemy.getState().hp.current > 0 && !isStunned) {
+                enemy.playTurn(playerState);
+            } else if (isStunned) {
+                float currentW = static_cast<float>(window.getSize().x);
+                float currentH = static_cast<float>(window.getSize().y);
+
+                sf::Vector2f enemyPos(currentW / 2.f, currentH / 4.f);
+
+                ui.spawnFCT(enemyPos, "Stunned!", sf::Color::Yellow, font);
+            }
+
+            enemy.getState().endTurn(enemy.getState());
+
+            turnState = TurnState::PlayerTurn;
             playerState.updateStatuses();
 
             deck.discardHand();
@@ -393,6 +425,8 @@ int main() {
                     hoveredCard = &card;
                 }
             }
+
+            ui.updateAndDrawFCT(window, dt);
 
             if (hoveredCard) {
                 ui.drawTooltip(window, font, *hoveredCard, mousePos.x, mousePos.y);

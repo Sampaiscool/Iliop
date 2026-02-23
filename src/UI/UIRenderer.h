@@ -3,10 +3,18 @@
 #include <map>
 #include <memory>
 #include <vector>
+#include <string>
 #include "../Other/CombatState.h"
 #include "../Card/Card.h"
 #include "../Other/Status.h"
 #include "../Character/Character.h"
+
+struct FloatingText {
+    sf::Text text;
+    sf::Vector2f position;
+    sf::Color color;
+    float lifetime = 0.5f;
+};
 
 class UIRenderer {
 public:
@@ -24,9 +32,13 @@ public:
         (void)portraitTextures[CharacterName::MightyFire].loadFromFile("../assets/portraits/MightyFire.png");
     }
 
+    void spawnFCT(sf::Vector2f pos, std::string str, sf::Color color, const sf::Font& font);
+    void updateAndDrawFCT(sf::RenderWindow& window, float dt);
+
     sf::FloatRect getEndTurnBounds() const;
     sf::FloatRect getTransformBounds() const;
 private:
+    std::vector<FloatingText> floatingTexts;
     std::map<CharacterName, sf::Texture> portraitTextures;
     std::map<StatusType, sf::Texture> statusTextures;
     sf::FloatRect endTurnBounds;

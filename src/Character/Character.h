@@ -28,7 +28,7 @@ public:
           CharacterName identity,
           std::string nameStr,
           std::vector<Card> deck,
-          CombatState stats,
+          CombatState&& stats,
           int threshold,
           int duration)
     : type(type),

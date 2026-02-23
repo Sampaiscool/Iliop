@@ -10,7 +10,7 @@ public:
 
     void apply(CombatState& self, CombatState& target, int value) override {
         // if value is passed use that value else use internal mount
-        int finalVal = (value != 0) ? value : amount;
+        int finalVal = (value != 0) ? self.getModifiedDamage(value) : self.getModifiedDamage(amount);
         target.takeDamage(finalVal);
     }
 };

@@ -2,20 +2,24 @@
 #include <string>
 
 enum class StatusType {
+    Overload,
     Bleed,
     Stun,
     DamageDown,
     DamageUp,
     DefenceDown,
     DefenceUp,
+    VoidMark,
+    Judged,
+    Blessed
 };
 
 struct CombatState;
 
 struct Status {
     std::string name;
-    int duration;
-    int intensity;
+    int duration = 0;
+    int intensity = 0;
 
     virtual void onTurnStart(CombatState& owner) = 0;
     virtual StatusType getType() const = 0;

@@ -1,10 +1,10 @@
 #pragma once
 #include "Resource.h"
-#include "Status.h"
 #include <memory>
 #include <vector>
-#include <algorithm>
 
+// Forward Declarations: Tells the compiler these exist without including them
+class Status; 
 class Effect;
 
 struct CombatState {
@@ -20,63 +20,19 @@ struct CombatState {
     std::unique_ptr<Effect> transformationProc;
     std::vector<std::unique_ptr<Status>> statuses;
 
-    void takeDamage(int amount) {
-        if (amount <= 0) return;
+    CombatState();
+    CombatState(Resource hp, Resource sh, Resource ma, Resource co);
+    ~CombatState();
 
-        int remainingDamage = amount;
+    CombatState(CombatState&&) noexcept = default;
+    CombatState& operator=(CombatState&&) noexcept = default;
 
-        // maybe shield?
-        if (shield.current > 0) {
-            int absorbed = std::min(shield.current, remainingDamage);
-            shield.current -= absorbed;
-            remainingDamage -= absorbed;
-        }
-
-        hp.current -= remainingDamage;
-
-        if (hp.current < 0) hp.current = 0;
-    }
-
-    void heal(int amount) {
-        if (amount <= 0) return;
-        hp.current += amount;
-        if (hp.current > hp.max) hp.current = hp.max;
-    }
-
-    void addShield(int amount) {
-        if (amount <= 0) return;
-        shield.current += amount;
-        if (shield.current > shield.max) shield.current = shield.max;
-    }
-
-    void applyStatus(std::unique_ptr<Status> newStatus) {
-    // if it exists add duration + intensity else push back
-    for (auto& s : statuses) {
-        if (s->name == newStatus->name) {
-            s->duration  += newStatus->duration;
-            s->intensity += newStatus->intensity;
-            return;
-        }
-    }
-    statuses.push_back(std::move(newStatus));
-}
-
-    void updateStatuses() {
-        for (auto it = statuses.begin(); it != statuses.end(); ) {
-            (*it)->onTurnStart(*this);
-            if ((*it)->duration <= 0) it = statuses.erase(it);
-            else ++it;
-        }
-    }
-
-    void endTurn(CombatState& currentActor) {
-        for (auto it = currentActor.statuses.begin(); it != currentActor.statuses.end(); ) {
-            (*it)->duration--;
-            if ((*it)->duration <= 0) {
-                it = currentActor.statuses.erase(it);
-            } else {
-                ++it;
-            }
-        }
-    }
+    // Function Declarations only
+    int takeDamage(int amount);
+    int heal(int amount);
+    int addShield(int amount);
+    void applyStatus(std::unique_ptr<Status> newStatus);
+    void updateStatuses();
+    void endTurn(CombatState& currentActor);
+    int getModifiedDamage(int baseDamage);
 };

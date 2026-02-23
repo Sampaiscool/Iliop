@@ -23,3 +23,114 @@ public:
         duration--;
     }
 };
+
+// Rewards high corruption but risks self-damage
+class OverloadStatus : public Status {
+public:
+    OverloadStatus(int dur, int intens) {
+        name = "Arcane Overload";
+        duration = dur;
+        intensity = intens;
+    }
+    StatusType getType() const override { return StatusType::Overload; }
+    std::string getDescription() const override { 
+        return "Deal " + std::to_string(intensity) + " more damage\nStart turn: take " + std::to_string(intensity / 2)  + " damage."; 
+    }
+
+    void onTurnStart(CombatState& owner) override {
+        owner.takeDamage(intensity / 2);
+        duration--;
+    }
+};
+
+class VoidMarkStatus : public Status {
+public:
+    VoidMarkStatus(int dur, int intens) {
+        name = "Void Mark";
+        duration = dur;
+        intensity = intens;
+    }
+    StatusType getType() const override { return StatusType::VoidMark; }
+    std::string getDescription() const override {
+        return "Takes extra damage\nfrom Transformed attacks.";
+    }
+
+    void onTurnStart(CombatState& owner) override {
+        duration--;
+    }
+};
+
+class DefenceUpStatus : public Status {
+public:
+    DefenceUpStatus(int dur, int intens) {
+        name = "Defence Up";
+        duration = dur;
+        intensity = intens;
+    }
+    StatusType getType() const override { return StatusType::DefenceUp; }
+    std::string getDescription() const override { return "Reduce incoming damage by " + std::to_string(intensity); }
+    void onTurnStart(CombatState& owner) override {
+        duration--;
+    }
+};
+
+class DefenceDownStatus : public Status {
+public:
+    DefenceDownStatus(int dur, int intens) { name = "Defence Down"; duration = dur; intensity = intens; }
+    StatusType getType() const override { return StatusType::DefenceDown; }
+    std::string getDescription() const override { return "Take " + std::to_string(intensity) + " extra damage."; }
+    void onTurnStart(CombatState& owner) override {
+        duration--;
+    }
+};
+
+class DamageDownStatus : public Status {
+public:
+    DamageDownStatus(int dur, int intens) { name = "Damage Down"; duration = dur; intensity = intens; }
+    StatusType getType() const override { return StatusType::DamageDown; }
+    std::string getDescription() const override { return "Deal " + std::to_string(intensity) + " less damage."; }
+    void onTurnStart(CombatState& owner) override {
+        duration--;
+    }
+};
+
+class DamageUpStatus : public Status {
+public:
+    DamageUpStatus(int dur, int intens) { name = "Damage Up"; duration = dur; intensity = intens; }
+    StatusType getType() const override { return StatusType::DamageDown; }
+    std::string getDescription() const override { return "Deal " + std::to_string(intensity) + " less damage."; }
+    void onTurnStart(CombatState& owner) override {
+        duration--;
+    }
+};
+
+
+class StunStatus : public Status {
+public:
+    StunStatus(int dur, int intens) { name = "Stun"; duration = dur; intensity = intens; }
+    StatusType getType() const override { return StatusType::Stun; }
+    std::string getDescription() const override { return "Skips the next turn."; }
+    void onTurnStart(CombatState& owner) override {
+        // removes stun aftah 1 turn beacause this is BROKEN!
+    }
+};
+
+class JudgedStatus : public Status {
+public:
+    JudgedStatus(int dur, int intens) { name = "Judged"; duration = dur; intensity = intens; }
+    StatusType getType() const override { return StatusType::Judged; }
+    std::string getDescription() const override {
+        return "Taking 5+ damage triggers " + std::to_string(intensity) + " Defence Down.";
+    }
+    void onTurnStart(CombatState& owner) override { duration--; }
+};
+
+class BlessedStatus : public Status {
+public:
+    BlessedStatus(int dur, int intens) { name = "Blessed"; duration = dur; intensity = intens; }
+    StatusType getType() const override { return StatusType::Blessed; }
+    std::string getDescription() const override {
+        return "End of turn: Heal + " + std::to_string(intensity) + "\nIf your were not at corruption Threshhold";
+    }
+    void onTurnStart(CombatState& owner) override { duration--; }
+};

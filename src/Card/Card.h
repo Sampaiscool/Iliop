@@ -9,7 +9,28 @@ enum class CardType {
     Damage,
     Heal,
     Shield,
-    PrimalArrow
+
+    // ranger
+    PrimalArrow,
+
+    // mage
+    UnstableVolley,
+    EldritchBlast,
+    VoidGrasp,
+    AstralShift,
+
+    // warrior
+    AegisStrike,
+    IronWill,
+    ShatterSpleen,
+    ShieldBash,
+    WarriorPact,
+
+    // cleric
+    BlindingLight,
+    Condemn,
+    Purge,
+    Ritual
 };
 
 enum class CardTheme {
@@ -48,15 +69,10 @@ struct Card {
 
     void play(CombatState& self, CombatState& target, bool isCorrupted) const {
         if (effect) {
-            // THIS is where the addition happens
             int totalPower = value; 
             if (isCorrupted) {
                 totalPower += corruptedValue;
             }
-
-            // Now we pass the SUM. 
-            // Because totalPower is now > 0, the Effect will use this 
-            // instead of its internal 'amount'.
             effect->apply(self, target, totalPower);
         }
     }

@@ -15,22 +15,30 @@ public:
         // character: hp - shield - mana - corruption
         switch (classType) {
             case Class::Mage:
-                stats = {{15, 15}, {0, 10}, {4, 4}, {0, 3}};
+                stats = CombatState{{15, 15}, {0, 10}, {4, 4}, {0, 3}};
                 transformCorruption = 3; transformTime = 2;
-                for (int i = 0; i < 6; ++i) deck.push_back(CardFactory::create("Fire Bolt"));
-                for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Primal Arrow"));
+                for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Unstable Volley"));
+                for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Void Grasp"));
+                for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Eldritch Blast"));
+                for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Astral Shift"));
                 break;
             case Class::Warrior:
-                stats = {{40, 40}, {0, 20}, {2, 2}, {0, 1}};
+                stats = CombatState{{40, 40}, {0, 20}, {2, 2}, {0, 1}};
                 transformCorruption = 1; transformTime = 2;
-                for (int i = 0; i < 8; ++i) deck.push_back(CardFactory::create("Slash"));
-                for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Defend"));
+                for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Iron Will"));
+                for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Shatter Spleen"));
+                for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Aegis Strike"));
+                for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Warrior Pact"));
+                for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Shield Bash"));
                 break;
             case Class::Cleric:
-                stats = {{30, 30}, {0, 10}, {3, 3}, {0, 2}};
+                stats = CombatState{{30, 30}, {0, 10}, {3, 3}, {0, 2}};
                 transformCorruption = 2; transformTime = 3;
-                for (int i = 0; i < 6; ++i) deck.push_back(CardFactory::create("Holy Light"));
-                for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Smite"));
+                for (int i = 0; i < 5; ++i) deck.push_back(CardFactory::create("Holy Light"));
+                for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Purge"));
+                for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Ritual"));
+                for (int i = 0; i < 5; ++i) deck.push_back(CardFactory::create("Condemn"));
+                for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Blinding Light"));
                 break;
         }
 
@@ -38,15 +46,15 @@ public:
         switch (nameType) {
             case CharacterName::Hiroshi:
                 displayName = "Hiroshi";
-                stats.shield.max += 5;
+                stats.shield.max += 10;
                 stats.transformationProc = std::make_unique<DamageEffect>(4);
                 break;
             case CharacterName::Phlox: {
                 displayName = "Phlox";
                 deck.push_back(CardFactory::create("Phlox's Bloom"));
                 auto multi = std::make_unique<MultiEffect>();
-                multi->add(std::make_unique<ShieldEffect>(3));
-                multi->add(std::make_unique<HealEffect>(2));
+                multi->add(std::make_unique<HolyZeal>(1));
+                multi->add(std::make_unique<HealEffect>(1));
                 stats.transformationProc = std::move(multi);
                 break;
             }

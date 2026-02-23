@@ -1,12 +1,12 @@
 #include "Enemy.h"
+#include "../Other/AllStatuses.h"
+#include "../Effects/Effect.h"
 
 Enemy::Enemy(int hp, int sh, int mana, int cor, EnemyType chosenType) {
-    state = {
-        {hp, hp},     // hp
-        {0, sh},      // shield
-        {mana, mana}, // mana
-        {0, cor}      // corruption
-    };
+    state.hp = {hp, hp};
+    state.shield = {0, sh};
+    state.mana = {mana, mana};
+    state.corruption = {0, cor};
     type = chosenType;
 }
 

@@ -14,6 +14,7 @@ find_package(SFML 3 COMPONENTS Graphics Window System REQUIRED)
 
 add_executable(card_engine
     src/main.cpp
+    src/Other/CombatState.cpp
     src/Deck/Deck.cpp
     src/Card/Card.cpp
     src/Enemy/Enemy.cpp
