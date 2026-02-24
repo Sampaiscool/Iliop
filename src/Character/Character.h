@@ -13,7 +13,7 @@ enum class Class {
 enum class CharacterName {
     Hiroshi,
     Phlox,
-    MightyFire
+    Vortex
 };
 
 class Character {

@@ -10,6 +10,8 @@ enum class StatusType {
     DefenceDown,
     DefenceUp,
     VoidMark,
+    TrueVoid,
+    CorruptedVoid,
     Judged,
     Blessed
 };

@@ -1,5 +1,6 @@
 #include "CombatState.h"
 #include "AllStatuses.h"
+#include "Status.h"
 #include "../Effects/Effect.h"
 #include <algorithm>
 
@@ -98,5 +99,32 @@ void CombatState::updateStatuses() {
         (*it)->onTurnStart(*this);
         if ((*it)->duration <= 0) it = statuses.erase(it);
         else ++it;
+    }
+}
+
+void CombatState::transform(CombatState& enemy) {
+    isTransformed = true;
+    transformTime += transformGain;
+
+    if (onTransform) {
+        onTransform->apply(*this, enemy, 0);
+    }
+}
+
+int CombatState::getTrueVoidMana() const {
+    for (const auto& s : statuses) {
+        if (s && s->getType() == StatusType::TrueVoid) {
+            return s->intensity;
+        }
+    }
+    return 0;
+}
+
+void CombatState::consumeTrueVoid(int amount) {
+    for (auto& s : statuses) {
+        if (s && s->getType() == StatusType::TrueVoid) {
+            s->intensity -= amount;
+            return;
+        }
     }
 }

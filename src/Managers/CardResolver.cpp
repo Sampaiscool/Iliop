@@ -4,13 +4,23 @@
 bool CardResolver::play(
     const Card& card,
     CombatState& player,
-    CombatState& enemy)
+    CombatState& enemy,
+    Deck& deck)
 {
-    if (player.mana.current < card.cost)
+    int trueVoidMana = player.getTrueVoidMana();
+    int totalAvailable = player.mana.current + trueVoidMana;
+
+    if (totalAvailable < card.cost)
         return false;
 
-    // pay cost
-    player.mana.current -= card.cost;
+    // pay for card
+    int remainingCost = card.cost;
+    if (trueVoidMana > 0) {
+        int usedFromVoid = std::min(trueVoidMana, remainingCost);
+        player.consumeTrueVoid(usedFromVoid);
+        remainingCost -= usedFromVoid;
+    }
+    player.mana.current -= remainingCost;
 
     // check if current corruption amount is enough for a transformation
     bool isCorrupted = (player.corruption.current >= player.transformThreshold);
@@ -18,8 +28,16 @@ bool CardResolver::play(
     // trigger card behavior
     card.play(player, enemy, isCorrupted);
 
-    if (player.isTransformed && player.transformationProc) {
-        player.transformationProc->apply(player, enemy, 0);
+    if (player.isTransformed && player.onCardPlayProc) {
+        player.onCardPlayProc->apply(player, enemy, 0);
+    }
+
+    if (isCorrupted) {
+        for (auto& status : player.statuses) {
+            if (status->getType() == StatusType::CorruptedVoid) {
+                deck.drawCard(status->intensity);
+            }
+        }
     }
 
     // global rules

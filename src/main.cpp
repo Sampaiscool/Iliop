@@ -143,7 +143,7 @@ int main() {
                     std::vector<CharacterName> charactersList = {
                         CharacterName::Hiroshi,
                         CharacterName::Phlox,
-                        CharacterName::MightyFire
+                        CharacterName::Vortex
                     };
 
                     for (int i = 0; i < charactersList.size(); ++i) {
@@ -186,8 +186,7 @@ int main() {
                         else if (ui.getTransformBounds().contains(mousePos) && playerState.mana.current == playerState.mana.max) {
                             if (playerState.isTransformed != true) {
                                 playerState.mana.current -= playerState.mana.max;
-                                playerState.isTransformed = true;
-                                playerState.transformTime += playerState.transformGain;
+                                playerState.transform(enemy.getState());
                             }
                         }
                         else {
@@ -197,7 +196,8 @@ int main() {
                                     if (CardResolver::play(
                                             card,
                                             playerState,
-                                            enemy.getState()))
+                                            enemy.getState(),
+                                            deck))
                                     {
                                         deck.discardCard(card);
                                         break;
@@ -374,7 +374,7 @@ int main() {
             std::vector<std::pair<std::string, CharacterName>> characters = {
                 {"Hiroshi", CharacterName::Hiroshi},
                 {"Phlox", CharacterName::Phlox},
-                {"MightyFire", CharacterName::MightyFire}
+                {"Vortex", CharacterName::Vortex}
             };
 
             for (int i = 0; i < characters.size(); ++i) {

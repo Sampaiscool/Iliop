@@ -29,7 +29,7 @@ public:
     void loadPlayerTextures() {
         (void)portraitTextures[CharacterName::Hiroshi].loadFromFile("../assets/portraits/HiroshiPortrait.png");
         (void)portraitTextures[CharacterName::Phlox].loadFromFile("../assets/portraits/PhloxPortrait.png");
-        (void)portraitTextures[CharacterName::MightyFire].loadFromFile("../assets/portraits/MightyFire.png");
+        (void)portraitTextures[CharacterName::Vortex].loadFromFile("../assets/portraits/MightyFire.png"); //TODO Fix this to vortex
     }
 
     void spawnFCT(sf::Vector2f pos, std::string str, sf::Color color, const sf::Font& font);

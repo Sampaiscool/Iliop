@@ -47,7 +47,9 @@ public:
             case CharacterName::Hiroshi:
                 displayName = "Hiroshi";
                 stats.shield.max += 10;
-                stats.transformationProc = std::make_unique<DamageEffect>(4);
+                stats.onTransform = std::make_unique<ShieldEffect>(10);
+                stats.onCardPlayProc = std::make_unique<RagingDefence>(3);
+                stats.passiveValue = 2;
                 break;
             case CharacterName::Phlox: {
                 displayName = "Phlox";
@@ -55,13 +57,15 @@ public:
                 auto multi = std::make_unique<MultiEffect>();
                 multi->add(std::make_unique<HolyZeal>(1));
                 multi->add(std::make_unique<HealEffect>(1));
-                stats.transformationProc = std::move(multi);
+                stats.onCardPlayProc = std::move(multi);
                 break;
             }
-            case CharacterName::MightyFire:
-                displayName = "Mighty Fire";
+            case CharacterName::Vortex:
+                displayName = "Vortex";
                 stats.mana.max += 1; stats.mana.current += 1;
-                stats.transformationProc = std::make_unique<DamageEffect>(1);
+                stats.onTransform = std::make_unique<VoidProwess>(3);
+                stats.onCardPlayProc = std::make_unique<Infinity>(1);
+                stats.passiveValue = 1;
                 break;
         }
 

@@ -12,8 +12,7 @@ public:
         if (self.isTransformed) {
             self.applyStatus(std::make_unique<BlessedStatus>(3, value));
         } else {
-            self.isTransformed = true;
-            self.transformTime += self.transformGain;
+           self.transform(target);
         }
     }
 };

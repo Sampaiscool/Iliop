@@ -82,7 +82,7 @@ static const Status* drawStatusIcons(sf::RenderWindow& window, const sf::Font& f
     const std::vector<std::unique_ptr<Status>>& statuses,
     int x, int y, sf::Vector2f mousePos, const std::map<StatusType, sf::Texture>& textures)
 {
-    float iconSize = 24.f;
+    float iconSize = 30.f;
     float spacing = 6.f;
     const Status* hoveredStatus = nullptr;
 
@@ -256,24 +256,21 @@ void UIRenderer::render(sf::RenderWindow& window,
 }
 
 void UIRenderer::spawnFCT(sf::Vector2f pos, std::string str, sf::Color color, const sf::Font& font) {
-    // SFML 3 fix: Initialize the struct and its sf::Text member with the font immediately
     FloatingText ft{
-        .text = sf::Text(font, sf::String(str), 24), // Font, String, CharSize
+        .text = sf::Text(font, sf::String(str), 24),
         .position = pos,
         .color = color,
         .lifetime = 1.0f
     };
 
-    // Add your styling
     ft.text.setFillColor(color);
     ft.text.setOutlineColor(sf::Color::Black);
     ft.text.setOutlineThickness(2.f);
 
-    // Apply the random offset
+    // apply offset
     float offsetX = static_cast<float>((rand() % 40) - 20);
     ft.position += sf::Vector2f(offsetX, -20.f);
 
-    // Make sure the internal vector name matches your header (fcts vs floatingTexts)
     floatingTexts.push_back(std::move(ft));
 }
 
@@ -283,7 +280,6 @@ void UIRenderer::updateAndDrawFCT(sf::RenderWindow& window, float dt) {
         it->position.y -= 60.f * dt; 
 
         sf::Color c = it->color;
-        // Correct SFML 3 / C++ cast
         float alpha = std::max(0.f, it->lifetime);
         c.a = static_cast<uint8_t>(255 * alpha);
 

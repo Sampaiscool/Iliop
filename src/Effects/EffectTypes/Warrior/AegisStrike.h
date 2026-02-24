@@ -19,8 +19,7 @@ public:
             target.takeDamage(damage);
         }
         else {
-            self.isTransformed = true;
-            self.transformTime = self.transformGain;
+            self.transform(target);
         }
     }
 };

@@ -12,6 +12,8 @@
 #include "../Effects/EffectTypes/Mage/EldritchBlast.h"
 #include "../Effects/EffectTypes/Mage/UnstableVolley.h"
 #include "../Effects/EffectTypes/Mage/VoidGrasp.h"
+#include "../Effects/EffectTypes/Mage/VoidProwess.h"
+#include "../Effects/EffectTypes/Mage/Infinity.h"
 
 // warrior:
 #include "../Effects/EffectTypes/Warrior/AegisStrike.h"
@@ -19,6 +21,7 @@
 #include "../Effects/EffectTypes/Warrior/ShatterSpleen.h"
 #include "../Effects/EffectTypes/Warrior/ShieldBash.h"
 #include "../Effects/EffectTypes/Warrior/WarriorPact.h"
+#include "../Effects/EffectTypes/Warrior/RagingDefence.h"
 
 // cleric:
 #include "../Effects/EffectTypes/Cleric/BlindingLight.h"

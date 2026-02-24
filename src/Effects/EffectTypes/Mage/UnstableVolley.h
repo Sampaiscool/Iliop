@@ -17,8 +17,7 @@ public:
             std::min(self.corruption.current + 2,
                     self.corruption.max);
             if (self.corruption.current >= self.transformThreshold) {
-                self.isTransformed = true;
-                self.transformTime = self.transformGain;
+                self.transform(target);
             }
         } else {
             // if transformed, gain overload

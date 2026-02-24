@@ -14,8 +14,7 @@ public:
 
         if (!self.isTransformed) {
             target.takeDamage(self.getModifiedDamage(finalVal));
-            self.isTransformed = true;
-            self.transformTime += self.transformGain;
+            self.transform(target);
         } else {
             for (int i = 0; i < 5; ++i) {
                 target.takeDamage(self.getModifiedDamage(finalVal / 2));
