@@ -9,10 +9,10 @@ public:
     ShatterSpleen(int value) : amount(value) {}
     ShatterSpleen() = default;
     void apply(CombatState& self, CombatState& target, int value) override {
-        int defenceUpGain = (self.shield.current / 4);
-        self.applyStatus(std::make_unique<DefenceUpStatus>(3, defenceUpGain));
+        int defenceUpGain = (std::max((self.shield.current / 10), 1));
+        self.applyStatus(std::make_unique<DefenceUpStatus>(1, defenceUpGain));
         if (self.shield.current == self.shield.max) {
-            int damage = self.getModifiedDamage(value * 3);
+            int damage = self.getModifiedDamage(value) * 2;
             target.takeDamage(damage);
         }
 

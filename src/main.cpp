@@ -254,7 +254,7 @@ int main() {
         if (gameState == GameState::Combat &&
             turnState == TurnState::EnemyTurn)
         {
-            enemy.getState().updateStatuses();
+            
 
             bool isStunned = false;
             for (auto& s : enemy.getState().statuses) {
@@ -274,6 +274,8 @@ int main() {
 
                 ui.spawnFCT(enemyPos, "Stunned!", sf::Color::Yellow, font);
             }
+
+            enemy.getState().updateStatuses();
 
             // end thah turn
             enemy.getState().endTurn(enemy.getState());

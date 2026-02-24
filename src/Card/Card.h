@@ -18,6 +18,7 @@ enum class CardType {
     EldritchBlast,
     VoidGrasp,
     AstralShift,
+    VoidProwess,
 
     // warrior
     AegisStrike,

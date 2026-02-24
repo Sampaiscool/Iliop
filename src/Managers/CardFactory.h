@@ -51,11 +51,11 @@ private:
     inline static std::map<std::string, CardData> CardRepo = {
         // format: { name, description, value, corruptedValue, cost, type, theme }
         {"Fire Bolt",       {"Fire Bolt", "Deals fire damage.", 5, 2, 1, CardType::Damage, CardTheme::Red}},
-        {"Mana Shield",     {"Mana Shield", "Gain magical protection.", 2, 3, 1, CardType::Shield, CardTheme::Blue}},
+        {"Mana Shield",     {"Mana Shield", "Gain magical protection.", 2, 3, 1, CardType::Shield, CardTheme::Gray}},
         {"Slash",           {"Slash", "A basic melee attack.", 4, 3, 1, CardType::Damage, CardTheme::Red}},
-        {"Defend",          {"Defend", "Raise your guard.", 6, 4, 1, CardType::Shield, CardTheme::Blue}},
-        {"Smite",           {"Smite", "Strike with holy power.", 1, 7, 1, CardType::Damage, CardTheme::Gold}},
-        {"Phlox's Bloom",   {"Phlox's Bloom", "A powerful floral burst.", 10, 10, 2, CardType::Damage, CardTheme::Purple}},
+        {"Defend",          {"Defend", "Raise your guard.", 6, 4, 1, CardType::Shield, CardTheme::Gray}},
+        {"Smite",           {"Smite", "Strike with holy power.", 1, 7, 1, CardType::Damage, CardTheme::Red}},
+        {"Phlox's Bloom",   {"Phlox's Bloom", "A powerful floral burst.", 10, 10, 2, CardType::Damage, CardTheme::Red}},
 
         // ranger
         {"Primal Arrow",    {"Primal Arrow", "Deal damage and transform\n(deal damage 5 times (can bleed))", 2, 2, 1, CardType::PrimalArrow, CardTheme::Red}},
@@ -63,21 +63,22 @@ private:
         // mage
         {"Unstable Volley", {"Unstable Volley", "Deal damage + gain 2 corruption, \nThen if you are at max: transform\n(Gain Overload)", 2, 4, 1, CardType::UnstableVolley, CardTheme::Purple}},
         {"Eldritch Blast",  {"Eldritch Blast", "Deal damage, scales with corruption.\nThen gain 2 corruption", 4, 2, 2, CardType::EldritchBlast, CardTheme::Purple}},
-        {"Void Grasp",      {"Void Grasp", "Deal damage and Apply Void Mark.\nStronger if transformed.\nAlso shreds shields", 3, 5, 1, CardType::VoidGrasp, CardTheme::Purple}},
-        {"Astral Shift",    {"Astral Shift", "Gain Shield, Lose all corruption\n(Become transformed longer)", 5, 5, 1, CardType::AstralShift, CardTheme::Blue}},
+        {"Void Grasp",      {"Void Grasp", "Deal damage and Apply Void Mark.\nStronger if transformed.\nAlso shreds shields", 1, 1, 1, CardType::VoidGrasp, CardTheme::Red}},
+        {"Astral Shift",    {"Astral Shift", "Transformed: transform\nElse: Gain shield + Lose all corruption", 5, 5, 1, CardType::AstralShift, CardTheme::Gray}},
+        {"Void Prowess",    {"Void Prowess", "Gain true void", 2, 2, 2, CardType::VoidProwess, CardTheme::Blue}},
 
         // warrior
         {"Aegis Strike",    {"Aegis Strike", "Deal damage to yourself and enemy.\nTransform after", 6, 8, 1, CardType::AegisStrike, CardTheme::Red}},
-        {"Iron Will",       {"Iron Will", "Deal some damage to yourself,\nGain a shield", 10, 15, 1, CardType::IronWill, CardTheme::Blue}},
+        {"Iron Will",       {"Iron Will", "Deal some damage to yourself,\nGain a shield", 10, 15, 1, CardType::IronWill, CardTheme::Gray}},
         {"Shatter Spleen",  {"Shatter Spleen", "Gain Defense Up based on Shield.\nDeals damage if you have max shield\n(Give weaken)", 5, 8, 2, CardType::ShatterSpleen, CardTheme::Red}},
-        {"Shield Bash",     {"Shield Bash", "Consume Max Shield to Stun\nAlso deals damage.", 10, 20, 2, CardType::ShieldBash, CardTheme::Blue}},
+        {"Shield Bash",     {"Shield Bash", "Consume Max Shield to Stun\nAlso deals damage.", 10, 20, 2, CardType::ShieldBash, CardTheme::Red}},
         {"Warrior Pact",    {"Warrior Pact", "Sacrifice HP for 2 Mana.", 5, 0, 0, CardType::WarriorPact, CardTheme::Purple}},
 
         // cleric
         {"Holy Light",      {"Holy Light", "Restore health.", 7, 3, 1, CardType::Heal, CardTheme::Green}},
         {"Blinding Light",  {"Blinding Light", "Deal damage and apply Damage Down.\nIf target has 2+ statuses:\nstun and damage becomes increased.", 4, 6, 1, CardType::BlindingLight, CardTheme::Gold}},
         {"Condemn",         {"Condemn", "Apply Bleed and Defense Down.\nIf transformed: give Judged + Bleed self.", 4, 4, 1, CardType::Condemn, CardTheme::Gold}},
-        {"Purge",           {"Purge", "Deal damage for every\nstatus effect on the target.", 6, 5, 2, CardType::Purge, CardTheme::Gold}},
+        {"Purge",           {"Purge", "Deal damage for every unique\nstatus effect on the target.", 3, 8, 2, CardType::Purge, CardTheme::Gold}},
         {"Ritual",          {"Ritual", "Transform (Gain blessed)", 2, 4, 2, CardType::Ritual, CardTheme::Gold}}
     };
 

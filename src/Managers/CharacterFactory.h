@@ -60,13 +60,17 @@ public:
                 stats.onCardPlayProc = std::move(multi);
                 break;
             }
-            case CharacterName::Vortex:
+            case CharacterName::Vortex: {
                 displayName = "Vortex";
                 stats.mana.max += 1; stats.mana.current += 1;
                 stats.onTransform = std::make_unique<VoidProwess>(3);
-                stats.onCardPlayProc = std::make_unique<Infinity>(1);
+                auto multi = std::make_unique<MultiEffect>();
+                multi->add(std::make_unique<DamageEffect>(1));
+                multi->add(std::make_unique<Infinity>(1));
+                stats.onCardPlayProc = std::move(multi);
                 stats.passiveValue = 1;
                 break;
+            }
         }
 
         return Character(classType, nameType, displayName, std::move(deck), std::move(stats), transformCorruption, transformTime);

@@ -2,6 +2,7 @@
 #include "../Card/Card.h"
 #include "../Deck/Deck.h"
 #include "../Other/Status.h"
+#include "../Other/AllStatuses.h"
 #include "../Other/CombatState.h"
 
 class CardResolver {

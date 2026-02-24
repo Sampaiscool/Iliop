@@ -10,7 +10,7 @@ public:
     Infinity() = default;
     void apply(CombatState& self, CombatState& target, int value) override {
         if (self.corruption.current >= self.transformThreshold) {
-            self.applyStatus(std::make_unique<CorruptedVoidStatus>(amount, amount));
+            self.applyStatus(std::make_unique<CorruptedVoidStatus>(0, amount));
         }
     }
 };

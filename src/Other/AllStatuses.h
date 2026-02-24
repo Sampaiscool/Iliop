@@ -44,14 +44,16 @@ public:
 
 class VoidMarkStatus : public Status {
 public:
-    VoidMarkStatus(int dur, int intens) {
+    VoidMarkStatus(int dur, int intens = 0) { 
         name = "Void Mark";
         duration = dur;
         intensity = intens;
     }
     StatusType getType() const override { return StatusType::VoidMark; }
+
     std::string getDescription() const override {
-        return "Takes extra damage\nfrom Transformed attacks.";
+        return "Abyssal Charge: " + std::to_string(intensity) + "/5\n" +
+               "For holder: Take 5 dmg\nFor other: gain 5 True Void + draw 5";
     }
 
     void onTurnStart(CombatState& owner) override {
@@ -111,6 +113,7 @@ public:
     std::string getDescription() const override { return "Skips the next turn."; }
     void onTurnStart(CombatState& owner) override {
         // removes stun aftah 1 turn beacause this is BROKEN!
+        duration = 0;
     }
 };
 
@@ -119,7 +122,7 @@ public:
     JudgedStatus(int dur, int intens) { name = "Judged"; duration = dur; intensity = intens; }
     StatusType getType() const override { return StatusType::Judged; }
     std::string getDescription() const override {
-        return "Taking 5+ damage triggers " + std::to_string(intensity) + " Defence Down.";
+        return "Taking 5+ damage gives " + std::to_string(intensity) + " Defence Down.";
     }
     void onTurnStart(CombatState& owner) override { duration--; }
 };

@@ -40,6 +40,23 @@ bool CardResolver::play(
         }
     }
 
+
+    for (auto it = enemy.statuses.begin(); it != enemy.statuses.end(); ) {
+        if ((*it)->getType() == StatusType::VoidMark) {
+            (*it)->intensity++;
+
+            if ((*it)->intensity >= 5) {
+                enemy.takeDamage(5);                                        // Big damage
+                player.applyStatus(std::make_unique<TrueVoidStatus>(2, 5)); // Big Mana
+                deck.drawCard(5);                                           // Big Hand refill
+
+                it = enemy.statuses.erase(it);
+                continue; 
+            }
+        }
+        ++it;
+    }
+
     // global rules
     player.corruption.current =
         std::min(player.corruption.current + 1,

@@ -12,7 +12,7 @@ public:
         target.takeDamage(self.getModifiedDamage(value));
 
         // apply void-mark, more if transformed
-        int markIntensity = self.isTransformed ? 10 : 2;
+        int markIntensity = self.isTransformed ? value : (value - 1);
         target.applyStatus(std::make_unique<VoidMarkStatus>(3, markIntensity));
 
         // Deal some damage to the shield, can go under 0
