@@ -16,12 +16,12 @@ Start of each turn you regain all your mana and 4 new cards
 
 TODO:
     - Update game loop to -> Start - Fight enemy - Collect cards - Fight enemy - ??? --- Fight boss
-    - Class selection and custom deck per class
-    - Unique characters wich can be merged with a class
-    - Deck that can be modified easy
-    - More EffectTypes
+    - Class selection and custom deck per class   X
+    - Unique characters wich can be merged with a class   X
+    - Deck that can be modified easy   X
+    - More EffectTypes   X
     - More Enemies
-    - Card corruption logic
+    - Card corruption logic   X
     - Upgrades(?)
     - Custom events between fighting enemies and collecting cards(?)
     - Update UI and make actual sprites

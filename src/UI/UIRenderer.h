@@ -34,6 +34,7 @@ public:
 
     void spawnFCT(sf::Vector2f pos, std::string str, sf::Color color, const sf::Font& font);
     void updateAndDrawFCT(sf::RenderWindow& window, float dt);
+    void resetHPTracking();
 
     sf::FloatRect getEndTurnBounds() const;
     sf::FloatRect getTransformBounds() const;
@@ -43,5 +44,9 @@ private:
     std::map<StatusType, sf::Texture> statusTextures;
     sf::FloatRect endTurnBounds;
     sf::FloatRect transformBounds;
+    int lastPlayerHP = -1;
+    int lastEnemyHP = -1;
+    sf::Vector2f lastPlayerBarPos;
+    sf::Vector2f lastEnemyBarPos;
 };
 

@@ -46,7 +46,7 @@ struct CardData {
 class CardFactory {
 private:
     inline static std::map<std::string, CardData> CardRepo = {
-        // Format: { Name, Description, Value, CorruptedValue, Cost, Type, Theme }
+        // format: { name, description, value, corruptedValue, cost, type, theme }
         {"Fire Bolt",       {"Fire Bolt", "Deals fire damage.", 5, 2, 1, CardType::Damage, CardTheme::Red}},
         {"Mana Shield",     {"Mana Shield", "Gain magical protection.", 2, 3, 1, CardType::Shield, CardTheme::Blue}},
         {"Slash",           {"Slash", "A basic melee attack.", 4, 3, 1, CardType::Damage, CardTheme::Red}},
@@ -55,7 +55,7 @@ private:
         {"Phlox's Bloom",   {"Phlox's Bloom", "A powerful floral burst.", 10, 10, 2, CardType::Damage, CardTheme::Purple}},
 
         // ranger
-        {"Primal Arrow",    {"Primal Arrow", "Deal damage and transform\n(deal damage 5 times (can bleed))", 2, 2, 1, CardType::PrimalArrow, CardTheme::Green}},
+        {"Primal Arrow",    {"Primal Arrow", "Deal damage and transform\n(deal damage 5 times (can bleed))", 2, 2, 1, CardType::PrimalArrow, CardTheme::Red}},
 
         // mage
         {"Unstable Volley", {"Unstable Volley", "Deal damage + gain 2 corruption, \nThen if you are at max: transform\n(Gain Overload)", 2, 4, 1, CardType::UnstableVolley, CardTheme::Purple}},

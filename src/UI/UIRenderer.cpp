@@ -129,6 +129,7 @@ void UIRenderer::render(sf::RenderWindow& window,
     // player
     int x = winW - barWidth - margin;
     int y = winH - (barHeight * 2) - margin * 2;
+    lastPlayerBarPos = sf::Vector2f(static_cast<float>(x), static_cast<float>(y));
 
     // player corruption
     int corruptionY = y - (barHeight + 5);
@@ -151,6 +152,7 @@ void UIRenderer::render(sf::RenderWindow& window,
     int enemyBarHeight = barHeight;
     int enemyX = winW / 2 - enemyBarWidth / 2;
     int enemyY = winH / 4 - enemyBarHeight - margin;
+    lastEnemyBarPos = sf::Vector2f(static_cast<float>(enemyX), static_cast<float>(enemyY));
 
     // enemy hp
     drawBar(window, enemyX, enemyY, enemyBarWidth, enemyBarHeight, enemyState.hp.current, enemyState.hp.max, sf::Color(255,0,0), sf::Color(60,20,20));
@@ -165,6 +167,31 @@ void UIRenderer::render(sf::RenderWindow& window,
     int btnSpacing = 10;
 
     drawPlayerPortrait(window, font, player, winW, winH, portraitTextures);
+
+    // skips the first frame check
+    if (lastPlayerHP == -1) {
+        lastPlayerHP = playerState.hp.current;
+        lastEnemyHP = enemyState.hp.current;
+        return;
+    }
+
+    // detects player hp changes
+    if (playerState.hp.current != lastPlayerHP) {
+        int diff = playerState.hp.current - lastPlayerHP;
+        sf::Color color = (diff > 0) ? sf::Color::Green : sf::Color::Red;
+        std::string text = (diff > 0) ? "+" + std::to_string(diff) : std::to_string(diff);
+        spawnFCT(lastPlayerBarPos, text, color, font);
+        lastPlayerHP = playerState.hp.current;
+    }
+
+    // same goes for the enemy
+    if (enemyState.hp.current != lastEnemyHP) {
+        int diff = enemyState.hp.current - lastEnemyHP;
+        sf::Color color = (diff > 0) ? sf::Color::Green : sf::Color::Red;
+        std::string text = (diff > 0) ? "+" + std::to_string(diff) : std::to_string(diff);
+        spawnFCT(lastEnemyBarPos, text, color, font);
+        lastEnemyHP = enemyState.hp.current;
+    }
 
     // get thah mouse position
     sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
@@ -368,6 +395,11 @@ void UIRenderer::loadStatusTextures() {
     std::string pathVoidMark = "../assets/statusIcons/VoidMarkIcon.png";
     if (!statusTextures[StatusType::VoidMark].loadFromFile(pathVoidMark)) {
     }
+}
+
+void UIRenderer::resetHPTracking() {
+    lastPlayerHP = -1;
+    lastEnemyHP = -1;
 }
 
 sf::FloatRect UIRenderer::getEndTurnBounds() const {

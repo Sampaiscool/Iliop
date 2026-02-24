@@ -58,6 +58,9 @@ int main() {
     while (window.isOpen()) {
         float dt = particleClock.restart().asSeconds();
 
+        float winW = static_cast<float>(window.getSize().x);
+        float winH = static_cast<float>(window.getSize().y);
+
         while (auto eventOpt = window.pollEvent()) {
             if (!eventOpt.has_value()) continue;
             sf::Event& event = *eventOpt;
@@ -95,11 +98,6 @@ int main() {
 
                     if (startButton.contains(mousePos)) {
                         gameState = GameState::ClassSelect;
-                        // gameState = GameState::Combat;
-                        // turnState = TurnState::PlayerTurn;
-                        //
-                        // playerState.mana.current = playerState.mana.max;
-                        // deck.shuffle();
                     }
                 }
                 else if (gameState == GameState::ClassSelect) {
@@ -196,24 +194,12 @@ int main() {
                             // card clicks
                             for (Card& card : deck.getHand()) {
                                 if (card.contains(mousePos.x, mousePos.y)) {
-                                    int oldEnemyHP = enemy.getState().hp.current;
                                     if (CardResolver::play(
                                             card,
                                             playerState,
                                             enemy.getState()))
                                     {
                                         deck.discardCard(card);
-
-                                        int diff = oldEnemyHP - enemy.getState().hp.current;
-                                        if (diff > 0) {
-                                            float w = static_cast<float>(window.getSize().x);
-                                            float h = static_cast<float>(window.getSize().y);
-
-                                            sf::Vector2f enemyPos(w / 2.f, h / 4.f);
-
-                                            ui.spawnFCT(enemyPos, "-" + std::to_string(diff), sf::Color::Red, font);
-                                        }
-
                                         break;
                                     }
                                 }
@@ -256,6 +242,8 @@ int main() {
 
                         enemy = EnemyFactory::create(currentFloor);
 
+                        ui.resetHPTracking();
+
                         gameState = GameState::Combat;
                     }
                 }
@@ -287,6 +275,7 @@ int main() {
                 ui.spawnFCT(enemyPos, "Stunned!", sf::Color::Yellow, font);
             }
 
+            // end thah turn
             enemy.getState().endTurn(enemy.getState());
 
             turnState = TurnState::PlayerTurn;
@@ -331,9 +320,6 @@ int main() {
 
         // render
         window.clear(sf::Color(40, 40, 40));
-
-        int winW = window.getSize().x;
-        int winH = window.getSize().y;
 
         // render startscreen
         if (gameState == GameState::StartScreen) {
@@ -476,6 +462,19 @@ int main() {
                 lootOptions[i].h = cardH;
 
                 lootOptions[i].draw(window, font, false, playerState);
+            }
+
+            // draw tooltip if hovered
+            sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+            Card* hoveredCard = nullptr;
+            for (Card& card : lootOptions) {
+                if (card.getBounds().contains(mousePos)) {
+                    hoveredCard = &card;
+                }
+            }
+
+            if (hoveredCard) {
+                ui.drawTooltip(window, font, *hoveredCard, mousePos.x, mousePos.y);
             }
         }
         window.display();
