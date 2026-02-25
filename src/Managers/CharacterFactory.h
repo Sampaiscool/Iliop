@@ -33,7 +33,7 @@ public:
                 break;
             case Class::Cleric:
                 stats = CombatState{{30, 30}, {0, 10}, {3, 3}, {0, 2}};
-                transformCorruption = 2; transformTime = 3;
+                transformCorruption = 2; transformTime = 2;
                 for (int i = 0; i < 5; ++i) deck.push_back(CardFactory::create("Holy Light"));
                 for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Purge"));
                 for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Ritual"));
@@ -70,6 +70,12 @@ public:
                 stats.onCardPlayProc = std::move(multi);
                 stats.passiveValue = 1;
                 break;
+            }
+            case CharacterName::MathewsLift: {
+                displayName = "Mathews Lift";
+                stats.hp.max -= 10; stats.transformThreshold += 2;
+                //stats.onTransform = std::make_unique<>();
+                
             }
         }
 

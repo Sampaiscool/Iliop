@@ -346,9 +346,10 @@ int main() {
             float spacing = 100.f;
 
             std::vector<std::pair<std::string, Class>> classes = {
-                {"Mage", Class::Mage},
                 {"Warrior", Class::Warrior},
-                {"Cleric", Class::Cleric}
+                {"Cleric", Class::Cleric},
+                {"Mage", Class::Mage},
+                {"Ranger", Class::Ranger}
             };
 
             for (int i = 0; i < classes.size(); ++i) {
@@ -376,7 +377,8 @@ int main() {
             std::vector<std::pair<std::string, CharacterName>> characters = {
                 {"Hiroshi", CharacterName::Hiroshi},
                 {"Phlox", CharacterName::Phlox},
-                {"Vortex", CharacterName::Vortex}
+                {"Vortex", CharacterName::Vortex},
+                {"Mathews Lift", CharacterName::MathewsLift}
             };
 
             for (int i = 0; i < characters.size(); ++i) {

@@ -5,15 +5,17 @@
 #include "../Other/CombatState.h"
 
 enum class Class {
-    Mage,
     Warrior,
-    Cleric
+    Cleric,
+    Mage,
+    Ranger
 };
 
 enum class CharacterName {
     Hiroshi,
     Phlox,
-    Vortex
+    Vortex,
+    MathewsLift
 };
 
 class Character {

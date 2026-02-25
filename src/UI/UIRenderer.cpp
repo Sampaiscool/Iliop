@@ -82,8 +82,8 @@ static const Status* drawStatusIcons(sf::RenderWindow& window, const sf::Font& f
     const std::vector<std::unique_ptr<Status>>& statuses,
     int x, int y, sf::Vector2f mousePos, const std::map<StatusType, sf::Texture>& textures)
 {
-    float iconSize = 30.f;
-    float spacing = 6.f;
+    float iconSize = (window.getSize().x / 20);
+    float spacing = iconSize / 4;
     const Status* hoveredStatus = nullptr;
 
     for (size_t i = 0; i < statuses.size(); ++i) {
@@ -196,7 +196,7 @@ void UIRenderer::render(sf::RenderWindow& window,
     // get thah mouse position
     sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
-    // player status TODO: check if it works?
+    // player status
     int playerStatusX = x;
     int playerStatusY = corruptionY - barHeight - (winH / 8); 
     const Status* hovered = drawStatusIcons(window, font, playerState.statuses, 
@@ -207,13 +207,6 @@ void UIRenderer::render(sf::RenderWindow& window,
     int enemyStatusY = enemyY - (enemyY / 2 - 10);
     const Status* enemyHovered = drawStatusIcons(window, font, enemyState.statuses, 
                                                 enemyStatusX, enemyStatusY, mousePos, statusTextures);
-
-    // if we are hovering draw tooltip last
-    if (hovered) {
-        drawStatusTooltip(window, font, *hovered, mousePos);
-    } else if (enemyHovered) {
-        drawStatusTooltip(window, font, *enemyHovered, mousePos);
-    }
 
     // end turn button
     int endX = x + barWidth - btnW;
@@ -253,6 +246,13 @@ void UIRenderer::render(sf::RenderWindow& window,
     rectTransform.setOutlineThickness(2.f);
     window.draw(rectTransform);
     drawText(window, font, "Form", transX + (btnW / 6), buttonsY + (btnH / 5), btnH * 0.6, sf::Color::Black);
+
+    // if we are hovering draw tooltip last
+    if (hovered) {
+        drawStatusTooltip(window, font, *hovered, mousePos);
+    } else if (enemyHovered) {
+        drawStatusTooltip(window, font, *enemyHovered, mousePos);
+    }
 }
 
 void UIRenderer::spawnFCT(sf::Vector2f pos, std::string str, sf::Color color, const sf::Font& font) {
@@ -310,7 +310,7 @@ void UIRenderer::drawTooltip(sf::RenderWindow& window, const sf::Font& font, con
     oss << "\n------------------\n" 
         << card.description;
 
-    sf::Text descText(font, sf::String(oss.str()), 16);
+    sf::Text descText(font, sf::String(oss.str()), (window.getSize().x / 40));
     descText.setFillColor(sf::Color::White);
 
     // get the background and shape
@@ -348,7 +348,7 @@ void UIRenderer::drawStatusTooltip(sf::RenderWindow& window, const sf::Font& fon
     oss << "--------------------\n";
     oss << status.getDescription();
 
-    sf::Text text(font, sf::String(oss.str()), 14);
+    sf::Text text(font, sf::String(oss.str()), (window.getSize().x / 45));
     text.setFillColor(sf::Color::White);
 
     sf::FloatRect bounds = text.getGlobalBounds();
