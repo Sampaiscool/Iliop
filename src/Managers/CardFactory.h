@@ -59,6 +59,7 @@ private:
 
         // ranger
         {"Primal Arrow",    {"Primal Arrow", "Deal damage and transform\n(deal damage 5 times (can bleed))", 2, 2, 1, CardType::PrimalArrow, CardTheme::Red}},
+        {"Aim",             {"Aim", "Gain Locked and heal\n(Instaed gain Raging Bear and inflict bleed)", 2, 1, 1, CardType::Aim, CardTheme::Gray}}
 
         // mage
         {"Unstable Volley", {"Unstable Volley", "Deal damage + gain 2 corruption, \nThen if you are at max: transform\n(Gain Overload)", 2, 4, 1, CardType::UnstableVolley, CardTheme::Purple}},
@@ -103,6 +104,7 @@ public:
 
             // ranger
             case CardType::PrimalArrow:   card.effect = std::make_unique<PrimalArrowEffect>();    break;
+            case CardType::Aim:   card.effect = std::make_unique<AimEffect>();    break;
 
             // mage
             case CardType::UnstableVolley: card.effect = std::make_unique<UnstableVolley>(); break;
@@ -150,6 +152,7 @@ public:
             case CardTheme::Blue:   return sf::Color(50, 50, 200);
             case CardTheme::Green:  return sf::Color(50, 180, 50);
             case CardTheme::Purple: return sf::Color(140, 50, 200);
+            case CardTheme::Yellow: return sf::Color(255, 255, 102);
             default: return sf::Color::White;
         }
     }

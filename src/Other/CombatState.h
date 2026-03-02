@@ -3,7 +3,7 @@
 #include <memory>
 #include <vector>
 
-// Forward Declarations: Tells the compiler these exist without including them
+// forward Declarations
 class Status;
 class Effect;
 
@@ -23,6 +23,7 @@ struct CombatState {
 
     std::vector<std::unique_ptr<Status>> statuses;
 
+    // need this for forward declerations
     CombatState();
     CombatState(Resource hp, Resource sh, Resource ma, Resource co);
     ~CombatState();
@@ -30,7 +31,6 @@ struct CombatState {
     CombatState(CombatState&&) noexcept = default;
     CombatState& operator=(CombatState&&) noexcept = default;
 
-    // Function Declarations only
     int takeDamage(int amount);
     int heal(int amount);
     int addShield(int amount);

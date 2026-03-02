@@ -132,7 +132,7 @@ public:
     BlessedStatus(int dur, int intens) { name = "Blessed"; duration = dur; intensity = intens; }
     StatusType getType() const override { return StatusType::Blessed; }
     std::string getDescription() const override {
-        return "End of turn: Heal " + std::to_string(intensity) + "\nIf your were not at corruption Threshhold";
+        return "End of turn: Heal " + std::to_string(intensity) + "\nIf your were not at corruption threshhold";
     }
     void onTurnStart(CombatState& owner) override { duration--; }
 };
@@ -156,3 +156,24 @@ public:
     }
     void onTurnStart(CombatState& owner) override { duration = 0; }
 };
+
+class LockedStatus : public Status {
+public:
+    LockedStatus(int dur, int intens) { name = "Locked"; duration = dur; intensity = intens; }
+    StatusType getType() const override { return StatusType::Locked; }
+    std::string getDescription() const override {
+        return "Deal " + std::to_string(intensity * 2) + " extra damage while you are at max HP";
+    }
+    void onTurnStart(CombatState& owner) override { duration--; }
+};
+
+class RagingBearStatus : public Status {
+public:
+    RagingBearStatus(int dur, int intens) { name = "Raging bear"; duration = dur; intensity = intens; }
+    StatusType getType() const override { return StatusType::RagingBear; }
+    std::string getDescription() const override {
+        return "If you take damage while you are under 50% HP:\nGain " + std:to_string(intensity) + " Defence Up + Damage Up\nAnd heal " + std::to_string(intensity * 2);
+    }
+    void onTurnStart(CombatState& owner) override { duration--; }
+};
+

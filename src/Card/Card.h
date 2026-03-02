@@ -12,6 +12,10 @@ enum class CardType {
 
     // ranger
     PrimalArrow,
+    Aim,
+    ArrowVolley,
+    Jump,
+    Metamorphosis,
 
     // mage
     UnstableVolley,
@@ -70,7 +74,7 @@ struct Card {
 
     void play(CombatState& self, CombatState& target, bool isCorrupted) const {
         if (effect) {
-            int totalPower = value; 
+            int totalPower = value;
             if (isCorrupted) {
                 totalPower += corruptedValue;
             }

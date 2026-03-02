@@ -111,9 +111,10 @@ int main() {
                     float spacing = 100.f;
 
                     std::vector<Class> classList = {
-                        Class::Mage,
                         Class::Warrior,
-                        Class::Cleric
+                        Class::Cleric,
+                        Class::Mage,
+                        Class::Ranger
                     };
 
                     for (int i = 0; i < classList.size(); ++i) {
@@ -143,7 +144,8 @@ int main() {
                     std::vector<CharacterName> charactersList = {
                         CharacterName::Hiroshi,
                         CharacterName::Phlox,
-                        CharacterName::Vortex
+                        CharacterName::Vortex,
+                        CharacterName::MathewsLift
                     };
 
                     for (int i = 0; i < charactersList.size(); ++i) {

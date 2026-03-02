@@ -33,11 +33,16 @@ int CombatState::takeDamage(int amount) {
     hp.current = std::max(0, hp.current - remainingDamage);
     int damageDealt = oldHP - hp.current;
 
-    if (damageDealt >= 5) {
-        for (auto& s : statuses) {
-            if (s->name == "Judged") {
+    for (auto$ s : statuses) {
+        if (s->name == "Raging Bear") {
+            if (hp.current <= (hp.max / 2)) {
+                applyStatus(std::make_unique<DefenceUpStatus>(2, s->intensity));
+                applyStatus(std::make_unique<DamageUpStatus>(2, s->intensity));
+            }
+        }
+        if (s->name == "Judged") {
+            if (damageDealt >= 5) {
                 applyStatus(std::make_unique<DefenceDownStatus>(2, 2));
-                break;
             }
         }
     }
@@ -50,6 +55,7 @@ int CombatState::getModifiedDamage(int baseDamage) {
         if (s->name == "Arcane Overload") total += s->intensity;
         if (s->name == "Damage Up")       total += s->intensity;
         if (s->name == "Damage Down")     total = std::max(0, total - s->intensity);
+        if (s->name == "Locked")          if (hp.current == hp.max) total += ((s->intensity) * 2);
     }
     return total;
 }

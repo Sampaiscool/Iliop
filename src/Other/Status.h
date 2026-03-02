@@ -13,7 +13,9 @@ enum class StatusType {
     TrueVoid,
     CorruptedVoid,
     Judged,
-    Blessed
+    Blessed,
+    Locked,
+    RagingBear
 };
 
 struct CombatState;

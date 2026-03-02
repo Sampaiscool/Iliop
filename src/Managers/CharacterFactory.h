@@ -40,6 +40,10 @@ public:
                 for (int i = 0; i < 5; ++i) deck.push_back(CardFactory::create("Condemn"));
                 for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Blinding Light"));
                 break;
+            case Class::Ranger:
+                stats = CombatState{{20, 20}, {0, 10}, {3, 3}, {0, 2}};
+                transformCorruption = 2; transformTime = 2;
+                break;
         }
 
         // create the identity of the characters
