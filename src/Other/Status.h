@@ -15,7 +15,8 @@ enum class StatusType {
     Judged,
     Blessed,
     Locked,
-    RagingBear
+    RagingBear,
+    BloodLust
 };
 
 struct CombatState;

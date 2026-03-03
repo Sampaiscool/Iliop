@@ -2,6 +2,8 @@
 #include "../Character/Character.h"
 #include "../Managers/CardFactory.h"
 #include "../Effects/MultiEffect.h"
+#include "../Effects/EffectTypes/Ranger/PredatorInstinct.h"
+#include "../Other/AllStatuses.h"
 
 class CharacterFactory {
 public:
@@ -41,8 +43,13 @@ public:
                 for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Blinding Light"));
                 break;
             case Class::Ranger:
-                stats = CombatState{{20, 20}, {0, 10}, {3, 3}, {0, 2}};
+                stats = CombatState{{25, 25}, {0, 10}, {3, 3}, {0, 2}};
                 transformCorruption = 2; transformTime = 2;
+                for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Primal Arrow"));
+                for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Aim"));
+                for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Arrow Volley"));
+                for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Jump"));
+                for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Metamorphosis"));
                 break;
         }
 
@@ -77,9 +84,18 @@ public:
             }
             case CharacterName::MathewsLift: {
                 displayName = "Mathews Lift";
-                stats.hp.max -= 10; stats.transformThreshold += 2;
-                //stats.onTransform = std::make_unique<>();
-                
+                stats.hp.max -= 5; stats.hp.current = stats.hp.max;
+                stats.transformThreshold += 2;
+                stats.onTransform = std::make_unique<PredatorInstinct>(3);
+                auto multi = std::make_unique<MultiEffect>();
+                auto prowl = std::make_unique<PredatorInstinct>(1);
+                multi->add(std::move(prowl));
+                multi->add(std::make_unique<HealEffect>(1));
+                stats.onCardPlayProc = std::move(multi);
+                stats.passiveValue = 1;
+                // THE COOL PART: Apply Blood Lust when wounded - gives card draw!
+                stats.statuses.push_back(std::make_unique<BloodLustStatus>(99, 1));
+                break;
             }
         }
 
@@ -88,6 +104,16 @@ public:
 
     static std::vector<std::string> getRandomLootOptions(int count) {
         auto keys = CardFactory::getAllAvailableKeys();
+        
+        // Filter out fusion cards from loot!
+        keys.erase(std::remove_if(keys.begin(), keys.end(), [](const std::string& key) {
+            return key == "Divine Arrow" || key == "Void Storm" || 
+                   key == "Beast Rampage" || key == "Cosmic Shield" || 
+                   key == "Blood Frenzy" || key == "Omega Annihilation" ||
+                   key == "Universal Singularity" || key == "Primordial Chaos" ||
+                   key == "Existential Crisis";
+        }), keys.end());
+        
         std::shuffle(keys.begin(), keys.end(), std::mt19937(std::random_device()()));
         if (keys.size() > count) keys.resize(count);
         return keys;

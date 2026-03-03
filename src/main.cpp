@@ -1,6 +1,8 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <optional>
+#include <algorithm>
+#include <vector>
 
 #include "Managers/CardResolver.h"
 #include "Managers/EnemyFactory.h"
@@ -43,6 +45,7 @@ int main() {
     Deck deck;
 
     std::vector<Card> lootOptions;
+    std::vector<size_t> forgeSelectedIndices;
 
     UIRenderer ui;
     ui.loadPlayerTextures();
@@ -246,6 +249,78 @@ int main() {
 
                         ui.resetHPTracking();
 
+                        // Always go to forge after looting!
+                        gameState = GameState::Forge;
+                    }
+                }
+                // FORGE - combine two cards!
+                else if (gameState == GameState::Forge) {
+                    sf::FloatRect continueButton(
+                        sf::Vector2f(window.getSize().x / 2.f - 100.f, window.getSize().y * 0.85f),
+                        sf::Vector2f(200.f, 60.f));
+                    
+                    // Get all cards from permanent collection
+                    auto& allCards = deck.getPermanentCollection();
+                    
+                    for (size_t i = 0; i < allCards.size(); ++i) {
+                        sf::FloatRect cardRect({(float)allCards[i].x, (float)allCards[i].y},
+                                              {(float)allCards[i].w, (float)allCards[i].h});
+                        
+                        if (cardRect.contains(mousePos)) {
+                            // Check if already selected
+                            auto it = std::find(forgeSelectedIndices.begin(), forgeSelectedIndices.end(), i);
+                            if (it != forgeSelectedIndices.end()) {
+                                forgeSelectedIndices.erase(it);
+                            } else if (forgeSelectedIndices.size() < 2) {
+                                forgeSelectedIndices.push_back(i);
+                                
+                                // If 2 selected, create a fusion!
+                                if (forgeSelectedIndices.size() == 2) {
+                                    // Sort indices descending so we can remove from back first
+                                    std::sort(forgeSelectedIndices.begin(), forgeSelectedIndices.end(), std::greater<size_t>());
+                                    
+                                    // Check if BOTH cards are fusions - DOUBLE FUSION!
+                                    bool isDoubleFusion = (allCards[forgeSelectedIndices[0]].name == "Divine Arrow" ||
+                                                           allCards[forgeSelectedIndices[0]].name == "Void Storm" ||
+                                                           allCards[forgeSelectedIndices[0]].name == "Beast Rampage" ||
+                                                           allCards[forgeSelectedIndices[0]].name == "Cosmic Shield" ||
+                                                           allCards[forgeSelectedIndices[0]].name == "Blood Frenzy") &&
+                                                          (allCards[forgeSelectedIndices[1]].name == "Divine Arrow" ||
+                                                           allCards[forgeSelectedIndices[1]].name == "Void Storm" ||
+                                                           allCards[forgeSelectedIndices[1]].name == "Beast Rampage" ||
+                                                           allCards[forgeSelectedIndices[1]].name == "Cosmic Shield" ||
+                                                           allCards[forgeSelectedIndices[1]].name == "Blood Frenzy");
+                                    
+                                    std::string fusionName;
+                                    if (isDoubleFusion) {
+                                        // Double fusion - SUPER WACKY!
+                                        std::vector<std::string> doubleFusionCards = {"Omega Annihilation", "Universal Singularity", "Primordial Chaos", "Existential Crisis"};
+                                        fusionName = doubleFusionCards[rand() % doubleFusionCards.size()];
+                                    } else {
+                                        // Normal fusion
+                                        std::vector<std::string> fusionCards = {"Divine Arrow", "Void Storm", "Beast Rampage", "Cosmic Shield", "Blood Frenzy"};
+                                        fusionName = fusionCards[rand() % fusionCards.size()];
+                                    }
+                                    
+                                    // Add fusion card to draw pile (so you can use it!)
+                                    deck.addCardToDrawPile(CardFactory::create(fusionName));
+                                    
+                                    // Remove the selected cards (highest index first!)
+                                    for (size_t idx : forgeSelectedIndices) {
+                                        if (idx < allCards.size()) {
+                                            allCards.erase(allCards.begin() + idx);
+                                        }
+                                    }
+                                    
+                                    forgeSelectedIndices.clear();
+                                }
+                            }
+                            break;
+                        }
+                    }
+                    
+                    if (continueButton.contains(mousePos)) {
+                        forgeSelectedIndices.clear();
                         gameState = GameState::Combat;
                     }
                 }
@@ -482,6 +557,67 @@ int main() {
             if (hoveredCard) {
                 ui.drawTooltip(window, font, *hoveredCard, mousePos.x, mousePos.y);
             }
+        }
+        // render forge screen
+        else if (gameState == GameState::Forge) {
+            sf::Text title(font, "THE FORGE", (winW / 10));
+            title.setPosition({winW / 2.f - 140.f, winH * 0.1f});
+            title.setFillColor(sf::Color(255, 180, 50));
+            window.draw(title);
+
+            sf::Text subtitle(font, "Click 2 cards to fuse them into something powerful!", (winW / 30));
+            subtitle.setPosition({winW / 2.f - 220.f, winH * 0.18f});
+            subtitle.setFillColor(sf::Color::White);
+            window.draw(subtitle);
+
+            // redner card player collected
+            auto& allCards = deck.getPermanentCollection();
+            int cardW = winW / 10;
+            int cardH = winH / 6;
+
+            // display cards in grid
+            int cols = 8;
+            float startX = winW * 0.05f;
+            float startY = winH * 0.25f;
+            float gap = cardW + 15.f;
+
+            for (size_t i = 0; i < allCards.size(); ++i) {
+                int col = i % cols;
+                int row = i / cols;
+
+                allCards[i].x = startX + col * gap;
+                allCards[i].y = startY + row * (cardH + 30.f);
+                allCards[i].w = cardW;
+                allCards[i].h = cardH;
+
+                // check if card selected
+                bool isSelected = std::find(forgeSelectedIndices.begin(), forgeSelectedIndices.end(), i) != forgeSelectedIndices.end();
+
+                // draw highlight
+                if (isSelected) {
+                    sf::RectangleShape selectionHighlight(sf::Vector2f(cardW + 8.f, cardH + 8.f));
+                    selectionHighlight.setPosition(sf::Vector2f(allCards[i].x - 4.f, allCards[i].y - 4.f));
+                    selectionHighlight.setFillColor(sf::Color::Transparent);
+                    selectionHighlight.setOutlineColor(sf::Color(255, 215, 0)); // Gold
+                    selectionHighlight.setOutlineThickness(4.f);
+                    window.draw(selectionHighlight);
+                }
+
+                allCards[i].draw(window, font, false, playerState);
+            }
+
+            // continue buttin
+            sf::RectangleShape continueButton({200.f, 60.f});
+            continueButton.setPosition({winW / 2.f - 100.f, winH * 0.85f});
+            continueButton.setFillColor(sf::Color(70,70,70));
+            continueButton.setOutlineColor(sf::Color::Black);
+            continueButton.setOutlineThickness(3.f);
+            window.draw(continueButton);
+
+            sf::Text cont(font, "Continue", 30);
+            cont.setPosition({winW / 2.f - 70.f, winH * 0.85f + 15.f});
+            cont.setFillColor(sf::Color::White);
+            window.draw(cont);
         }
         window.display();
     }

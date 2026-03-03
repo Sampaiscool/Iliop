@@ -98,8 +98,8 @@ public:
 class DamageUpStatus : public Status {
 public:
     DamageUpStatus(int dur, int intens) { name = "Damage Up"; duration = dur; intensity = intens; }
-    StatusType getType() const override { return StatusType::DamageDown; }
-    std::string getDescription() const override { return "Deal " + std::to_string(intensity) + " less damage."; }
+    StatusType getType() const override { return StatusType::DamageUp; }
+    std::string getDescription() const override { return "Deal " + std::to_string(intensity) + " more damage."; }
     void onTurnStart(CombatState& owner) override {
         duration--;
     }
@@ -172,7 +172,17 @@ public:
     RagingBearStatus(int dur, int intens) { name = "Raging bear"; duration = dur; intensity = intens; }
     StatusType getType() const override { return StatusType::RagingBear; }
     std::string getDescription() const override {
-        return "If you take damage while you are under 50% HP:\nGain " + std:to_string(intensity) + " Defence Up + Damage Up\nAnd heal " + std::to_string(intensity * 2);
+        return "If you take damage while you are under 50% HP:\nGain " + std::to_string(intensity) + " Defence Up + Damage Up\nAnd heal " + std::to_string(intensity * 2);
+    }
+    void onTurnStart(CombatState& owner) override { duration--; }
+};
+
+class BloodLustStatus : public Status {
+public:
+    BloodLustStatus(int dur, int intens) { name = "Blood Lust"; duration = dur; intensity = intens; }
+    StatusType getType() const override { return StatusType::BloodLust; }
+    std::string getDescription() const override {
+        return "When you play a card while wounded:\nDraw " + std::to_string(intensity) + " cards";
     }
     void onTurnStart(CombatState& owner) override { duration--; }
 };

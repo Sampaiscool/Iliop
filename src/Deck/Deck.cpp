@@ -21,6 +21,14 @@ std::vector<Card>& Deck::getHand() {
     return hand;
 }
 
+std::vector<Card>& Deck::getPermanentCollection() {
+    return permanentCollection;
+}
+
+void Deck::addCardToDrawPile(Card card) {
+    drawPile.push_back(std::move(card));
+}
+
 void Deck::shuffle() {
     std::random_device rd;
     std::mt19937 g(rd());
@@ -56,7 +64,7 @@ void Deck::discardCard(Card& card) {
 // }
 
 void Deck::addCardToPermanentCollection(Card card) {
-    drawPile.push_back(std::move(card));
+    permanentCollection.push_back(std::move(card));
 }
 
 void Deck::discardHand()

@@ -10,6 +10,10 @@ enum class CardType {
     Heal,
     Shield,
 
+    // special
+    Fusion,
+    DoubleFusion,
+
     // ranger
     PrimalArrow,
     Aim,

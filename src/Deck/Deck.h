@@ -20,10 +20,13 @@ public:
     void render(sf::RenderWindow& window, int winW, int winH, const sf::Font& font, const CombatState& player, ParticleSystem& particles);
 
     std::vector<Card>& getHand();
+    std::vector<Card>& getPermanentCollection();
+    void addCardToDrawPile(Card card);
 
 private:
     std::vector<Card> drawPile;
     std::vector<Card> hand;
     std::vector<Card> discardPile;
+    std::vector<Card> permanentCollection;
 };
 

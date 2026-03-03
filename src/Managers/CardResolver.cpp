@@ -40,15 +40,23 @@ bool CardResolver::play(
         }
     }
 
+    if (player.hp.current < player.hp.max) {
+        for (auto& status : player.statuses) {
+            if (status->getType() == StatusType::BloodLust) {
+                deck.drawCard(status->intensity);
+            }
+        }
+    }
+
 
     for (auto it = enemy.statuses.begin(); it != enemy.statuses.end(); ) {
         if ((*it)->getType() == StatusType::VoidMark) {
             (*it)->intensity++;
 
             if ((*it)->intensity >= 5) {
-                enemy.takeDamage(5);                                        // Big damage
-                player.applyStatus(std::make_unique<TrueVoidStatus>(2, 5)); // Big Mana
-                deck.drawCard(5);                                           // Big Hand refill
+                enemy.takeDamage(5);
+                player.applyStatus(std::make_unique<TrueVoidStatus>(2, 5));
+                deck.drawCard(5);
 
                 it = enemy.statuses.erase(it);
                 continue; 

@@ -33,7 +33,7 @@ int CombatState::takeDamage(int amount) {
     hp.current = std::max(0, hp.current - remainingDamage);
     int damageDealt = oldHP - hp.current;
 
-    for (auto$ s : statuses) {
+    for (auto& s : statuses) {
         if (s->name == "Raging Bear") {
             if (hp.current <= (hp.max / 2)) {
                 applyStatus(std::make_unique<DefenceUpStatus>(2, s->intensity));

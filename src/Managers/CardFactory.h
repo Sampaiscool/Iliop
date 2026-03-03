@@ -3,9 +3,25 @@
 #include "../Effects/EffectTypes/DamageEffect.h"
 #include "../Effects/EffectTypes/HealEffect.h"
 #include "../Effects/EffectTypes/ShieldEffect.h"
+#include "../Effects/FusionEffect.h"
+
+// Fusion effects:
+#include "../Effects/EffectTypes/Fusion/DivineArrowFusion.h"
+#include "../Effects/EffectTypes/Fusion/VoidStormFusion.h"
+#include "../Effects/EffectTypes/Fusion/BeastRampageFusion.h"
+#include "../Effects/EffectTypes/Fusion/CosmicShieldFusion.h"
+#include "../Effects/EffectTypes/Fusion/BloodFrenzyFusion.h"
+#include "../Effects/EffectTypes/Fusion/OmegaAnnihilation.h"
+#include "../Effects/EffectTypes/Fusion/UniversalSingularity.h"
+#include "../Effects/EffectTypes/Fusion/PrimordialChaos.h"
+#include "../Effects/EffectTypes/Fusion/ExistentialCrisis.h"
 
 // ranger:
 #include "../Effects/EffectTypes/Ranger/PrimalArrow.h"
+#include "../Effects/EffectTypes/Ranger/Aim.h"
+#include "../Effects/EffectTypes/Ranger/ArrowVolley.h"
+#include "../Effects/EffectTypes/Ranger/Jump.h"
+#include "../Effects/EffectTypes/Ranger/Metamorphosis.h"
 
 // mage:
 #include "../Effects/EffectTypes/Mage/AstralShift.h"
@@ -58,8 +74,11 @@ private:
         {"Phlox's Bloom",   {"Phlox's Bloom", "A powerful floral burst.", 10, 10, 2, CardType::Damage, CardTheme::Red}},
 
         // ranger
-        {"Primal Arrow",    {"Primal Arrow", "Deal damage and transform\n(deal damage 5 times (can bleed))", 2, 2, 1, CardType::PrimalArrow, CardTheme::Red}},
-        {"Aim",             {"Aim", "Gain Locked and heal\n(Instaed gain Raging Bear and inflict bleed)", 2, 1, 1, CardType::Aim, CardTheme::Gray}}
+        {"Primal Arrow",    {"Primal Arrow", "Deal damage and transform\n(deal damage 5 times (can bleed))", 1, 1, 1, CardType::PrimalArrow, CardTheme::Red}},
+        {"Aim",             {"Aim", "Gain Locked and heal\n(Instead gain Raging Bear and inflict bleed)", 2, 1, 1, CardType::Aim, CardTheme::Gray}},
+        {"Arrow Volley",    {"Arrow Volley", "Fire a volley of arrows.\nTransformed: More hits + chance to bleed", 2, 1, 1, CardType::ArrowVolley, CardTheme::Red}},
+        {"Jump",            {"Jump", "Gain shield and Defence Up.\nTransformed: Deal damage + gain Defence Up", 4, 3, 1, CardType::Jump, CardTheme::Teal}},
+        {"Metamorphosis",  {"Metamorphosis", "Transform into beast form.\nTransformed: Extend transform + heal", 1, 2, 1, CardType::Metamorphosis, CardTheme::Green}},
 
         // mage
         {"Unstable Volley", {"Unstable Volley", "Deal damage + gain 2 corruption, \nThen if you are at max: transform\n(Gain Overload)", 2, 4, 1, CardType::UnstableVolley, CardTheme::Purple}},
@@ -80,7 +99,20 @@ private:
         {"Blinding Light",  {"Blinding Light", "Deal damage and apply Damage Down.\nIf target has 2+ statuses:\nstun and damage becomes increased.", 4, 6, 1, CardType::BlindingLight, CardTheme::Gold}},
         {"Condemn",         {"Condemn", "Apply Bleed and Defense Down.\nIf transformed: give Judged + Bleed self.", 4, 4, 1, CardType::Condemn, CardTheme::Gold}},
         {"Purge",           {"Purge", "Deal damage for every unique\nstatus effect on the target.", 3, 8, 2, CardType::Purge, CardTheme::Gold}},
-        {"Ritual",          {"Ritual", "Transform (Gain blessed)", 2, 4, 2, CardType::Ritual, CardTheme::Gold}}
+        {"Ritual",          {"Ritual", "Transform (Gain blessed)", 2, 4, 2, CardType::Ritual, CardTheme::Gold}},
+
+        // FORGE FUSIONS - combine two cards!
+        {"Divine Arrow",    {"Divine Arrow", "FUSION: Holy damage + Heal\nDeal damage and restore health!", 5, 5, 1, CardType::Fusion, CardTheme::Gold}},
+        {"Void Storm",      {"Void Storm", "FUSION: Arcane + Void\nDeal massive damage + gain corruption!", 8, 12, 2, CardType::Fusion, CardTheme::Purple}},
+        {"Beast Rampage",   {"Beast Rampage", "FUSION: Beast + Strike\nDeal big damage + gain Defence Up!", 10, 8, 2, CardType::Fusion, CardTheme::Red}},
+        {"Cosmic Shield",   {"Cosmic Shield", "FUSION: Arcane + Iron\nGain massive shield + True Void!", 8, 8, 1, CardType::Fusion, CardTheme::Blue}},
+        {"Blood Frenzy",    {"Blood Frenzy", "FUSION: Bleed + Attack\nDeal damage + apply bleed + heal!", 6, 10, 1, CardType::Fusion, CardTheme::Red}},
+        
+        // DOUBLE FUSIONS - fuse 2 fusions for WACKY results!
+        {"Omega Annihilation", {"Omega Annihilation", "DOUBLE FUSION: THE END\nDeal damage to ALL enemies + apply ALL statuses + transform!", 20, 20, 3, CardType::DoubleFusion, CardTheme::Gold}},
+        {"Universal Singularity", {"Universal Singularity", "DOUBLE FUSION: BLACK HOLE\nApply Void Mark x10 + True Void x10 + Corruption + Overload!", 15, 15, 2, CardType::DoubleFusion, CardTheme::Purple}},
+        {"Primordial Chaos", {"Primordial Chaos", "DOUBLE FUSION: PURE CHAOS\n50% chance: Double damage OR Full heal OR Full shield OR Transform!", 25, 25, 2, CardType::DoubleFusion, CardTheme::Red}},
+        {"Existential Crisis", {"Existential Crisis", "DOUBLE FUSION: REALITY BREAK\nIf enemy > 50% HP: 999 damage! Else: Heal to full + Max shield!", 50, 50, 4, CardType::DoubleFusion, CardTheme::Teal}}
     };
 
 public:
@@ -101,10 +133,28 @@ public:
             case CardType::Damage:        card.effect = std::make_unique<DamageEffect>();         break;
             case CardType::Heal:          card.effect = std::make_unique<HealEffect>();           break;
             case CardType::Shield:        card.effect = std::make_unique<ShieldEffect>();         break;
+            case CardType::Fusion:
+                if (card.name == "Divine Arrow") card.effect = std::make_unique<DivineArrowFusion>();
+                else if (card.name == "Void Storm") card.effect = std::make_unique<VoidStormFusion>();
+                else if (card.name == "Beast Rampage") card.effect = std::make_unique<BeastRampageFusion>();
+                else if (card.name == "Cosmic Shield") card.effect = std::make_unique<CosmicShieldFusion>();
+                else if (card.name == "Blood Frenzy") card.effect = std::make_unique<BloodFrenzyFusion>();
+                else card.effect = std::make_unique<FusionEffect>();
+                break;
+            case CardType::DoubleFusion:
+                if (card.name == "Omega Annihilation") card.effect = std::make_unique<OmegaAnnihilation>();
+                else if (card.name == "Universal Singularity") card.effect = std::make_unique<UniversalSingularity>();
+                else if (card.name == "Primordial Chaos") card.effect = std::make_unique<PrimordialChaos>();
+                else if (card.name == "Existential Crisis") card.effect = std::make_unique<ExistentialCrisis>();
+                else card.effect = std::make_unique<FusionEffect>();
+                break;
 
             // ranger
             case CardType::PrimalArrow:   card.effect = std::make_unique<PrimalArrowEffect>();    break;
-            case CardType::Aim:   card.effect = std::make_unique<AimEffect>();    break;
+            case CardType::Aim:           card.effect = std::make_unique<Aim>();               break;
+            case CardType::ArrowVolley:    card.effect = std::make_unique<ArrowVolley>();        break;
+            case CardType::Jump:           card.effect = std::make_unique<Jump>();               break;
+            case CardType::Metamorphosis:  card.effect = std::make_unique<Metamorphosis>();      break;
 
             // mage
             case CardType::UnstableVolley: card.effect = std::make_unique<UnstableVolley>(); break;
@@ -152,7 +202,7 @@ public:
             case CardTheme::Blue:   return sf::Color(50, 50, 200);
             case CardTheme::Green:  return sf::Color(50, 180, 50);
             case CardTheme::Purple: return sf::Color(140, 50, 200);
-            case CardTheme::Yellow: return sf::Color(255, 255, 102);
+            case CardTheme::Gold:   return sf::Color(255, 215, 0);
             default: return sf::Color::White;
         }
     }

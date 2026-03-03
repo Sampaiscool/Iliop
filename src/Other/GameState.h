@@ -7,6 +7,7 @@ enum class GameState {
     Combat,
     Victory,
     Looting,
+    Forge,
     GameOver
 };
 
