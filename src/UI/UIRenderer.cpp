@@ -80,14 +80,35 @@ void drawPlayerPortrait(sf::RenderWindow& window, const sf::Font& font, const Ch
 
 static const Status* drawStatusIcons(sf::RenderWindow& window, const sf::Font& font,
     const std::vector<std::unique_ptr<Status>>& statuses,
-    int x, int y, sf::Vector2f mousePos, const std::map<StatusType, sf::Texture>& textures)
+    int x, int y, sf::Vector2f mousePos, const std::map<StatusType, sf::Texture>& textures,
+    int scrollOffset = 0)
 {
     float iconSize = (window.getSize().x / 20);
     float spacing = iconSize / 4;
     const Status* hoveredStatus = nullptr;
+    const int MAX_VISIBLE = 4;
 
-    for (size_t i = 0; i < statuses.size(); ++i) {
-        sf::Vector2f pos(static_cast<float>(x) + (i * (iconSize + spacing)), static_cast<float>(y));
+    // draw container background if there are statuses
+    if (!statuses.empty()) {
+        float containerW = (iconSize + spacing) * MAX_VISIBLE - spacing;
+        sf::RectangleShape container(sf::Vector2f(containerW, iconSize + 4.f));
+        container.setPosition(sf::Vector2f(static_cast<float>(x) - 2.f, static_cast<float>(y) - 2.f));
+        container.setFillColor(sf::Color(30, 30, 30));
+        container.setOutlineColor(sf::Color(100, 100, 100));
+        container.setOutlineThickness(1.f);
+        window.draw(container);
+    }
+
+    // clamp scroll offset
+    int maxScroll = static_cast<int>(statuses.size()) - MAX_VISIBLE;
+    if (maxScroll < 0) maxScroll = 0;
+    int clamped = (scrollOffset < 0) ? 0 : ((scrollOffset > maxScroll) ? maxScroll : scrollOffset);
+
+    // draw only MAX_VISIBLE icons starting from clamped scroll offset
+    int end = std::min(static_cast<int>(statuses.size()), clamped + MAX_VISIBLE);
+    for (int i = clamped; i < end; ++i) {
+        int displayPos = i - clamped;
+        sf::Vector2f pos(static_cast<float>(x) + (displayPos * (iconSize + spacing)), static_cast<float>(y));
         sf::RectangleShape box(sf::Vector2f(iconSize, iconSize));
         box.setPosition(pos);
 
@@ -208,13 +229,16 @@ void UIRenderer::render(sf::RenderWindow& window,
     int playerStatusX = x;
     int playerStatusY = corruptionY - barHeight - (winH / 8); 
     const Status* hovered = drawStatusIcons(window, font, playerState.statuses, 
-                                           playerStatusX, playerStatusY, mousePos, statusTextures);
+                                           playerStatusX, playerStatusY, mousePos, statusTextures,
+                                           playerStatusScroll);
 
     // enemy status
     int enemyStatusX = enemyX;
     int enemyStatusY = enemyY - (enemyY / 2 - 10);
     const Status* enemyHovered = drawStatusIcons(window, font, enemyState.statuses, 
-                                                enemyStatusX, enemyStatusY, mousePos, statusTextures);
+                                                enemyStatusX, enemyStatusY, mousePos, statusTextures,
+                                                enemyStatusScroll);
+
 
     // end turn button
     int endX = x + barWidth - btnW;
@@ -412,4 +436,17 @@ sf::FloatRect UIRenderer::getEndTurnBounds() const {
 
 sf::FloatRect UIRenderer::getTransformBounds() const {
     return transformBounds;
+}
+
+void UIRenderer::scrollPlayerStatuses(int delta) {
+    playerStatusScroll += delta;
+}
+
+void UIRenderer::scrollEnemyStatuses(int delta) {
+    enemyStatusScroll += delta;
+}
+
+void UIRenderer::resetStatusScrolls() {
+    playerStatusScroll = 0;
+    enemyStatusScroll = 0;
 }

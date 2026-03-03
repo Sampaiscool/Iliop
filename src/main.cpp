@@ -83,6 +83,19 @@ int main() {
                     corruptionParticles.setScale(scale);
             }
 
+            // mouse wheel scroll for statuses
+            if (auto wheel = event.getIf<sf::Event::MouseWheelScrolled>()) {
+                if (gameState == GameState::Combat) {
+                    if (wheel->delta > 0) {
+                        ui.scrollPlayerStatuses(-1);
+                        ui.scrollEnemyStatuses(-1);
+                    } else {
+                        ui.scrollPlayerStatuses(1);
+                        ui.scrollEnemyStatuses(1);
+                    }
+                }
+            }
+
             // mouse wordt geklikt
             if (auto mouse = event.getIf<sf::Event::MouseButtonPressed>()) {
                 if (mouse->button != sf::Mouse::Button::Left)
@@ -254,6 +267,7 @@ int main() {
                         enemy.rollIntent(); // prepare the new enemy's first intent
 
                         ui.resetHPTracking();
+                        ui.resetStatusScrolls();
 
                         // Always go to forge after looting!
                         gameState = GameState::Forge;

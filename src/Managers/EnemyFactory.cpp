@@ -3,41 +3,30 @@
 
 Enemy EnemyFactory::create(int floor)
 {
-    // Based on Doobies Gist enemies
-    // Floor 1-3: Difficulty 1 enemies
-    // Floor 4-6: Difficulty 2 enemies  
-    // Floor 7-9: Difficulty 3 enemies
-    // Floor 10+: Difficulty 4 / Bosses
-    
     std::vector<EnemyType> pool;
-    
+
     if (floor <= 3) {
-        // Difficulty 1 enemies - easier
         pool = {EnemyType::MisterEraser, EnemyType::LittleGremlin, EnemyType::AngerBot, EnemyType::Puth};
     } else if (floor <= 6) {
-        // Difficulty 2 enemies - medium
         pool = {EnemyType::FatGremlin, EnemyType::Bungus, EnemyType::CultistMember, EnemyType::MagicSpright};
     } else if (floor <= 9) {
-        // Difficulty 3 enemies - harder
         pool = {EnemyType::MagicSpright, EnemyType::Lihm, EnemyType::Nutou, EnemyType::MushroomMan};
     } else {
-        // Difficulty 4 enemies - hardest + bosses
         pool = {EnemyType::FatedTraveler, EnemyType::Kazan, EnemyType::DeathMarcher, EnemyType::Biyumi};
     }
-    
-    // Pick random enemy from pool
+    // pick enemy from floor
     int idx = rand() % pool.size();
     EnemyType chosenType = pool[idx];
-    
-    // Set stats based on enemy type and floor scaling
+
+    // set stats based on floor
     int hp = 15;
     int shield = 5;
     int mana = 1;
     int corruption = 10;
-    
-    // Scale with floor
+
+    // scale with floor
     float scale = 1.0f + (floor * 0.15f);
-    
+
     switch (chosenType) {
         case EnemyType::MisterEraser:
             hp = 12; shield = 5; mana = 1; corruption = 10;
@@ -94,10 +83,9 @@ Enemy EnemyFactory::create(int floor)
             hp = 15; shield = 5; mana = 1; corruption = 10;
             break;
     }
-    
-    // Apply floor scaling
+    // apply floor scaling
     hp = (int)(hp * scale);
     shield = (int)(shield * scale);
-    
+
     return Enemy(hp, shield, mana, corruption, chosenType);
 }

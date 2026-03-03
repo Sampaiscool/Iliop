@@ -9,16 +9,12 @@
 #include "../Effects/EffectTypes/ShieldEffect.h"
 #include "../Effects/MultiEffect.h"
 
-// enemy types are driven by the Doobies Gist, plus additional custom creations
-// when expanding this list, be sure to update Enemy::rollIntent and EnemyFactory
 enum class EnemyType {
-    // early floors
     MisterEraser,
     LittleGremlin,
     AngerBot,
     Puth,
 
-    // mid floors
     FatGremlin,
     Bungus,
     CultistMember,
@@ -27,13 +23,11 @@ enum class EnemyType {
     Nutou,
     MushroomMan,
 
-    // endgame / bosses
     FatedTraveler,
     Kazan,
     DeathMarcher,
     Biyumi,
 
-    // original custom enemies
     Menta,
     CursedKing,
     VoidSpider,

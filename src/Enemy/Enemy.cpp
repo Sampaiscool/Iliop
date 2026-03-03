@@ -1,6 +1,10 @@
 #include "Enemy.h"
 #include "../Other/AllStatuses.h"
 #include "../Effects/Effect.h"
+#include "../Effects/EffectTypes/Enemy/EnemyPoisonStrike.h"
+#include "../Effects/EffectTypes/Enemy/EnemySelfBuff.h"
+#include "../Effects/EffectTypes/Enemy/EnemyWeakening.h"
+#include "../Effects/EffectTypes/Enemy/EnemyDefensiveStrike.h"
 #include <map>
 #include <string>
 
@@ -147,7 +151,11 @@ void Enemy::rollIntent()
 
         case EnemyType::CultistMember:
         {
-            intent = std::make_unique<DamageEffect>(8);
+            // cultists buff themselves while attacking
+            auto multi = std::make_unique<MultiEffect>();
+            multi->add(std::make_unique<DamageEffect>(8));
+            multi->add(std::make_unique<ShieldEffect>(4));
+            intent = std::move(multi);
             currentIntent = EnemyIntent::Attack;
             intentValue = 8;
             break;
@@ -155,15 +163,26 @@ void Enemy::rollIntent()
 
         case EnemyType::MagicSpright:
         {
-            intent = std::make_unique<DamageEffect>(6);
-            currentIntent = EnemyIntent::Attack;
-            intentValue = 6;
+            // spirits alternate between attacking and buffing
+            if (rand() % 2 == 0) {
+                intent = std::make_unique<DamageEffect>(6);
+                currentIntent = EnemyIntent::Attack;
+                intentValue = 6;
+            } else {
+                intent = std::make_unique<ShieldEffect>(8);
+                currentIntent = EnemyIntent::Block;
+                intentValue = 8;
+            }
             break;
         }
 
         case EnemyType::Lihm:
         {
-            intent = std::make_unique<DamageEffect>(9);
+            // lihm is balanced attack and defense
+            auto multi = std::make_unique<MultiEffect>();
+            multi->add(std::make_unique<DamageEffect>(9));
+            multi->add(std::make_unique<ShieldEffect>(3));
+            intent = std::move(multi);
             currentIntent = EnemyIntent::Attack;
             intentValue = 9;
             break;
@@ -214,19 +233,10 @@ void Enemy::rollIntent()
         }
         case EnemyType::VoidSpider:
         {
-            // 70% chance attack, 30% debuff
-            if (rand() % 100 < 70) {
-                intent = std::make_unique<DamageEffect>(8);
-                currentIntent = EnemyIntent::Attack;
-                intentValue = 8;
-            } else {
-                auto multi = std::make_unique<MultiEffect>();
-                multi->add(std::make_unique<DamageEffect>(3));
-                multi->add(std::make_unique<DamageEffect>(3));
-                intent = std::move(multi);
-                currentIntent = EnemyIntent::Debuff;
-                intentValue = 3;
-            }
+            // poisonous spider strikes and applies bleed
+            intent = std::make_unique<EnemyPoisonStrike>(8);
+            currentIntent = EnemyIntent::Attack;
+            intentValue = 8;
             break;
         }
         
@@ -251,7 +261,8 @@ void Enemy::rollIntent()
         
         case EnemyType::ShadowAssassin:
         {
-            intent = std::make_unique<DamageEffect>(15);
+            // weakens the target while striking
+            intent = std::make_unique<EnemyWeakening>(15);
             currentIntent = EnemyIntent::Attack;
             intentValue = 15;
             break;
@@ -259,10 +270,8 @@ void Enemy::rollIntent()
         
         case EnemyType::BloodGolem:
         {
-            auto multi = std::make_unique<MultiEffect>();
-            multi->add(std::make_unique<DamageEffect>(8));
-            multi->add(std::make_unique<HealEffect>(8));
-            intent = std::move(multi);
+            // Heals itself and gains defense buff
+            intent = std::make_unique<EnemySelfBuff>(8);
             currentIntent = EnemyIntent::Heal;
             intentValue = 8;
             break;
@@ -270,7 +279,8 @@ void Enemy::rollIntent()
         
         case EnemyType::ArcaneGolem:
         {
-            intent = std::make_unique<ShieldEffect>(15);
+            // Shields heavily and weakens player defence
+            intent = std::make_unique<EnemyDefensiveStrike>(15);
             currentIntent = EnemyIntent::Block;
             intentValue = 15;
             break;
