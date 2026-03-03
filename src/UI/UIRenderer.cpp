@@ -120,7 +120,8 @@ void UIRenderer::render(sf::RenderWindow& window,
     const CombatState& enemyState,
     int winW,
     int winH,
-    const sf::Font& font)
+    const sf::Font& font,
+    const std::string& enemyIntentDescription)
 {
     int barWidth  = winW / 4;
     int barHeight = winH / 25;
@@ -160,6 +161,13 @@ void UIRenderer::render(sf::RenderWindow& window,
 
     // enemy shield
     drawText(window, font, std::to_string(enemyState.shield.current), enemyX + (winW / 7), enemyY + 2, enemyBarHeight * 0.6, sf::Color::White);
+
+    // intent label (draw above enemy health bar)
+    if (!enemyIntentDescription.empty()) {
+        drawText(window, font, enemyIntentDescription,
+                 enemyX, enemyY - enemyBarHeight - 5,
+                 enemyBarHeight * 0.6, sf::Color::Yellow);
+    }
 
     int btnW = winW / 10;
     int btnH = barHeight * 2;

@@ -18,7 +18,15 @@ struct FloatingText {
 
 class UIRenderer {
 public:
-    void render(sf::RenderWindow& window, const Character& player, const CombatState& playerState, const CombatState& enemyState, int winW, int winH, const sf::Font& font);
+    // Added enemyIntentDescription so the UI can display what the foe plans to do
+    void render(sf::RenderWindow& window,
+                const Character& player,
+                const CombatState& playerState,
+                const CombatState& enemyState,
+                int winW,
+                int winH,
+                const sf::Font& font,
+                const std::string& enemyIntentDescription);
     void drawTooltip(sf::RenderWindow& window, const sf::Font& font, const Card& card, float mouseX, float mouseY);
 
     void loadStatusTextures();

@@ -57,6 +57,8 @@ int main() {
     int currentFloor = 1;
 
     Enemy enemy = EnemyFactory::create(currentFloor);
+    // first intent roll so the UI shows something before the enemy acts
+    enemy.rollIntent();
 
     while (window.isOpen()) {
         float dt = particleClock.restart().asSeconds();
@@ -177,8 +179,7 @@ int main() {
                 // combat
                 else if (gameState == GameState::Combat) {
 
-                    enemy.rollIntent();
-
+                    // removed rolling every click; intent is handled on turn boundaries
                     if (turnState == TurnState::PlayerTurn) {
                         // end turn button
                         if (ui.getEndTurnBounds().contains(mousePos)) {
@@ -225,7 +226,11 @@ int main() {
                                               {(float)lootOptions[i].w, (float)lootOptions[i].h});
 
                         if (cardRect.contains(mousePos)) {
+                            // capture name before moving out of the vector slot
+                            std::string chosenName = lootOptions[i].name;
                             deck.addCardToPermanentCollection(std::move(lootOptions[i]));
+                            // also give a fresh copy to the draw pile so you can draw it
+                            deck.addCardToDrawPile(CardFactory::create(chosenName));
                             lootOptions.clear();
                             break;
                         }
@@ -246,6 +251,7 @@ int main() {
                         playerState.isTransformed = false;
 
                         enemy = EnemyFactory::create(currentFloor);
+                        enemy.rollIntent(); // prepare the new enemy's first intent
 
                         ui.resetHPTracking();
 
@@ -343,13 +349,17 @@ int main() {
 
             if (enemy.getState().hp.current > 0 && !isStunned) {
                 enemy.playTurn(playerState);
-            } else if (isStunned) {
-                float currentW = static_cast<float>(window.getSize().x);
-                float currentH = static_cast<float>(window.getSize().y);
+            } else {
+                if (isStunned) {
+                    float currentW = static_cast<float>(window.getSize().x);
+                    float currentH = static_cast<float>(window.getSize().y);
 
-                sf::Vector2f enemyPos(currentW / 2.f, currentH / 4.f);
+                    sf::Vector2f enemyPos(currentW / 2.f, currentH / 4.f);
+                    ui.spawnFCT(enemyPos, "Stunned!", sf::Color::Yellow, font);
 
-                ui.spawnFCT(enemyPos, "Stunned!", sf::Color::Yellow, font);
+                    // still pick a new intent while stunned so the next player turn shows it
+                    enemy.rollIntent();
+                }
             }
 
             enemy.getState().updateStatuses();
@@ -482,7 +492,8 @@ int main() {
             deck.render(window, winW, winH, font, playerState, corruptionParticles);
 
             if (player.has_value()) {
-                ui.render(window, *player, playerState, enemy.getState(), winW, winH, font);
+                ui.render(window, *player, playerState, enemy.getState(), winW, winH, font,
+                          enemy.getIntentDescription());
             }
 
             sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
