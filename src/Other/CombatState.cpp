@@ -7,7 +7,7 @@
 CombatState::CombatState() : transformThreshold(0), transformTime(0), transformGain(0) {}
 
 CombatState::CombatState(Resource h, Resource s, Resource m, Resource c)
-    : hp(h), shield(s), mana(m), corruption(c), 
+    : hp(h), shield(s), mana(m), corruption(c),
       transformThreshold(0), transformTime(0), transformGain(0) {}
 
 CombatState::~CombatState() = default;
@@ -17,6 +17,7 @@ int CombatState::takeDamage(int amount) {
     int finalDamage = amount;
 
     for (auto& s : statuses) {
+        if (s->name == "Death Mark") finalDamage = s->intensity * 2;
         if (s->name == "Void Mark") finalDamage += s->intensity;
         if (s->name == "Defence Up") finalDamage = std::max(0, finalDamage - s->intensity);
         if (s->name == "Defence Down") finalDamage += s->intensity;
@@ -27,11 +28,17 @@ int CombatState::takeDamage(int amount) {
         int absorbed = std::min(shield.current, remainingDamage);
         shield.current -= absorbed;
         remainingDamage -= absorbed;
+        if (absorbed > 0) damageEvents.emplace_back(absorbed, false);
     }
 
     int oldHP = hp.current;
     hp.current = std::max(0, hp.current - remainingDamage);
     int damageDealt = oldHP - hp.current;
+
+    // add damage event
+    if (damageDealt > 0) {
+        damageEvents.emplace_back(damageDealt, false);
+    }
 
     for (auto& s : statuses) {
         if (s->name == "Raging Bear") {
@@ -64,14 +71,22 @@ int CombatState::heal(int amount) {
     if (amount <= 0) return 0;
     int oldHP = hp.current;
     hp.current = std::min(hp.max, hp.current + amount);
-    return hp.current - oldHP;
+    int healed = hp.current - oldHP;
+    if (healed > 0) {
+        damageEvents.emplace_back(healed, true);
+    }
+    return healed;
 }
 
 int CombatState::addShield(int amount) {
     if (amount <= 0) return 0;
     int oldShield = shield.current;
     shield.current = std::min(shield.max, shield.current + amount);
-    return shield.current - oldShield;
+    int gained = shield.current - oldShield;
+    if (gained > 0) {
+        damageEvents.emplace_back(gained, false); // Show shield as damage-type (blue)
+    }
+    return gained;
 }
 
 void CombatState::applyStatus(std::unique_ptr<Status> newStatus) {

@@ -2,10 +2,17 @@
 #include "Resource.h"
 #include <memory>
 #include <vector>
+#include <utility>
 
 // forward Declarations
 class Status;
 class Effect;
+
+struct DamageEvent {
+    int amount;
+    bool isHeal;
+    DamageEvent(int amt, bool heal) : amount(amt), isHeal(heal) {}
+};
 
 struct CombatState {
     Resource hp;
@@ -22,6 +29,9 @@ struct CombatState {
     int passiveValue = 0;
 
     std::vector<std::unique_ptr<Status>> statuses;
+    
+    // Queue of damage/heal events to show as floating text
+    mutable std::vector<DamageEvent> damageEvents;
 
     // need this for forward declerations
     CombatState();
@@ -44,4 +54,7 @@ struct CombatState {
     int getZombieArmyIntensity() const;
     int getSkeletonArmyIntensity() const;
     int getSoulFragmentCount() const;
+    
+    void addDamageEvent(int amount, bool isHeal);
+    void clearDamageEvents() const { damageEvents.clear(); }
 };

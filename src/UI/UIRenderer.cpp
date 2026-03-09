@@ -205,23 +205,67 @@ void UIRenderer::render(sf::RenderWindow& window,
         return;
     }
 
-    // detects player hp changes
-    if (playerState.hp.current != lastPlayerHP) {
-        int diff = playerState.hp.current - lastPlayerHP;
-        sf::Color color = (diff > 0) ? sf::Color::Green : sf::Color::Red;
-        std::string text = (diff > 0) ? "+" + std::to_string(diff) : std::to_string(diff);
-        spawnFCT(lastPlayerBarPos, text, color, font);
-        lastPlayerHP = playerState.hp.current;
+    // Render damage events from CombatState - one popup per takeDamage/heal call
+    // Player damage events
+    for (const auto& evt : playerState.damageEvents) {
+        sf::Color color;
+        std::string text;
+        if (evt.isHeal) {
+            color = sf::Color(100, 255, 100); // Green for heal
+            text = "+" + std::to_string(evt.amount);
+        } else {
+            color = sf::Color(255, 100, 100); // Red for damage
+            text = "-" + std::to_string(evt.amount);
+        }
+        // Random offset for each event
+        float offsetX = (rand() % 30 - 15) * 1.f;
+        float offsetY = (rand() % 20 - 10) * 1.f;
+        sf::Vector2f pos = lastPlayerBarPos;
+        pos.x += offsetX;
+        pos.y += offsetY;
+        
+        // Scale size by damage amount (base 20, +2 per damage, max 60)
+        int charSize = std::min(60, 20 + evt.amount * 3);
+        sf::Text fctText(font, sf::String(text), static_cast<unsigned int>(charSize));
+        fctText.setFillColor(color);
+        fctText.setOutlineColor(sf::Color::Black);
+        fctText.setOutlineThickness(1.f);
+        
+        floatingTexts.push_back({fctText, pos, color, 0.8f});
     }
+    playerState.clearDamageEvents();
+    
+    // Enemy damage events
+    for (const auto& evt : enemyState.damageEvents) {
+        sf::Color color;
+        std::string text;
+        if (evt.isHeal) {
+            color = sf::Color(100, 255, 100);
+            text = "+" + std::to_string(evt.amount);
+        } else {
+            color = sf::Color(255, 100, 100);
+            text = "-" + std::to_string(evt.amount);
+        }
+        float offsetX = (rand() % 30 - 15) * 1.f;
+        float offsetY = (rand() % 20 - 10) * 1.f;
+        sf::Vector2f pos = lastEnemyBarPos;
+        pos.x += offsetX;
+        pos.y += offsetY;
+        
+        // Scale size by damage amount
+        int charSize = std::min(60, 20 + evt.amount * 3);
+        sf::Text fctText(font, sf::String(text), static_cast<unsigned int>(charSize));
+        fctText.setFillColor(color);
+        fctText.setOutlineColor(sf::Color::Black);
+        fctText.setOutlineThickness(1.f);
+        
+        floatingTexts.push_back({fctText, pos, color, 0.8f});
+    }
+    enemyState.clearDamageEvents();
 
-    // same goes for the enemy
-    if (enemyState.hp.current != lastEnemyHP) {
-        int diff = enemyState.hp.current - lastEnemyHP;
-        sf::Color color = (diff > 0) ? sf::Color::Green : sf::Color::Red;
-        std::string text = (diff > 0) ? "+" + std::to_string(diff) : std::to_string(diff);
-        spawnFCT(lastEnemyBarPos, text, color, font);
-        lastEnemyHP = enemyState.hp.current;
-    }
+    // Update HP tracking after rendering events
+    lastPlayerHP = playerState.hp.current;
+    lastEnemyHP = enemyState.hp.current;
 
     // get thah mouse position
     sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
@@ -288,23 +332,17 @@ void UIRenderer::render(sf::RenderWindow& window,
     }
 }
 
-void UIRenderer::spawnFCT(sf::Vector2f pos, std::string str, sf::Color color, const sf::Font& font) {
-    FloatingText ft{
-        .text = sf::Text(font, sf::String(str), 24),
-        .position = pos,
-        .color = color,
-        .lifetime = 1.0f
-    };
-
-    ft.text.setFillColor(color);
-    ft.text.setOutlineColor(sf::Color::Black);
-    ft.text.setOutlineThickness(2.f);
-
+void UIRenderer::spawnFCT(sf::Vector2f pos, std::string str, sf::Color color, const sf::Font& font, int charSize) {
+    sf::Text txt(font, sf::String(str), static_cast<unsigned int>(charSize > 0 ? charSize : 24));
+    txt.setFillColor(color);
+    txt.setOutlineColor(sf::Color::Black);
+    txt.setOutlineThickness(2.f);
+    
     // apply offset
     float offsetX = static_cast<float>((rand() % 40) - 20);
-    ft.position += sf::Vector2f(offsetX, -20.f);
-
-    floatingTexts.push_back(std::move(ft));
+    pos += sf::Vector2f(offsetX, -20.f);
+    
+    floatingTexts.push_back({txt, pos, color, 1.0f});
 }
 
 void UIRenderer::updateAndDrawFCT(sf::RenderWindow& window, float dt) {

@@ -15,16 +15,16 @@ Start of each turn you regain all your mana and 4 new cards
 
 
 TODO:
-    - Update game loop to -> Start - Fight enemy - Collect cards - Fight enemy - ??? --- Fight boss
+    - Update game loop to -> Start - Fight enemy - Collect cards - Fight enemy - ??? --- Fight boss X
     - Class selection and custom deck per class   X
     - Unique characters wich can be merged with a class   X
     - Deck that can be modified easy   X
     - More EffectTypes   X
-    - More Enemies
+    - More Enemies X
     - Card corruption logic   X
     - Upgrades(?)
-    - Custom events between fighting enemies and collecting cards(?)
-    - Update UI and make actual sprites
+    - Custom events between fighting enemies and collecting cards(?) X
+    - Update UI and make actual sprites X
 
 
 Classes:
@@ -36,3 +36,9 @@ Classes:
           While not transformed deal very little damage, if transformed lose most healing and deal more damage,
           Corruption cards transform him, but also deal damage to him.
     - Ranger:
+    - Necromancer:
+    - Alchemist:
+          Weak initialy, very strong corruption effects,
+          Auto transform based on reactions,
+          Cards that create other elements,
+          Mix elements to create reactions that also create actual effects,

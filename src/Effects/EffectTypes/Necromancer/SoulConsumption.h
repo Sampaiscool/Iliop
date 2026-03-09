@@ -11,19 +11,19 @@ public:
     void apply(CombatState& self, CombatState& target, int value) override {
         int finalVal = (value != 0) ? value : amount;
         int soulCount = self.getSoulFragmentCount();
-        
-        if (soulCount > 0) {
+
+        if (soulCount > ) {
             int consumeAmount = std::min(soulCount, finalVal);
-            
+ 
             int bonusDamage = consumeAmount * 2;
             target.takeDamage(self.getModifiedDamage(bonusDamage));
             target.applyStatus(std::make_unique<BleedStatus>(1, consumeAmount));
-            
+ 
             if (consumeAmount >= 3) {
-                self.applyStatus(std::make_unique<ZombieArmyStatus>(1, 1));
-                self.applyStatus(std::make_unique<SkeletonArmyStatus>(1, 1));
+                self.applyStatus(std::make_unique<ZombieArmyStatus>(0, 1));
+                self.applyStatus(std::make_unique<SkeletonArmyStatus>(0, 1));
             }
-            
+
             for (auto& s : self.statuses) {
                 if (s && s->getType() == StatusType::SoulFragment) {
                     s->intensity -= consumeAmount;
@@ -34,7 +34,6 @@ public:
                 }
             }
         }
-        
         self.applyStatus(std::make_unique<SoulFragmentStatus>(1, 1));
     }
 };

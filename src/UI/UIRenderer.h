@@ -13,7 +13,7 @@ struct FloatingText {
     sf::Text text;
     sf::Vector2f position;
     sf::Color color;
-    float lifetime = 0.5f;
+    float lifetime;
 };
 
 class UIRenderer {
@@ -40,7 +40,7 @@ public:
         (void)portraitTextures[CharacterName::Vortex].loadFromFile("../assets/portraits/VortexPortrait.png");
     }
 
-    void spawnFCT(sf::Vector2f pos, std::string str, sf::Color color, const sf::Font& font);
+    void spawnFCT(sf::Vector2f pos, std::string str, sf::Color color, const sf::Font& font, int charSize = 24);
     void updateAndDrawFCT(sf::RenderWindow& window, float dt);
     void resetHPTracking();
 

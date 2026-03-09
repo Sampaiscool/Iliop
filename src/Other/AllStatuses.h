@@ -220,10 +220,10 @@ public:
 
 class SoulFragmentStatus : public Status {
 public:
-    SoulFragmentStatus(int dur, int intens) { 
-        name = "Soul Fragment"; 
-        duration = dur; 
-        intensity = intens; 
+    SoulFragmentStatus(int dur, int intens) {
+        name = "Soul Fragment";
+        duration = dur;
+        intensity = intens;
     }
     StatusType getType() const override { return StatusType::SoulFragment; }
     std::string getDescription() const override {
@@ -236,10 +236,10 @@ public:
 
 class DeathMarkStatus : public Status {
 public:
-    DeathMarkStatus(int dur, int intens) { 
-        name = "Death Mark"; 
-        duration = dur; 
-        intensity = intens; 
+    DeathMarkStatus(int dur, int intens) {
+        name = "Death Mark";
+        duration = dur;
+        intensity = intens;
     }
     StatusType getType() const override { return StatusType::DeathMark; }
     std::string getDescription() const override {

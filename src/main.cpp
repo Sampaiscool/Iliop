@@ -185,7 +185,7 @@ int main() {
                         {"Mage", Class::Mage},
                         {"Ranger", Class::Ranger},
                         {"Necromancer", Class::Necromancer},
-                        {"Bard", Class::Bard},
+                        {"Alchemist", Class::Alchemist},
                         {"Paladin", Class::Paladin},
                         {"Rogue", Class::Rogue}
                     };
@@ -240,7 +240,7 @@ int main() {
                         {"Vortex", CharacterName::Vortex},
                         {"Mathews Lift", CharacterName::MathewsLift},
                         {"Djin", CharacterName::Djin},
-                        {"doobie2", CharacterName::doobie2},
+                        {"Kobalt", CharacterName::Kobalt},
                         {"doobie3", CharacterName::doobie3},
                         {"doobie4", CharacterName::doobie4}
                     };
@@ -307,6 +307,23 @@ int main() {
                                 }
                             }
                         }
+                    }
+                }
+                // victory screen 
+                else if (gameState == GameState::Victory) {
+                    sf::FloatRect continueBtn(
+                        sf::Vector2f(winW / 2.f - 125.f, winH * 0.55f),
+                        sf::Vector2f(250.f, 70.f));
+
+                    if (continueBtn.contains(mousePos)) {
+                        // create loot
+                        currentFloor++;
+                        lootOptions.clear();
+                        std::vector<std::string> lootNames = CharacterFactory::getRandomLootOptions(3);
+                        for(auto& name : lootNames) {
+                            lootOptions.push_back(CardFactory::create(name));
+                        }
+                        gameState = GameState::Looting;
                     }
                 }
                 // looting screen:
@@ -534,16 +551,7 @@ int main() {
         }
 
         if (gameState == GameState::Victory) {
-            currentFloor++;
-
-            lootOptions.clear();
-
-            std::vector<std::string> lootNames = CharacterFactory::getRandomLootOptions(3);
-            for(auto& name : lootNames) {
-                lootOptions.push_back(CardFactory::create(name));
-            }
-
-            gameState = GameState::Looting;
+            // im so lonely...
         }
 
 
@@ -591,7 +599,7 @@ int main() {
                 {"Mage", Class::Mage},
                 {"Ranger", Class::Ranger},
                 {"Necromancer", Class::Necromancer},
-                {"Bard", Class::Bard},
+                {"Alchemist", Class::Alchemist},
                 {"Paladin", Class::Paladin},
                 {"Rogue", Class::Rogue}
             };
@@ -659,7 +667,7 @@ int main() {
                 {"Vortex", CharacterName::Vortex},
                 {"Mathews Lift", CharacterName::MathewsLift},
                 {"Djin", CharacterName::Djin},
-                {"doobie2", CharacterName::doobie2},
+                {"Kobalt", CharacterName::Kobalt},
                 {"doobie3", CharacterName::doobie3},
                 {"doobie4", CharacterName::doobie4}
             };
@@ -740,6 +748,40 @@ int main() {
             if (hoveredCard) {
                 ui.drawTooltip(window, font, *hoveredCard, mousePos.x, mousePos.y);
             }
+        }
+        // victory screen overlay
+        else if (gameState == GameState::Victory) {
+            // also render combat
+            enemy.render(window, winW, winH);
+            deck.render(window, winW, winH, font, playerState, corruptionParticles);
+
+            if (player.has_value()) {
+                ui.render(window, *player, playerState, enemy.getState(), winW, winH, font,enemy.getIntentDescription());
+            }
+
+            // overlay
+            sf::RectangleShape overlay(sf::Vector2f(winW, winH));
+            overlay.setFillColor(sf::Color(0, 0, 0, 150));
+            window.draw(overlay);
+ 
+            // text
+            sf::Text victory(font, "Victory!", 70);
+            victory.setPosition({winW / 2.f - 150.f, winH * 0.25f});
+            victory.setFillColor(sf::Color(255, 215, 0));
+            window.draw(victory);
+ 
+            // continue button
+            sf::RectangleShape continueBtn({250.f, 70.f});
+            continueBtn.setPosition({winW / 2.f - 125.f, winH * 0.55f});
+            continueBtn.setFillColor(sf::Color(70, 70, 70));
+            continueBtn.setOutlineColor(sf::Color::Black);
+            continueBtn.setOutlineThickness(3.f);
+            window.draw(continueBtn);
+ 
+            sf::Text cont(font, "Continue", 32);
+            cont.setPosition({winW / 2.f - 75.f, winH * 0.55f + 18.f});
+            cont.setFillColor(sf::Color::White);
+            window.draw(cont);
         }
         // render game over screen
         else if (gameState == GameState::GameOver) {
