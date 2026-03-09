@@ -134,3 +134,31 @@ void CombatState::consumeTrueVoid(int amount) {
         }
     }
 }
+
+int CombatState::getZombieArmyIntensity() const {
+    for (const auto& s : statuses) {
+        if (s && s->getType() == StatusType::ZombieArmy) {
+            return s->intensity;
+        }
+    }
+    return 0;
+}
+
+int CombatState::getSkeletonArmyIntensity() const {
+    for (const auto& s : statuses) {
+        if (s && s->getType() == StatusType::SkeletonArmy) {
+            return s->intensity;
+        }
+    }
+    return 0;
+}
+
+int CombatState::getSoulFragmentCount() const {
+    int count = 0;
+    for (const auto& s : statuses) {
+        if (s && s->getType() == StatusType::SoulFragment) {
+            count += s->intensity;
+        }
+    }
+    return count;
+}

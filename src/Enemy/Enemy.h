@@ -10,33 +10,33 @@
 #include "../Effects/MultiEffect.h"
 
 enum class EnemyType {
+    // Difficulty 1
     MisterEraser,
     LittleGremlin,
     AngerBot,
     Puth,
-
+    WarChief,
+    
+    // Difficulty 2
     FatGremlin,
     Bungus,
     CultistMember,
+    GiggyGrass,
+    BulletJunior,
+    
+    // Difficulty 3
     MagicSpright,
     Lihm,
     Nutou,
     MushroomMan,
-
+    Biyumi,
+    
+    // Difficulty 4 / Bosses
     FatedTraveler,
     Kazan,
     DeathMarcher,
-    Biyumi,
-
     Menta,
-    CursedKing,
-    VoidSpider,
-    FlameImp,
-    FrostWraith,
-    ShadowAssassin,
-    BloodGolem,
-    ArcaneGolem,
-    SoulReaper
+    CursedKing
 };
 
 enum class EnemyIntent {
@@ -45,7 +45,8 @@ enum class EnemyIntent {
     Buff,
     Debuff,
     Heal,
-    Multi
+    Multi,
+    Lifesteal
 };
 
 class Enemy {

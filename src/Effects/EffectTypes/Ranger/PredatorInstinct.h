@@ -12,7 +12,7 @@ public:
         int finalVal = (value != 0) ? value : amount;
 
         if (self.hp.current >= self.hp.max) {
-            target.takeDamage(self.getModifiedDamage(finalVal * 2));
+            target.takeDamage(self.getModifiedDamage(finalVal));
             target.applyStatus(std::make_unique<BleedStatus>(2, finalVal));
             self.applyStatus(std::make_unique<DamageUpStatus>(1, 1));
         } else {

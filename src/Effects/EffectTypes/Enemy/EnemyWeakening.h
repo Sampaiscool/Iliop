@@ -10,9 +10,7 @@ public:
     EnemyWeakening() = default;
     void apply(CombatState& self, CombatState& target, int value) override {
         int dmg = (value != 0) ? value : amount;
-        // deal damage to player
         target.takeDamage(dmg);
-        // weaken the player's damage output
         target.applyStatus(std::make_unique<DamageDownStatus>(2, 2));
     }
 };

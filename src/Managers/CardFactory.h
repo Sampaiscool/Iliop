@@ -46,6 +46,17 @@
 #include "../Effects/EffectTypes/Cleric/Purge.h"
 #include "../Effects/EffectTypes/Cleric/Ritual.h"
 
+// necromancer:
+#include "../Effects/EffectTypes/Necromancer/GraveCall.h"
+#include "../Effects/EffectTypes/Necromancer/BoneSplinter.h"
+#include "../Effects/EffectTypes/Necromancer/RottingBite.h"
+#include "../Effects/EffectTypes/Necromancer/SoulHarvest.h"
+#include "../Effects/EffectTypes/Necromancer/DeathMark.h"
+#include "../Effects/EffectTypes/Necromancer/ArmySurge.h"
+#include "../Effects/EffectTypes/Necromancer/CryptShield.h"
+#include "../Effects/EffectTypes/Necromancer/RaiseDead.h"
+#include "../Effects/EffectTypes/Necromancer/BoneLegion.h"
+
 #include <map>
 #include <string>
 #include <vector>
@@ -76,9 +87,9 @@ private:
         // ranger
         {"Primal Arrow",    {"Primal Arrow", "Deal damage and transform\n(deal damage 5 times (can bleed))", 1, 1, 1, CardType::PrimalArrow, CardTheme::Red}},
         {"Aim",             {"Aim", "Gain Locked and heal\n(Instead gain Raging Bear and inflict bleed)", 2, 1, 1, CardType::Aim, CardTheme::Gray}},
-        {"Arrow Volley",    {"Arrow Volley", "Fire a volley of arrows.\nTransformed: More hits + chance to bleed", 2, 1, 1, CardType::ArrowVolley, CardTheme::Red}},
-        {"Jump",            {"Jump", "Gain shield and Defence Up.\nTransformed: Deal damage + gain Defence Up", 4, 3, 1, CardType::Jump, CardTheme::Teal}},
-        {"Metamorphosis",  {"Metamorphosis", "Transform into beast form.\nTransformed: Extend transform + heal", 1, 2, 1, CardType::Metamorphosis, CardTheme::Green}},
+        {"Arrow Volley",    {"Arrow Volley", "Fire a volley of arrows.\n(More hits + chance to bleed)", 3, 3, 1, CardType::ArrowVolley, CardTheme::Red}},
+        {"Jump",            {"Jump", "Shield and Defence Up.\n(Deal damage + Defence Up)", 2, 2, 1, CardType::Jump, CardTheme::Teal}},
+        {"Metamorphosis",   {"Metamorphosis", "Transform.\n(Extend transform + heal)", 1, 2, 1, CardType::Metamorphosis, CardTheme::Green}},
 
         // mage
         {"Unstable Volley", {"Unstable Volley", "Deal damage + gain 2 corruption, \nThen if you are at max: transform\n(Gain Overload)", 2, 4, 1, CardType::UnstableVolley, CardTheme::Purple}},
@@ -98,21 +109,31 @@ private:
         {"Holy Light",      {"Holy Light", "Restore health.", 7, 3, 1, CardType::Heal, CardTheme::Green}},
         {"Blinding Light",  {"Blinding Light", "Deal damage and apply Damage Down.\nIf target has 2+ statuses:\nstun and damage becomes increased.", 4, 6, 1, CardType::BlindingLight, CardTheme::Gold}},
         {"Condemn",         {"Condemn", "Apply Bleed and Defense Down.\nIf transformed: give Judged + Bleed self.", 4, 4, 1, CardType::Condemn, CardTheme::Gold}},
-        {"Purge",           {"Purge", "Deal damage for every unique\nstatus effect on the target.", 3, 8, 2, CardType::Purge, CardTheme::Gold}},
-        {"Ritual",          {"Ritual", "Transform (Gain blessed)", 2, 4, 2, CardType::Ritual, CardTheme::Gold}},
+        {"Purge",           {"Purge", "Deal damage for every unique\nstatus effect on the target.", 3, 8, 2, CardType::Purge, CardTheme::Red}},
+        {"Ritual",          {"Ritual", "Transform (Gain blessed)", 2, 4, 2, CardType::Ritual, CardTheme::Green}},
 
-        // FORGE FUSIONS - combine two cards!
+        // necromancer
+        {"Raise Dead",      {"Raise Dead", "Summon Zombie Army.\nTransform: Double zombies + heal", 1, 1, 1, CardType::RaiseDead, CardTheme::Gold}},
+        {"Bone Legion",     {"Bone Legion", "Summon Skeleton Army.\nTransform: Double skeletons + shield", 1, 1, 1, CardType::BoneLegion, CardTheme::Gold}},
+        {"Bone Splinter",   {"Bone Splinter", "Deal damage + skeleton bonus.\n(+ Apply Defence Down + Soul)", 1, 2, 1, CardType::BoneSplinter, CardTheme::Red}},
+        {"Rotting Bite",    {"Rotting Bite", "Deal damage + zombie bonus + Bleed.\nHeal from zombies. (+ Death Mark)", 1, 2, 1, CardType::RottingBite, CardTheme::Red}},
+        {"Soul Harvest",    {"Soul Harvest", "Gain Soul Fragments.\n10 Fragments: Build 1 Zombie + 1 Skeleton", 2, 3, 1, CardType::SoulHarvest, CardTheme::Purple}},
+        {"Death Mark",      {"Death Mark", "Mark enemy: Extra damage taken.\n(Double marks + Bleed)", 1, 1, 1, CardType::DeathMark, CardTheme::Red}},
+        {"Army Surge",      {"Army Surge", "Transform + Army + Soul\n (Increased army boost)", 2, 4, 3, CardType::ArmySurge, CardTheme::Green}},
+        {"Crypt Shield",    {"Crypt Shield", "Shield + skeleton bonus.\n(+ Extra shield + Defence Up)", 0, 2, 1, CardType::CryptShield, CardTheme::Gray}},
+
+        // forge fusion
         {"Divine Arrow",    {"Divine Arrow", "FUSION: Holy damage + Heal\nDeal damage and restore health!", 5, 5, 1, CardType::Fusion, CardTheme::Gold}},
         {"Void Storm",      {"Void Storm", "FUSION: Arcane + Void\nDeal massive damage + gain corruption!", 8, 12, 2, CardType::Fusion, CardTheme::Purple}},
         {"Beast Rampage",   {"Beast Rampage", "FUSION: Beast + Strike\nDeal big damage + gain Defence Up!", 10, 8, 2, CardType::Fusion, CardTheme::Red}},
         {"Cosmic Shield",   {"Cosmic Shield", "FUSION: Arcane + Iron\nGain massive shield + True Void!", 8, 8, 1, CardType::Fusion, CardTheme::Blue}},
         {"Blood Frenzy",    {"Blood Frenzy", "FUSION: Bleed + Attack\nDeal damage + apply bleed + heal!", 6, 10, 1, CardType::Fusion, CardTheme::Red}},
-        
-        // DOUBLE FUSIONS - fuse 2 fusions for WACKY results!
-        {"Omega Annihilation", {"Omega Annihilation", "DOUBLE FUSION: THE END\nDeal damage to ALL enemies + apply ALL statuses + transform!", 20, 20, 3, CardType::DoubleFusion, CardTheme::Gold}},
-        {"Universal Singularity", {"Universal Singularity", "DOUBLE FUSION: BLACK HOLE\nApply Void Mark x10 + True Void x10 + Corruption + Overload!", 15, 15, 2, CardType::DoubleFusion, CardTheme::Purple}},
-        {"Primordial Chaos", {"Primordial Chaos", "DOUBLE FUSION: PURE CHAOS\n50% chance: Double damage OR Full heal OR Full shield OR Transform!", 25, 25, 2, CardType::DoubleFusion, CardTheme::Red}},
-        {"Existential Crisis", {"Existential Crisis", "DOUBLE FUSION: REALITY BREAK\nIf enemy > 50% HP: 999 damage! Else: Heal to full + Max shield!", 50, 50, 4, CardType::DoubleFusion, CardTheme::Teal}}
+
+        // double fusions
+        {"Omega Annihilation", {"Omega Annihilation", "DOUBLE FUSION: THE END\nDeal insane damage \napply ALL statuses + transform!", 20, 20, 4, CardType::DoubleFusion, CardTheme::Gold}},
+        {"Universal Singularity", {"Universal Singularity", "DOUBLE FUSION: BLACK HOLE\nApply Void Mark x10 + True Void x10\n And corruption + Overload!", 15, 15, 2, CardType::DoubleFusion, CardTheme::Purple}},
+        {"Primordial Chaos", {"Primordial Chaos", "DOUBLE FUSION: PURE CHAOS\n50% chance: Double damage OR Full heal \nOR Full shield OR Transform!", 25, 25, 2, CardType::DoubleFusion, CardTheme::Red}},
+        {"Existential Crisis", {"Existential Crisis", "DOUBLE FUSION: REALITY BREAK\nIf enemy > 50% HP: 999 damage!\nElse: Heal to full + Max shield!", 50, 50, 4, CardType::DoubleFusion, CardTheme::Teal}}
     };
 
 public:
@@ -174,6 +195,16 @@ public:
             case CardType::Condemn:       card.effect = std::make_unique<Condemn>();        break;
             case CardType::Purge:         card.effect = std::make_unique<Purge>();          break;
             case CardType::Ritual:        card.effect = std::make_unique<Ritual>();         break;
+
+            // necromancer
+            case CardType::RaiseDead:     card.effect = std::make_unique<RaiseDead>();      break;
+            case CardType::BoneLegion:    card.effect = std::make_unique<BoneLegion>();     break;
+            case CardType::BoneSplinter:  card.effect = std::make_unique<BoneSplinter>();   break;
+            case CardType::RottingBite:   card.effect = std::make_unique<RottingBite>();    break;
+            case CardType::SoulHarvest:    card.effect = std::make_unique<SoulHarvest>();    break;
+            case CardType::DeathMark:     card.effect = std::make_unique<DeathMark>();      break;
+            case CardType::ArmySurge:     card.effect = std::make_unique<ArmySurge>();      break;
+            case CardType::CryptShield:   card.effect = std::make_unique<CryptShield>();    break;
         }
         return card;
     }

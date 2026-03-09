@@ -41,4 +41,7 @@ struct CombatState {
     void transform(CombatState& enemy);
     int getTrueVoidMana() const;
     void consumeTrueVoid(int amount);
+    int getZombieArmyIntensity() const;
+    int getSkeletonArmyIntensity() const;
+    int getSoulFragmentCount() const;
 };

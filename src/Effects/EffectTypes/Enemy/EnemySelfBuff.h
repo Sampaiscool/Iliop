@@ -10,10 +10,8 @@ public:
     EnemySelfBuff() = default;
     void apply(CombatState& self, CombatState& target, int value) override {
         int val = (value != 0) ? value : amount;
-        // enemy heals itself
         self.hp.current += val;
         if (self.hp.current > self.hp.max) self.hp.current = self.hp.max;
-        // and gains defence buff
         self.applyStatus(std::make_unique<DefenceUpStatus>(2, 3));
     }
 };

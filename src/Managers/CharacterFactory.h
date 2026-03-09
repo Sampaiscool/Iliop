@@ -3,6 +3,8 @@
 #include "../Managers/CardFactory.h"
 #include "../Effects/MultiEffect.h"
 #include "../Effects/EffectTypes/Ranger/PredatorInstinct.h"
+#include "../Effects/EffectTypes/Necromancer/UnleashArmy.h"
+#include "../Effects/EffectTypes/Necromancer/SoulGathering.h"
 #include "../Other/AllStatuses.h"
 
 class CharacterFactory {
@@ -51,6 +53,18 @@ public:
                 for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Jump"));
                 for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Metamorphosis"));
                 break;
+            case Class::Necromancer:
+                stats = CombatState{{30, 30}, {0, 8}, {3, 3}, {0, 2}};
+                transformCorruption = 2; transformTime = 3;
+                for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Raise Dead"));
+                for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Bone Legion"));
+                for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Bone Splinter"));
+                for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Rotting Bite"));
+                for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Soul Harvest"));
+                for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Death Mark"));
+                for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Army Surge"));
+                for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Crypt Shield"));
+                break;
         }
 
         // create the identity of the characters
@@ -93,8 +107,19 @@ public:
                 multi->add(std::make_unique<HealEffect>(1));
                 stats.onCardPlayProc = std::move(multi);
                 stats.passiveValue = 1;
-                // THE COOL PART: Apply Blood Lust when wounded - gives card draw!
                 stats.statuses.push_back(std::make_unique<BloodLustStatus>(99, 1));
+                break;
+            }
+            case CharacterName::Djin: {
+                displayName = "Djin";
+                stats.hp.max += 5; stats.hp.current += 5;
+                stats.transformThreshold -= 1;
+                stats.onTransform = std::make_unique<UnleashArmy>(1);
+                stats.onCardPlayProc = std::make_unique<SoulGathering>(1);
+                stats.passiveValue = 1;
+                stats.statuses.push_back(std::make_unique<ZombieArmyStatus>(99, 0));
+                stats.statuses.push_back(std::make_unique<SkeletonArmyStatus>(99, 0));
+                stats.statuses.push_back(std::make_unique<SoulFragmentStatus>(99, 1));
                 break;
             }
         }
@@ -104,8 +129,7 @@ public:
 
     static std::vector<std::string> getRandomLootOptions(int count) {
         auto keys = CardFactory::getAllAvailableKeys();
-        
-        // Filter out fusion cards from loot!
+
         keys.erase(std::remove_if(keys.begin(), keys.end(), [](const std::string& key) {
             return key == "Divine Arrow" || key == "Void Storm" || 
                    key == "Beast Rampage" || key == "Cosmic Shield" || 
@@ -113,7 +137,7 @@ public:
                    key == "Universal Singularity" || key == "Primordial Chaos" ||
                    key == "Existential Crisis";
         }), keys.end());
-        
+
         std::shuffle(keys.begin(), keys.end(), std::mt19937(std::random_device()()));
         if (keys.size() > count) keys.resize(count);
         return keys;

@@ -183,11 +183,12 @@ void UIRenderer::render(sf::RenderWindow& window,
     // enemy shield
     drawText(window, font, std::to_string(enemyState.shield.current), enemyX + (winW / 7), enemyY + 2, enemyBarHeight * 0.6, sf::Color::White);
 
-    // intent label (draw above enemy health bar)
+    // intent label (draw BELOW enemy - under the enemy sprite area)
     if (!enemyIntentDescription.empty()) {
+        int intentY = winW / 4 + (enemyY + (enemyY / 3.5)); // Below enemy portrait
         drawText(window, font, enemyIntentDescription,
-                 enemyX, enemyY - enemyBarHeight - 5,
-                 enemyBarHeight * 0.6, sf::Color::Yellow);
+                 enemyX, intentY,
+                 enemyBarHeight * 0.7, sf::Color(255, 200, 50));
     }
 
     int btnW = winW / 10;

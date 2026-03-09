@@ -16,7 +16,11 @@ enum class StatusType {
     Blessed,
     Locked,
     RagingBear,
-    BloodLust
+    BloodLust,
+    ZombieArmy,
+    SkeletonArmy,
+    SoulFragment,
+    DeathMark
 };
 
 struct CombatState;

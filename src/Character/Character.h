@@ -8,14 +8,22 @@ enum class Class {
     Warrior,
     Cleric,
     Mage,
-    Ranger
+    Ranger,
+    Necromancer,
+    Bard,
+    Paladin,
+    Rogue
 };
 
 enum class CharacterName {
     Hiroshi,
     Phlox,
     Vortex,
-    MathewsLift
+    MathewsLift,
+    Djin,
+    doobie2,
+    doobie3,
+    doobie4
 };
 
 class Character {

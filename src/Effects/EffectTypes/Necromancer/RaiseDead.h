@@ -3,22 +3,19 @@
 #include "../../../Other/CombatState.h"
 #include "../../../Other/AllStatuses.h"
 
-class CosmicShieldFusion : public Effect {
+class RaiseDead : public Effect {
     int amount = 0;
 public:
-    CosmicShieldFusion(int value) : amount(value) {}
-    CosmicShieldFusion() = default;
+    RaiseDead(int value) : amount(value) {}
+    RaiseDead() = default;
     void apply(CombatState& self, CombatState& target, int value) override {
         int finalVal = (value != 0) ? value : amount;
-
-        self.addShield(finalVal * 3);
-
-        self.applyStatus(std::make_unique<TrueVoidStatus>(3, finalVal));
-
+        
+        self.applyStatus(std::make_unique<ZombieArmyStatus>(99, finalVal));
+        
         if (self.isTransformed) {
-            self.addShield(finalVal * 2);
+            self.applyStatus(std::make_unique<ZombieArmyStatus>(99, finalVal));
             self.heal(finalVal * 2);
-            self.applyStatus(std::make_unique<DefenceUpStatus>(2, finalVal));
         }
     }
 };

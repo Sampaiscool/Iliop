@@ -10,9 +10,7 @@ public:
     EnemyDefensiveStrike() = default;
     void apply(CombatState& self, CombatState& target, int value) override {
         int val = (value != 0) ? value : amount;
-        // enemy shields itself heavily
         self.shield.current += val;
-        // and weakens player's defence
         target.applyStatus(std::make_unique<DefenceDownStatus>(2, 2));
     }
 };

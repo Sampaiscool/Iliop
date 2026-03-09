@@ -17,7 +17,7 @@ public:
             self.transform(target);
         } else {
             for (int i = 0; i < 5; ++i) {
-                target.takeDamage(self.getModifiedDamage(finalVal / 2));
+                target.takeDamage(self.getModifiedDamage(std::max(finalVal / 2, 1)));
                 if ((rand() % 100) < 25) {
                     target.applyStatus(std::make_unique<BleedStatus>(2, 3));
                 }

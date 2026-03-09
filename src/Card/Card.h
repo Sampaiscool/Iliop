@@ -39,7 +39,18 @@ enum class CardType {
     BlindingLight,
     Condemn,
     Purge,
-    Ritual
+    Ritual,
+
+    // necromancer
+    GraveCall,
+    BoneSplinter,
+    RottingBite,
+    SoulHarvest,
+    DeathMark,
+    ArmySurge,
+    CryptShield,
+    RaiseDead,
+    BoneLegion
 };
 
 enum class CardTheme {

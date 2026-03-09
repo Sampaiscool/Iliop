@@ -9,10 +9,6 @@ public:
     VoidProwess(int value) : amount(value) {}
     VoidProwess() = default;
     void apply(CombatState& self, CombatState& target, int value) override {
-        if (value != 0) {
-            self.applyStatus(std::make_unique<TrueVoidStatus>(2, value));
-        } else {
-            self.applyStatus(std::make_unique<TrueVoidStatus>(2, amount));
-        }
+        self.applyStatus(std::make_unique<TrueVoidStatus>(2, value + 2));
     }
 };

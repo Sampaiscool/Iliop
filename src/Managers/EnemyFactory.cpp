@@ -6,13 +6,13 @@ Enemy EnemyFactory::create(int floor)
     std::vector<EnemyType> pool;
 
     if (floor <= 3) {
-        pool = {EnemyType::MisterEraser, EnemyType::LittleGremlin, EnemyType::AngerBot, EnemyType::Puth};
+        pool = {EnemyType::MisterEraser, EnemyType::LittleGremlin, EnemyType::AngerBot, EnemyType::Puth, EnemyType::WarChief};
     } else if (floor <= 6) {
-        pool = {EnemyType::FatGremlin, EnemyType::Bungus, EnemyType::CultistMember, EnemyType::MagicSpright};
+        pool = {EnemyType::FatGremlin, EnemyType::Bungus, EnemyType::CultistMember, EnemyType::GiggyGrass, EnemyType::BulletJunior};
     } else if (floor <= 9) {
-        pool = {EnemyType::MagicSpright, EnemyType::Lihm, EnemyType::Nutou, EnemyType::MushroomMan};
+        pool = {EnemyType::MagicSpright, EnemyType::Lihm, EnemyType::Nutou, EnemyType::MushroomMan, EnemyType::Biyumi};
     } else {
-        pool = {EnemyType::FatedTraveler, EnemyType::Kazan, EnemyType::DeathMarcher, EnemyType::Biyumi};
+        pool = {EnemyType::FatedTraveler, EnemyType::Kazan, EnemyType::DeathMarcher, EnemyType::Menta, EnemyType::CursedKing};
     }
     // pick enemy from floor
     int idx = rand() % pool.size();
@@ -40,6 +40,9 @@ Enemy EnemyFactory::create(int floor)
         case EnemyType::Puth:
             hp = 10; shield = 4; mana = 1; corruption = 10;
             break;
+        case EnemyType::WarChief:
+            hp = 18; shield = 5; mana = 1; corruption = 12;
+            break;
         case EnemyType::FatGremlin:
             hp = 20; shield = 5; mana = 1; corruption = 12;
             break;
@@ -48,6 +51,12 @@ Enemy EnemyFactory::create(int floor)
             break;
         case EnemyType::CultistMember:
             hp = 16; shield = 4; mana = 2; corruption = 15;
+            break;
+        case EnemyType::GiggyGrass:
+            hp = 14; shield = 3; mana = 1; corruption = 10;
+            break;
+        case EnemyType::BulletJunior:
+            hp = 20; shield = 6; mana = 1; corruption = 12;
             break;
         case EnemyType::MagicSpright:
             hp = 30; shield = 0; mana = 2; corruption = 12;

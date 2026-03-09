@@ -182,8 +182,71 @@ public:
     BloodLustStatus(int dur, int intens) { name = "Blood Lust"; duration = dur; intensity = intens; }
     StatusType getType() const override { return StatusType::BloodLust; }
     std::string getDescription() const override {
-        return "When you play a card while wounded:\nDraw " + std::to_string(intensity) + " cards";
+        return "If you play a card while wounded:\nDraw " + std::to_string(intensity) + " cards";
     }
-    void onTurnStart(CombatState& owner) override { duration--; }
+    void onTurnStart(CombatState& owner) override {  }
+};
+
+class ZombieArmyStatus : public Status {
+public:
+    ZombieArmyStatus(int dur, int intens) {
+        name = "Zombie Army";
+        duration = dur;
+        intensity = intens;
+    }
+    StatusType getType() const override { return StatusType::ZombieArmy; }
+    std::string getDescription() const override {
+        return "End of turn: Heal " + std::to_string(std::max(1, intensity / 2));
+    }
+    void onTurnStart(CombatState& owner) override {
+        owner.heal(std::max(1, intensity / 2));
+    }
+};
+
+class SkeletonArmyStatus : public Status {
+public:
+    SkeletonArmyStatus(int dur, int intens) {
+        name = "Skeleton Army";
+        duration = dur;
+        intensity = intens;
+    }
+    StatusType getType() const override { return StatusType::SkeletonArmy; }
+    std::string getDescription() const override {
+        return "Each skeleton: +" + std::to_string(intensity) + " damage\nto your necromancer cards";
+    }
+    void onTurnStart(CombatState& owner) override {
+    }
+};
+
+class SoulFragmentStatus : public Status {
+public:
+    SoulFragmentStatus(int dur, int intens) { 
+        name = "Soul Fragment"; 
+        duration = dur; 
+        intensity = intens; 
+    }
+    StatusType getType() const override { return StatusType::SoulFragment; }
+    std::string getDescription() const override {
+        return "Play card while transformed: +1 Fragment\nAt 10: Summon 3 for both armies\n" + std::to_string(intensity) + "/10";
+    }
+    void onTurnStart(CombatState& owner) override { 
+        
+    }
+};
+
+class DeathMarkStatus : public Status {
+public:
+    DeathMarkStatus(int dur, int intens) { 
+        name = "Death Mark"; 
+        duration = dur; 
+        intensity = intens; 
+    }
+    StatusType getType() const override { return StatusType::DeathMark; }
+    std::string getDescription() const override {
+        return "Take " + std::to_string(intensity * 2) + " extra damage\nWhen marked dies: grant " + std::to_string(intensity) + " Soul Fragment";
+    }
+    void onTurnStart(CombatState& owner) override {
+        duration--;
+    }
 };
 
