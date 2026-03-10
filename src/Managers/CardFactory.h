@@ -57,6 +57,18 @@
 #include "../Effects/EffectTypes/Necromancer/RaiseDead.h"
 #include "../Effects/EffectTypes/Necromancer/BoneLegion.h"
 
+// alchemist:
+#include "../Effects/EffectTypes/Alchemist/PotionBrew.h"
+#include "../Effects/EffectTypes/Alchemist/Toss.h"
+#include "../Effects/EffectTypes/Alchemist/Reaction.h"
+#include "../Effects/EffectTypes/Alchemist/Copper.h"
+#include "../Effects/EffectTypes/Alchemist/Lead.h"
+#include "../Effects/EffectTypes/Alchemist/Gold.h"
+#include "../Effects/EffectTypes/Alchemist/Iron.h"
+#include "../Effects/EffectTypes/Alchemist/Mercury.h"
+#include "../Effects/EffectTypes/Alchemist/Silver.h"
+#include "../Effects/EffectTypes/Alchemist/Tin.h"
+
 #include <map>
 #include <string>
 #include <vector>
@@ -121,6 +133,18 @@ private:
         {"Death Mark",      {"Death Mark", "Mark enemy: Extra damage taken.\n(Double marks + Bleed)", 1, 1, 1, CardType::DeathMark, CardTheme::Red}},
         {"Army Surge",      {"Army Surge", "Transform + Army + Soul\n (Increased army boost)", 2, 4, 3, CardType::ArmySurge, CardTheme::Green}},
         {"Crypt Shield",    {"Crypt Shield", "Shield + skeleton bonus.\n(+ Extra shield + Defence Up)", 0, 2, 1, CardType::CryptShield, CardTheme::Gray}},
+
+        // alchemist
+        {"Potion Brew",     {"Potion Brew", "Create 2 random metals.", 0, 0, 1, CardType::PotionBrew, CardTheme::Blue}},
+        {"Toss",            {"Toss", "Remove 1 metal and deal increased damage\nbased on its value", 3, 7, 1, CardType::Toss, CardTheme::Red}},
+        {"Reaction",        {"Reaction", "Mix 2 metals for a powerful effect", 8, 3, 0, CardType::Reaction, CardTheme::Purple}},
+        {"Lead",            {"Lead", "Apply Lead status", 3, 0, 1, CardType::LeadCard, CardTheme::Gray}},
+        {"Gold",            {"Gold", "Apply Gold status", 4, 0, 1, CardType::GoldCard, CardTheme::Gray}},
+        {"Copper",          {"Copper", "Apply Copper status", 2, 0, 1, CardType::CopperCard, CardTheme::Gray}},
+        {"Iron",            {"Iron", "Apply Iron status", 3, 0, 1, CardType::IronCard, CardTheme::Gray}},
+        {"Mercury",         {"Mercury", "Apply Mercury status", 2, 0, 1, CardType::MercuryCard, CardTheme::Gray}},
+        {"Silver",          {"Silver", "Apply Silver status", 3, 0, 1, CardType::SilverCard, CardTheme::Gray}},
+        {"Tin",             {"Tin", "Apply Tin status", 1, 0, 1, CardType::TinCard, CardTheme::Gray}},
 
         // forge fusion
         {"Divine Arrow",    {"Divine Arrow", "FUSION: Holy damage + Heal\nDeal damage and restore health!", 5, 5, 1, CardType::Fusion, CardTheme::Gold}},
@@ -205,6 +229,18 @@ public:
             case CardType::DeathMark:     card.effect = std::make_unique<DeathMark>();      break;
             case CardType::ArmySurge:     card.effect = std::make_unique<ArmySurge>();      break;
             case CardType::CryptShield:   card.effect = std::make_unique<CryptShield>();    break;
+
+            // alchemist
+            case CardType::PotionBrew:   card.effect = std::make_unique<PotionBrew>();     break;
+            case CardType::Toss:         card.effect = std::make_unique<Toss>();           break;
+            case CardType::Reaction:      card.effect = std::make_unique<Reaction>();       break;
+            case CardType::LeadCard:      card.effect = std::make_unique<LeadEffect>();      break;
+            case CardType::GoldCard:      card.effect = std::make_unique<GoldEffect>();      break;
+            case CardType::CopperCard:    card.effect = std::make_unique<Copper>();          break;
+            case CardType::IronCard:      card.effect = std::make_unique<IronEffect>();      break;
+            case CardType::MercuryCard:   card.effect = std::make_unique<MercuryEffect>();   break;
+            case CardType::SilverCard:    card.effect = std::make_unique<SilverEffect>();    break;
+            case CardType::TinCard:       card.effect = std::make_unique<TinEffect>();      break;
         }
         return card;
     }

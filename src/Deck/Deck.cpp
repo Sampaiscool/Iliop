@@ -61,7 +61,7 @@ void Deck::discardCard(Card& card) {
 
 // void Deck::addCard(Card card) {
 //     discardPile.push_back(std::move(card));
-// }
+// } :)
 
 void Deck::addCardToPermanentCollection(Card card) {
     permanentCollection.push_back(std::move(card));
@@ -69,8 +69,12 @@ void Deck::addCardToPermanentCollection(Card card) {
 
 void Deck::discardHand()
 {
-    for (auto& card : hand)
-        discardPile.push_back(std::move(card));
+    for (auto& card : hand) {
+        // dont add temp cards
+        if (!card.isTemporary) {
+            discardPile.push_back(std::move(card));
+        }
+    }
 
     hand.clear();
 }
@@ -101,10 +105,10 @@ void Deck::render(sf::RenderWindow& window, int winW, int winH, const sf::Font& 
         card.draw(window, font, isCorrupted, player);
 
         if (isCorrupted) {
-            // Pick a random spot along the top edge of the card
+            // pick a random spot
             float spawnX = card.x + (rand() % card.w);
             float spawnY = card.y; 
-            // Emit 1 or 2 particles per frame per card
+            // emit particles per frame
             particles.emit({spawnX, spawnY}, 1);
         }
     }

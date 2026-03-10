@@ -183,9 +183,9 @@ void UIRenderer::render(sf::RenderWindow& window,
     // enemy shield
     drawText(window, font, std::to_string(enemyState.shield.current), enemyX + (winW / 7), enemyY + 2, enemyBarHeight * 0.6, sf::Color::White);
 
-    // intent label (draw BELOW enemy - under the enemy sprite area)
+    // intent label
     if (!enemyIntentDescription.empty()) {
-        int intentY = winW / 4 + (enemyY + (enemyY / 3.5)); // Below enemy portrait
+        int intentY = winW / 4 + (enemyY + (enemyY / 3.5));
         drawText(window, font, enemyIntentDescription,
                  enemyX, intentY,
                  enemyBarHeight * 0.7, sf::Color(255, 200, 50));
@@ -205,8 +205,7 @@ void UIRenderer::render(sf::RenderWindow& window,
         return;
     }
 
-    // Render damage events from CombatState - one popup per takeDamage/heal call
-    // Player damage events
+    // player damage events
     for (const auto& evt : playerState.damageEvents) {
         sf::Color color;
         std::string text;
@@ -217,25 +216,25 @@ void UIRenderer::render(sf::RenderWindow& window,
             color = sf::Color(255, 100, 100); // Red for damage
             text = "-" + std::to_string(evt.amount);
         }
-        // Random offset for each event
+        // random offset for each event
         float offsetX = (rand() % 30 - 15) * 1.f;
         float offsetY = (rand() % 20 - 10) * 1.f;
         sf::Vector2f pos = lastPlayerBarPos;
         pos.x += offsetX;
         pos.y += offsetY;
-        
-        // Scale size by damage amount (base 20, +2 per damage, max 60)
+
+        // text gains +2 size per damage, max 60
         int charSize = std::min(60, 20 + evt.amount * 3);
         sf::Text fctText(font, sf::String(text), static_cast<unsigned int>(charSize));
         fctText.setFillColor(color);
         fctText.setOutlineColor(sf::Color::Black);
         fctText.setOutlineThickness(1.f);
-        
+
         floatingTexts.push_back({fctText, pos, color, 0.8f});
     }
     playerState.clearDamageEvents();
-    
-    // Enemy damage events
+
+    // enemy damage events
     for (const auto& evt : enemyState.damageEvents) {
         sf::Color color;
         std::string text;
@@ -251,14 +250,14 @@ void UIRenderer::render(sf::RenderWindow& window,
         sf::Vector2f pos = lastEnemyBarPos;
         pos.x += offsetX;
         pos.y += offsetY;
-        
+
         // Scale size by damage amount
         int charSize = std::min(60, 20 + evt.amount * 3);
         sf::Text fctText(font, sf::String(text), static_cast<unsigned int>(charSize));
         fctText.setFillColor(color);
         fctText.setOutlineColor(sf::Color::Black);
         fctText.setOutlineThickness(1.f);
-        
+
         floatingTexts.push_back({fctText, pos, color, 0.8f});
     }
     enemyState.clearDamageEvents();
@@ -337,11 +336,11 @@ void UIRenderer::spawnFCT(sf::Vector2f pos, std::string str, sf::Color color, co
     txt.setFillColor(color);
     txt.setOutlineColor(sf::Color::Black);
     txt.setOutlineThickness(2.f);
-    
+
     // apply offset
     float offsetX = static_cast<float>((rand() % 40) - 20);
     pos += sf::Vector2f(offsetX, -20.f);
-    
+
     floatingTexts.push_back({txt, pos, color, 1.0f});
 }
 
@@ -355,7 +354,7 @@ void UIRenderer::updateAndDrawFCT(sf::RenderWindow& window, float dt) {
         c.a = static_cast<uint8_t>(255 * alpha);
 
         it->text.setFillColor(c);
-        
+
         sf::Color outline = sf::Color::Black;
         outline.a = c.a;
         it->text.setOutlineColor(outline);
@@ -373,7 +372,7 @@ void UIRenderer::drawTooltip(sf::RenderWindow& window, const sf::Font& font, con
     std::ostringstream oss;
     oss << card.name << "\n";
     oss << "Cost: " << card.cost << " | Value: " << card.value;
-    // if you are corrupted show the corrupted value
+    // if corrupted show the corrupted value
     if (card.corruptedValue > 0) {
         oss << " (+" << card.corruptedValue << ")";
     }
@@ -461,6 +460,15 @@ void UIRenderer::loadStatusTextures() {
     }
     std::string pathVoidMark = "../assets/statusIcons/VoidMarkIcon.png";
     if (!statusTextures[StatusType::VoidMark].loadFromFile(pathVoidMark)) {
+    }
+    std::string pathBlessed = "../assets/statusIcons/BlessedIcon.png";
+    if (!statusTextures[StatusType::Blessed].loadFromFile(pathBlessed)) {
+    }
+    std::string pathLocked = "../assets/statusIcons/LockedIcon.png";
+    if (!statusTextures[StatusType::Locked].loadFromFile(pathLocked)) {
+    }
+    std::string pathRage = "../assets/statusIcons/RageIcon.png";
+    if (!statusTextures[StatusType::Rage].loadFromFile(pathRage)) {
     }
 }
 

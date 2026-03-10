@@ -2,6 +2,9 @@
 #include "AllStatuses.h"
 #include "Status.h"
 #include "../Effects/Effect.h"
+#include "../Card/Card.h"
+#include "../Deck/Deck.h"
+#include "../Managers/CardFactory.h"
 #include <algorithm>
 
 CombatState::CombatState() : transformThreshold(0), transformTime(0), transformGain(0) {}
@@ -176,4 +179,93 @@ int CombatState::getSoulFragmentCount() const {
         }
     }
     return count;
+}
+
+void CombatState::addCardToHand(const std::string& cardKey) {
+    pendingCardKeys.push_back(cardKey);
+}
+
+void CombatState::flushPendingCards() {
+    if (deck) {
+        auto& hand = deck->getHand();
+        std::vector<std::string> metalNames = {"Lead", "Gold", "Copper", "Iron", "Mercury", "Silver", "Tin", "Reaction"};
+
+        for (const auto& key : pendingCardKeys) {
+            Card card = CardFactory::create(key);
+            // mark metal and reaction cards as temporary
+            if (std::find(metalNames.begin(), metalNames.end(), key) != metalNames.end()) {
+                card.isTemporary = true;
+            }
+            hand.push_back(std::move(card));
+        }
+        pendingCardKeys.clear();
+    }
+}
+
+bool CombatState::hasMetalStatus(StatusType metal) const {
+    for (const auto& s : statuses) {
+        if (s && s->getType() == metal) {
+            return true;
+        }
+    }
+    return false;
+}
+
+int CombatState::getMetalStatusCount() const {
+    int count = 0;
+    for (const auto& s : statuses) {
+        if (s) {
+            StatusType type = s->getType();
+            if (type == StatusType::Lead || type == StatusType::Gold ||
+                type == StatusType::Copper || type == StatusType::Iron ||
+                type == StatusType::Mercury || type == StatusType::Silver ||
+                type == StatusType::Tin) {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+void CombatState::removeMetalStatus(StatusType metal) {
+    for (auto it = statuses.begin(); it != statuses.end(); ) {
+        if (*it && (*it)->getType() == metal) {
+            it = statuses.erase(it);
+        } else {
+            ++it;
+        }
+    }
+}
+
+void CombatState::removeRandomMetalStatus() {
+    std::vector<StatusType> metals = {
+        StatusType::Lead, StatusType::Gold, StatusType::Copper,
+        StatusType::Iron, StatusType::Mercury, StatusType::Silver, StatusType::Tin
+    };
+
+    for (auto it = statuses.begin(); it != statuses.end(); ) {
+        StatusType type = (*it)->getType();
+        auto metalIt = std::find(metals.begin(), metals.end(), type);
+        if (metalIt != metals.end()) {
+            statuses.erase(it);
+            return;
+        } else {
+            ++it;
+        }
+    }
+}
+
+void CombatState::removeRandomMetalCardFromHand() {
+    if (!deck) return;
+ 
+    auto& hand = deck->getHand();
+    std::vector<std::string> metalNames = {"Lead", "Gold", "Copper", "Iron", "Mercury", "Silver", "Tin"};
+
+    for (auto it = hand.begin(); it != hand.end(); ++it) {
+        auto nameIt = std::find(metalNames.begin(), metalNames.end(), it->name);
+        if (nameIt != metalNames.end()) {
+            hand.erase(it);
+            return;
+        }
+    }
 }

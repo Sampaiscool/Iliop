@@ -13,7 +13,7 @@ public:
             self.applyStatus(std::make_unique<LockedStatus>(3, value));
             self.heal(value);
         } else {
-            self.applyStatus(std::make_unique<RagingBearStatus>(3, value));
+            self.applyStatus(std::make_unique<RageStatus>(3, value));
             target.applyStatus(std::make_unique<BleedStatus>(2, value));
         }
     }

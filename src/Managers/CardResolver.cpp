@@ -7,6 +7,8 @@ bool CardResolver::play(
     CombatState& enemy,
     Deck& deck)
 {
+    player.deck = &deck;
+
     int trueVoidMana = player.getTrueVoidMana();
     int totalAvailable = player.mana.current + trueVoidMana;
 
@@ -27,6 +29,9 @@ bool CardResolver::play(
 
     // trigger card behavior
     card.play(player, enemy, isCorrupted);
+
+    // flush any pending cards
+    player.flushPendingCards();
 
     if (player.isTransformed && player.onCardPlayProc) {
         player.onCardPlayProc->apply(player, enemy, 0);

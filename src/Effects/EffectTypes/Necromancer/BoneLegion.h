@@ -11,10 +11,10 @@ public:
     void apply(CombatState& self, CombatState& target, int value) override {
         int finalVal = (value != 0) ? value : amount;
         
-        self.applyStatus(std::make_unique<SkeletonArmyStatus>(99, finalVal));
+        self.applyStatus(std::make_unique<SkeletonArmyStatus>(1, finalVal));
         
         if (self.isTransformed) {
-            self.applyStatus(std::make_unique<SkeletonArmyStatus>(99, finalVal));
+            self.applyStatus(std::make_unique<SkeletonArmyStatus>(1, finalVal));
             self.addShield(finalVal * 2);
         }
     }

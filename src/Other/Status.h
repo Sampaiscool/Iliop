@@ -15,12 +15,20 @@ enum class StatusType {
     Judged,
     Blessed,
     Locked,
-    RagingBear,
+    Rage,
     BloodLust,
     ZombieArmy,
     SkeletonArmy,
     SoulFragment,
-    DeathMark
+    DeathMark,
+    // metals
+    Lead,
+    Gold,
+    Copper,
+    Iron,
+    Mercury,
+    Silver,
+    Tin
 };
 
 struct CombatState;

@@ -11,10 +11,10 @@ public:
     void apply(CombatState& self, CombatState& target, int value) override {
         int finalVal = (value != 0) ? value : amount;
         
-        self.applyStatus(std::make_unique<ZombieArmyStatus>(99, finalVal));
+        self.applyStatus(std::make_unique<ZombieArmyStatus>(1, finalVal));
         
         if (self.isTransformed) {
-            self.applyStatus(std::make_unique<ZombieArmyStatus>(99, finalVal));
+            self.applyStatus(std::make_unique<ZombieArmyStatus>(1, finalVal));
             self.heal(finalVal * 2);
         }
     }

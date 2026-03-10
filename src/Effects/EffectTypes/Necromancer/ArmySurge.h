@@ -13,13 +13,13 @@ public:
         
         if (self.isTransformed) {
             self.transformTime += 3;
-            self.applyStatus(std::make_unique<ZombieArmyStatus>(0, finalVal * 2));
-            self.applyStatus(std::make_unique<SkeletonArmyStatus>(0, finalVal * 2));
+            self.applyStatus(std::make_unique<ZombieArmyStatus>(1, finalVal * 2));
+            self.applyStatus(std::make_unique<SkeletonArmyStatus>(1, finalVal * 2));
             self.heal(finalVal * 3);
         } else {
             self.transform(target);
-            self.applyStatus(std::make_unique<ZombieArmyStatus>(0, finalVal));
-            self.applyStatus(std::make_unique<SkeletonArmyStatus>(0, finalVal));
+            self.applyStatus(std::make_unique<ZombieArmyStatus>(1, finalVal));
+            self.applyStatus(std::make_unique<SkeletonArmyStatus>(1, finalVal));
             self.applyStatus(std::make_unique<SoulFragmentStatus>(3, finalVal));
         }
     }

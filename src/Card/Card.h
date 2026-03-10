@@ -50,7 +50,21 @@ enum class CardType {
     ArmySurge,
     CryptShield,
     RaiseDead,
-    BoneLegion
+    BoneLegion,
+
+    // alchemist
+    PotionBrew,
+    Toss,
+    Reaction,
+
+    // metals
+    LeadCard,
+    GoldCard,
+    CopperCard,
+    IronCard,
+    MercuryCard,
+    SilverCard,
+    TinCard
 };
 
 enum class CardTheme {
@@ -71,6 +85,7 @@ struct Card {
     int value = 0;
     int corruptedValue = 0;
     int cost;
+    bool isTemporary = false;
 
     Card() = default;
 

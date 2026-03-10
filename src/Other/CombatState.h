@@ -1,5 +1,6 @@
 #pragma once
 #include "Resource.h"
+#include "Status.h"
 #include <memory>
 #include <vector>
 #include <utility>
@@ -7,6 +8,7 @@
 // forward Declarations
 class Status;
 class Effect;
+class Deck;
 
 struct DamageEvent {
     int amount;
@@ -29,9 +31,15 @@ struct CombatState {
     int passiveValue = 0;
 
     std::vector<std::unique_ptr<Status>> statuses;
-    
-    // Queue of damage/heal events to show as floating text
+
+    // queue of damage/heal events
     mutable std::vector<DamageEvent> damageEvents;
+
+    // pointer to deck for adding cards to hand
+    Deck* deck = nullptr;
+
+    // queue of card names to add to hand after resolution
+    std::vector<std::string> pendingCardKeys;
 
     // need this for forward declerations
     CombatState();
@@ -54,7 +62,15 @@ struct CombatState {
     int getZombieArmyIntensity() const;
     int getSkeletonArmyIntensity() const;
     int getSoulFragmentCount() const;
-    
+
     void addDamageEvent(int amount, bool isHeal);
     void clearDamageEvents() const { damageEvents.clear(); }
+
+    void addCardToHand(const std::string& cardKey);
+    void flushPendingCards();
+    bool hasMetalStatus(StatusType metal) const;
+    int getMetalStatusCount() const;
+    void removeMetalStatus(StatusType metal);
+    void removeRandomMetalStatus();
+    void removeRandomMetalCardFromHand();
 };

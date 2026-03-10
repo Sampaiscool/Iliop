@@ -167,10 +167,10 @@ public:
     void onTurnStart(CombatState& owner) override { duration--; }
 };
 
-class RagingBearStatus : public Status {
+class RageStatus : public Status {
 public:
-    RagingBearStatus(int dur, int intens) { name = "Raging bear"; duration = dur; intensity = intens; }
-    StatusType getType() const override { return StatusType::RagingBear; }
+    RageStatus(int dur, int intens) { name = "Rage"; duration = dur; intensity = intens; }
+    StatusType getType() const override { return StatusType::Rage; }
     std::string getDescription() const override {
         return "If you take damage while you are under 50% HP:\nGain " + std::to_string(intensity) + " Defence Up + Damage Up\nAnd heal " + std::to_string(intensity * 2);
     }
@@ -248,5 +248,61 @@ public:
     void onTurnStart(CombatState& owner) override {
         duration--;
     }
+};
+
+class LeadStatus : public Status {
+public:
+    LeadStatus(int dur, int intens) { name = "Lead"; duration = dur; intensity = intens; }
+    StatusType getType() const override { return StatusType::Lead; }
+    std::string getDescription() const override { return "Heavy metal"; }
+    void onTurnStart(CombatState& owner) override { }
+};
+
+class GoldStatus : public Status {
+public:
+    GoldStatus(int dur, int intens) { name = "Gold"; duration = dur; intensity = intens; }
+    StatusType getType() const override { return StatusType::Gold; }
+    std::string getDescription() const override { return "Precious metal"; }
+    void onTurnStart(CombatState& owner) override {  }
+};
+
+class CopperStatus : public Status {
+public:
+    CopperStatus(int dur, int intens) { name = "Copper"; duration = dur; intensity = intens; }
+    StatusType getType() const override { return StatusType::Copper; }
+    std::string getDescription() const override { return "Conductive metal"; }
+    void onTurnStart(CombatState& owner) override { }
+};
+
+class IronStatus : public Status {
+public:
+    IronStatus(int dur, int intens) { name = "Iron"; duration = dur; intensity = intens; }
+    StatusType getType() const override { return StatusType::Iron; }
+    std::string getDescription() const override { return "Sturdy metal"; }
+    void onTurnStart(CombatState& owner) override {  }
+};
+
+class MercuryStatus : public Status {
+public:
+    MercuryStatus(int dur, int intens) { name = "Mercury"; duration = dur; intensity = intens; }
+    StatusType getType() const override { return StatusType::Mercury; }
+    std::string getDescription() const override { return "Liquid metal"; }
+    void onTurnStart(CombatState& owner) override {  }
+};
+
+class SilverStatus : public Status {
+public:
+    SilverStatus(int dur, int intens) { name = "Silver"; duration = dur; intensity = intens; }
+    StatusType getType() const override { return StatusType::Silver; }
+    std::string getDescription() const override { return "Shiny metal"; }
+    void onTurnStart(CombatState& owner) override {  }
+};
+
+class TinStatus : public Status {
+public:
+    TinStatus(int dur, int intens) { name = "Tin"; duration = dur; intensity = intens; }
+    StatusType getType() const override { return StatusType::Tin; }
+    std::string getDescription() const override { return "Soft metal"; }
+    void onTurnStart(CombatState& owner) override {  }
 };
 

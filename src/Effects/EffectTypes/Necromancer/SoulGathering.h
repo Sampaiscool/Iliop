@@ -17,8 +17,8 @@ public:
                 
                 if (s->intensity >= 10) {
                     s->intensity = 0;
-                    self.applyStatus(std::make_unique<ZombieArmyStatus>(0, 3));
-                    self.applyStatus(std::make_unique<SkeletonArmyStatus>(0, 3));
+                    self.applyStatus(std::make_unique<ZombieArmyStatus>(1, 3));
+                    self.applyStatus(std::make_unique<SkeletonArmyStatus>(1, 3));
                 }
                 break;
             }

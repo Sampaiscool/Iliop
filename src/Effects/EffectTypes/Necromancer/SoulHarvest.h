@@ -19,8 +19,8 @@ public:
         }
         
         if (self.getSoulFragmentCount() >= 5) {
-            self.applyStatus(std::make_unique<ZombieArmyStatus>(0, 1));
-            self.applyStatus(std::make_unique<SkeletonArmyStatus>(0, 1));
+            self.applyStatus(std::make_unique<ZombieArmyStatus>(1, 1));
+            self.applyStatus(std::make_unique<SkeletonArmyStatus>(1, 1));
         }
     }
 };

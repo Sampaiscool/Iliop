@@ -293,6 +293,7 @@ int main() {
                         }
                         else {
                             // card clicks
+                            Card* playedCard = nullptr;
                             for (Card& card : deck.getHand()) {
                                 if (card.contains(mousePos.x, mousePos.y)) {
                                     if (CardResolver::play(
@@ -301,9 +302,18 @@ int main() {
                                             enemy.getState(),
                                             deck))
                                     {
-                                        deck.discardCard(card);
+                                        playedCard = &card;
                                         break;
                                     }
+                                }
+                            }
+                            if (playedCard) {
+                                if (!playedCard->isTemporary) {
+                                    deck.discardCard(*playedCard);
+                                } else {
+                                    auto& hand = deck.getHand();
+                                    hand.erase(std::remove_if(hand.begin(), hand.end(),
+                                        [&](const Card& c) { return c.x == playedCard->x && c.y == playedCard->y; }), hand.end());
                                 }
                             }
                         }

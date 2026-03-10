@@ -61,7 +61,7 @@ private:
     int lastEnemyHP = -1;
     sf::Vector2f lastPlayerBarPos;
     sf::Vector2f lastEnemyBarPos;
-    int playerStatusScroll = 0;  // scrollable status list offset
-    int enemyStatusScroll = 0;   // scrollable status list offset
+    int playerStatusScroll = 0;
+    int enemyStatusScroll = 0;
 };
 

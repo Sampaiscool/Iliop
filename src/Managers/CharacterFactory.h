@@ -55,7 +55,7 @@ public:
                 break;
             case Class::Necromancer:
                 stats = CombatState{{30, 30}, {0, 8}, {3, 3}, {0, 2}};
-                transformCorruption = 2; transformTime = 3;
+                transformCorruption = 2; transformTime = 2;
                 for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Raise Dead"));
                 for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Bone Legion"));
                 for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Bone Splinter"));
@@ -64,6 +64,12 @@ public:
                 for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Death Mark"));
                 for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Army Surge"));
                 for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Crypt Shield"));
+                break;
+            case Class::Alchemist:
+                stats = CombatState{{25, 25}, {0, 10}, {3, 3}, {0, 2}};
+                transformCorruption = 2; transformTime = 2;
+                for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Potion Brew"));
+                for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Toss"));
                 break;
         }
 
@@ -121,6 +127,12 @@ public:
                 stats.statuses.push_back(std::make_unique<SkeletonArmyStatus>(99, 0));
                 stats.statuses.push_back(std::make_unique<SoulFragmentStatus>(99, 1));
                 break;
+            }
+            case CharacterName::Kobalt: {
+                displayName = "Kobalt";
+                stats.mana.max += 1; stats.mana.current += 1;
+                stats.transformThreshold += 1;
+                stats.passiveValue = 1;
             }
         }
 
