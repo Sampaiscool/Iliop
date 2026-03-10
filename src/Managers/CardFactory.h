@@ -100,7 +100,7 @@ private:
         {"Primal Arrow",    {"Primal Arrow", "Deal damage and transform\n(deal damage 5 times (can bleed))", 1, 1, 1, CardType::PrimalArrow, CardTheme::Red}},
         {"Aim",             {"Aim", "Gain Locked and heal\n(Instead gain Raging Bear and inflict bleed)", 2, 1, 1, CardType::Aim, CardTheme::Gray}},
         {"Arrow Volley",    {"Arrow Volley", "Fire a volley of arrows.\n(More hits + chance to bleed)", 3, 3, 1, CardType::ArrowVolley, CardTheme::Red}},
-        {"Jump",            {"Jump", "Shield and Defence Up.\n(Deal damage + Defence Up)", 2, 2, 1, CardType::Jump, CardTheme::Teal}},
+        {"Jump",            {"Jump", "Shield and Defence Up.\n(Deal damage + Defence Up)", 2, 2, 1, CardType::Jump, CardTheme::Blue}},
         {"Metamorphosis",   {"Metamorphosis", "Transform.\n(Extend transform + heal)", 1, 2, 1, CardType::Metamorphosis, CardTheme::Green}},
 
         // mage
@@ -136,7 +136,7 @@ private:
 
         // alchemist
         {"Potion Brew",     {"Potion Brew", "Create 2 random metals.", 0, 0, 1, CardType::PotionBrew, CardTheme::Blue}},
-        {"Toss",            {"Toss", "Remove 1 metal and deal increased damage\nbased on removes metal value", 3, 7, 1, CardType::Toss, CardTheme::Red}},
+        {"Toss",            {"Toss", "Remove 1 metal and deal increased damage\nbased on removed metal value", 3, 7, 1, CardType::Toss, CardTheme::Red}},
         {"Reaction",        {"Reaction", "Mix 2 metals for a powerful effect", 8, 3, 0, CardType::Reaction, CardTheme::Purple}},
         {"Lead",            {"Lead", "Apply Lead status", 3, 0, 1, CardType::LeadCard, CardTheme::Gray}},
         {"Gold",            {"Gold", "Apply Gold status", 4, 0, 1, CardType::GoldCard, CardTheme::Gray}},

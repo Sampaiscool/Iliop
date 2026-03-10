@@ -68,7 +68,7 @@ public:
             case Class::Alchemist:
                 stats = CombatState{{25, 25}, {0, 10}, {3, 3}, {0, 2}};
                 transformCorruption = 2; transformTime = 2;
-                for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Potion Brew"));
+                for (int i = 0; i < 8; ++i) deck.push_back(CardFactory::create("Potion Brew"));
                 for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Toss"));
                 break;
         }
@@ -143,11 +143,18 @@ public:
         auto keys = CardFactory::getAllAvailableKeys();
 
         keys.erase(std::remove_if(keys.begin(), keys.end(), [](const std::string& key) {
-            return key == "Divine Arrow" || key == "Void Storm" || 
-                   key == "Beast Rampage" || key == "Cosmic Shield" || 
-                   key == "Blood Frenzy" || key == "Omega Annihilation" ||
-                   key == "Universal Singularity" || key == "Primordial Chaos" ||
-                   key == "Existential Crisis";
+            return
+                // fusion cards:
+                key == "Divine Arrow" || key == "Void Storm" ||
+                key == "Beast Rampage" || key == "Cosmic Shield" ||
+                key == "Blood Frenzy" || key == "Omega Annihilation" ||
+                key == "Universal Singularity" || key == "Primordial Chaos" ||
+                key == "Existential Crisis" ||
+                // temp cards:
+                key == "Copper" || key == "Gold" ||
+                key == "Iron" || key == "Lead" ||
+                key == "Mercury" || key == "Silver" ||
+                key == "Tin" || key == "Reaction";
         }), keys.end());
 
         std::shuffle(keys.begin(), keys.end(), std::mt19937(std::random_device()()));
