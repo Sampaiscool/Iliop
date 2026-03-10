@@ -21,6 +21,8 @@ enum class StatusType {
     SkeletonArmy,
     SoulFragment,
     DeathMark,
+    Vulnerable,
+    Regeneration,
     // metals
     Lead,
     Gold,

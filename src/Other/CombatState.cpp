@@ -24,6 +24,7 @@ int CombatState::takeDamage(int amount) {
         if (s->name == "Void Mark") finalDamage += s->intensity;
         if (s->name == "Defence Up") finalDamage = std::max(0, finalDamage - s->intensity);
         if (s->name == "Defence Down") finalDamage += s->intensity;
+        if (s->name == "Vulnerable") finalDamage += s->intensity;
     }
 
     int remainingDamage = finalDamage;

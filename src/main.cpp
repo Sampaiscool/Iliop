@@ -120,7 +120,7 @@ int main() {
                 }
             }
 
-            // mouse wordt geklikt
+            // mouse is clciked
             if (auto mouse = event.getIf<sf::Event::MouseButtonPressed>()) {
                 if (mouse->button != sf::Mouse::Button::Left)
                     continue;
@@ -129,7 +129,7 @@ int main() {
                     window.mapPixelToCoords(
                         sf::Mouse::getPosition(window));
 
-                // checkt of je klikt op de start knop
+                // click on startbutton?
                 if (gameState == GameState::StartScreen) {
 
                     sf::FloatRect startButton(

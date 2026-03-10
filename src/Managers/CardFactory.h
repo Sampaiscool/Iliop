@@ -136,7 +136,7 @@ private:
 
         // alchemist
         {"Potion Brew",     {"Potion Brew", "Create 2 random metals.", 0, 0, 1, CardType::PotionBrew, CardTheme::Blue}},
-        {"Toss",            {"Toss", "Remove 1 metal and deal increased damage\nbased on its value", 3, 7, 1, CardType::Toss, CardTheme::Red}},
+        {"Toss",            {"Toss", "Remove 1 metal and deal increased damage\nbased on removes metal value", 3, 7, 1, CardType::Toss, CardTheme::Red}},
         {"Reaction",        {"Reaction", "Mix 2 metals for a powerful effect", 8, 3, 0, CardType::Reaction, CardTheme::Purple}},
         {"Lead",            {"Lead", "Apply Lead status", 3, 0, 1, CardType::LeadCard, CardTheme::Gray}},
         {"Gold",            {"Gold", "Apply Gold status", 4, 0, 1, CardType::GoldCard, CardTheme::Gray}},

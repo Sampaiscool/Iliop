@@ -306,3 +306,22 @@ public:
     void onTurnStart(CombatState& owner) override {  }
 };
 
+class VulnerableStatus : public Status {
+public:
+    VulnerableStatus(int dur, int intens) { name = "Vulnerable"; duration = dur; intensity = intens; }
+    StatusType getType() const override { return StatusType::Vulnerable; }
+    std::string getDescription() const override { return "Take " + std::to_string(intensity) + " extra damage"; }
+    void onTurnStart(CombatState& owner) override { duration--; }
+};
+
+class RegenerationStatus : public Status {
+public:
+    RegenerationStatus(int dur, int intens) { name = "Regeneration"; duration = dur; intensity = intens; }
+    StatusType getType() const override { return StatusType::Regeneration; }
+    std::string getDescription() const override { return "Heal " + std::to_string(intensity) + " at end of turn"; }
+    void onTurnStart(CombatState& owner) override { 
+        owner.heal(intensity);
+        duration--; 
+    }
+};
+
