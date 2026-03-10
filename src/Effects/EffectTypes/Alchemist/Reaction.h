@@ -73,24 +73,18 @@ private:
 
     void applySolder(CombatState& self, CombatState& target) {
         // Iron + Lead
-        target.applyStatus(std::make_unique<StunStatus>(1, 0));
-    }
-
-    void applyRoyal(CombatState& self, CombatState& target) {
-        // Gold + Lead
-        self.heal(12);
-        self.mana.current = std::min(self.mana.current + 2, self.mana.max);
+        target.applyStatus(std::make_unique<StunStatus>(1, 1));
     }
 
     void applyWhiteMetal(CombatState& self, CombatState& target) {
         // Copper + Lead
-        target.applyStatus(std::make_unique<StunStatus>(1, 0));
+        target.applyStatus(std::make_unique<StunStatus>(1, 1));
         target.applyStatus(std::make_unique<BleedStatus>(2, 2));
     }
 
     void applyLiquidHeavy(CombatState& self, CombatState& target) {
         // Lead + Mercury
-        target.applyStatus(std::make_unique<StunStatus>(1, 0));
+        target.applyStatus(std::make_unique<StunStatus>(1, 1));
         target.takeDamage(self.getModifiedDamage(8));
     }
 
@@ -188,7 +182,6 @@ public:
         else if (m1 == StatusType::Copper  && m2 == StatusType::Mercury) applyVerdigris(self, target);    // Copper + Mercury
         else if (m1 == StatusType::Lead    && m2 == StatusType::Mercury) applyAmalgam(self, target);      // Lead + Mercury
         else if (m1 == StatusType::Iron    && m2 == StatusType::Lead)    applySolder(self, target);       // Iron + Lead
-        else if (m1 == StatusType::Gold    && m2 == StatusType::Lead)    applyRoyal(self, target);        // Gold + Lead
         else if (m1 == StatusType::Copper  && m2 == StatusType::Lead)    applyWhiteMetal(self, target);   // Copper + Lead
         else if (m1 == StatusType::Lead    && m2 == StatusType::Mercury) applyLiquidHeavy(self, target);  // Lead + Mercury
         else if (m1 == StatusType::Lead    && m2 == StatusType::Silver)  applyHeavyShiny(self, target);   // Lead + Silver
