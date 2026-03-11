@@ -42,3 +42,14 @@ Classes:
           Auto transform based on reactions,
           Cards that create other elements,
           Mix elements to create reactions that also create actual effects,
+    - Technomancer:
+          Most of his cards upgrade 1 specific card,
+          Resolves around upgrading / transforming the card to the version you need that moment,
+          (Upgrades work like statuses so you get a status "Bleeding Machine", and while you have that if you play the card (Machine Power) it gives bleed.
+          After the status is used it goes away.)
+          That one card can do everything but not at once,
+          Only transforming gives him the card,
+          At the start of combat applies 1 "Weaker Creator" to the enemy, Everytime you play a card it's counter goes up by 1 (2 if corrupted)
+          If "Weaker Creator" is at max (7) stacks; you transform. and you gain 1 "Suprime Machine".
+          Everytime you get a status its counter goes up by 1 (2 if corrupted) at max (4) stacks; gain 3 "True Void" and draw 3 cards.
+

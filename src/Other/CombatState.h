@@ -16,6 +16,11 @@ struct DamageEvent {
     DamageEvent(int amt, bool heal) : amount(amt), isHeal(heal) {}
 };
 
+struct PendingCard {
+    std::string key;
+    bool forceTemporary;
+};
+
 struct CombatState {
     Resource hp;
     Resource shield;
@@ -39,7 +44,7 @@ struct CombatState {
     Deck* deck = nullptr;
 
     // queue of card names to add to hand after resolution
-    std::vector<std::string> pendingCardKeys;
+    std::vector<PendingCard> pendingCards;
 
     // need this for forward declerations
     CombatState();
@@ -66,11 +71,12 @@ struct CombatState {
     void addDamageEvent(int amount, bool isHeal);
     void clearDamageEvents() const { damageEvents.clear(); }
 
-    void addCardToHand(const std::string& cardKey);
+    void addCardToHand(const std::string& cardKey, bool makeTemporary);
     void flushPendingCards();
     bool hasMetalStatus(StatusType metal) const;
     int getMetalStatusCount() const;
     void removeMetalStatus(StatusType metal);
     void removeRandomMetalStatus();
-    void removeRandomMetalCardFromHand();
+    std::string removeRandomMetalCardFromHand();
+    void removeUpgradeStatus();
 };

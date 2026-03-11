@@ -70,6 +70,43 @@ bool CardResolver::play(
         ++it;
     }
 
+    // weaker creator increment
+    for (auto& status : enemy.statuses) {
+        if (status->getType() == StatusType::WeakerCreator) {
+            int increment = isCorrupted ? 2 : 1;
+            status->intensity += increment;
+
+            // at 7, transform and give Suprime Machine
+            if (status->intensity >= 7) {
+                player.transform(enemy);
+                bool hasSuprimeMachine = false;
+                for (const auto& s : player.statuses) {
+                    if (s && s->getType() == StatusType::SupremeMachine) {
+                        hasSuprimeMachine = true;
+                        break;
+                    }
+                }
+                if (!hasSuprimeMachine) {
+                    player.applyStatus(std::make_unique<SuprimeMachineStatus>(3, 0));
+                }
+                status->intensity = 0;
+            }
+            break;
+        }
+    }
+
+    // suprime machine increment
+    for (auto& status : player.statuses) {
+        if (status->getType() == StatusType::SupremeMachine) {
+            if (status->intensity >= 4) {
+                player.applyStatus(std::make_unique<TrueVoidStatus>(2, 3));
+                deck.drawCard(3);
+                status->intensity = 0;
+            }
+            break;
+        }
+    }
+
     // global rules
     player.corruption.current =
         std::min(player.corruption.current + 1,

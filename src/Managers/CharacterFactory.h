@@ -5,6 +5,7 @@
 #include "../Effects/EffectTypes/Ranger/PredatorInstinct.h"
 #include "../Effects/EffectTypes/Necromancer/UnleashArmy.h"
 #include "../Effects/EffectTypes/Necromancer/SoulGathering.h"
+#include "../Effects/EffectTypes/Technomancer/PerfectCreation.h"
 #include "../Other/AllStatuses.h"
 
 class CharacterFactory {
@@ -71,6 +72,16 @@ public:
                 for (int i = 0; i < 8; ++i) deck.push_back(CardFactory::create("Potion Brew"));
                 for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Toss"));
                 break;
+            case Class::Technomancer:
+                stats = CombatState{{30, 30}, {0, 10}, {5, 5}, {0, 2}};
+                transformCorruption = 2; transformTime = 2;
+                for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Overclock"));
+                for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Bleed Inject"));
+                for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Shock Inject"));
+                for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Vampiric Inject"));
+                for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Armor Inject"));
+                for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Status Drive"));
+                break;
         }
 
         // create the identity of the characters
@@ -132,7 +143,17 @@ public:
                 displayName = "Kobalt";
                 stats.mana.max += 1; stats.mana.current += 1;
                 stats.transformThreshold += 1;
+                stats.onTransform = std::make_unique<VoidProwess>(3);
+                stats.onCardPlayProc = std::make_unique<PotionBrew>(2);
                 stats.passiveValue = 1;
+                break;
+            }
+            case CharacterName::OneXNAO: {
+                displayName = "1X NAO";
+                stats.transformThreshold = 7;
+                stats.onTransform = std::make_unique<PerfectCreation>();
+                stats.passiveValue = 1;
+                break;
             }
         }
 
@@ -154,7 +175,8 @@ public:
                 key == "Copper" || key == "Gold" ||
                 key == "Iron" || key == "Lead" ||
                 key == "Mercury" || key == "Silver" ||
-                key == "Tin" || key == "Reaction";
+                key == "Tin" || key == "Reaction" ||
+                key == "Machine Power";
         }), keys.end());
 
         std::shuffle(keys.begin(), keys.end(), std::mt19937(std::random_device()()));

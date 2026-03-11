@@ -11,6 +11,7 @@ enum class Class {
     Ranger,
     Necromancer,
     Alchemist,
+    Technomancer,
     Paladin,
     Rogue
 };
@@ -22,6 +23,7 @@ enum class CharacterName {
     MathewsLift,
     Djin,
     Kobalt,
+    OneXNAO,
     doobie2,
     doobie3,
     doobie4

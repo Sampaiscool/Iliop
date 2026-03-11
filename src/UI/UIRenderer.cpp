@@ -50,8 +50,8 @@ sf::Color getClassColor(Class type) {
 }
 
 void drawPlayerPortrait(sf::RenderWindow& window, const sf::Font& font, const Character& player, int winW, int winH, const std::map<CharacterName, sf::Texture>& portraitTextures) {
-    float boxW = winW / 8.f;
-    float boxH = winW / 8.f;
+    float boxW = winW / 5.f;
+    float boxH = winW / 5.f;
     float margin = 20.f;
 
     float x = margin;

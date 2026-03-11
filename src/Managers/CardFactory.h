@@ -69,6 +69,15 @@
 #include "../Effects/EffectTypes/Alchemist/Silver.h"
 #include "../Effects/EffectTypes/Alchemist/Tin.h"
 
+// technomancer:
+#include "../Effects/EffectTypes/Technomancer/MachinePower.h"
+#include "../Effects/EffectTypes/Technomancer/Overclock.h"
+#include "../Effects/EffectTypes/Technomancer/BleedInject.h"
+#include "../Effects/EffectTypes/Technomancer/ShockInject.h"
+#include "../Effects/EffectTypes/Technomancer/VampiricInject.h"
+#include "../Effects/EffectTypes/Technomancer/ArmorInject.h"
+#include "../Effects/EffectTypes/Technomancer/StatusDrive.h"
+
 #include <map>
 #include <string>
 #include <vector>
@@ -138,13 +147,22 @@ private:
         {"Potion Brew",     {"Potion Brew", "Create 2 random metals.", 0, 0, 1, CardType::PotionBrew, CardTheme::Blue}},
         {"Toss",            {"Toss", "Remove 1 metal and deal increased damage\nbased on removed metal value", 3, 7, 1, CardType::Toss, CardTheme::Red}},
         {"Reaction",        {"Reaction", "Mix 2 metals for a powerful effect", 8, 3, 0, CardType::Reaction, CardTheme::Purple}},
-        {"Lead",            {"Lead", "Apply Lead status", 3, 0, 1, CardType::LeadCard, CardTheme::Gray}},
-        {"Gold",            {"Gold", "Apply Gold status", 4, 0, 1, CardType::GoldCard, CardTheme::Gray}},
-        {"Copper",          {"Copper", "Apply Copper status", 2, 0, 1, CardType::CopperCard, CardTheme::Gray}},
-        {"Iron",            {"Iron", "Apply Iron status", 3, 0, 1, CardType::IronCard, CardTheme::Gray}},
-        {"Mercury",         {"Mercury", "Apply Mercury status", 2, 0, 1, CardType::MercuryCard, CardTheme::Gray}},
-        {"Silver",          {"Silver", "Apply Silver status", 3, 0, 1, CardType::SilverCard, CardTheme::Gray}},
-        {"Tin",             {"Tin", "Apply Tin status", 1, 0, 1, CardType::TinCard, CardTheme::Gray}},
+        {"Lead",            {"Lead", "Apply Lead status", 3, 1, 1, CardType::LeadCard, CardTheme::Gray}},
+        {"Gold",            {"Gold", "Apply Gold status", 4, 4, 1, CardType::GoldCard, CardTheme::Gray}},
+        {"Copper",          {"Copper", "Apply Copper status", 2, 2, 1, CardType::CopperCard, CardTheme::Gray}},
+        {"Iron",            {"Iron", "Apply Iron status", 3, 1, 1, CardType::IronCard, CardTheme::Gray}},
+        {"Mercury",         {"Mercury", "Apply Mercury status", 2, 4, 1, CardType::MercuryCard, CardTheme::Gray}},
+        {"Silver",          {"Silver", "Apply Silver status", 3, 1, 1, CardType::SilverCard, CardTheme::Gray}},
+        {"Tin",             {"Tin", "Apply Tin status", 1, 2, 1, CardType::TinCard, CardTheme::Gray}},
+
+        // technomancer
+        {"Machine Power",   {"Machine Power", "Deal damage.\nUpgrades apply additional effects", 5, 8, 1, CardType::MachinePower, CardTheme::Blue}},
+        {"Overclock",       {"Overclock", "Upgrade Machine Power:\n+5 damage", 1, 1, 1, CardType::Overclock, CardTheme::Red}},
+        {"Bleed Inject",    {"Bleed Inject", "Upgrade Machine Power:\nApply Bleed", 1, 1, 1, CardType::BleedInject, CardTheme::Red}},
+        {"Shock Inject",    {"Shock Inject", "Upgrade Machine Power:\nApply Stun", 1, 1, 1, CardType::ShockInject, CardTheme::Blue}},
+        {"Vampiric Inject", {"Vampiric Inject", "Upgrade Machine Power:\nHeal on hit", 1, 1, 1, CardType::VampiricInject, CardTheme::Green}},
+        {"Armor Inject",    {"Armor Inject", "Upgrade Machine Power:\nGain Shield", 1, 1, 1, CardType::ArmorInject, CardTheme::Gray}},
+        {"Status Drive",    {"Status Drive", "WIP", 2, 3, 1, CardType::StatusDrive, CardTheme::Purple}},
 
         // forge fusion
         {"Divine Arrow",    {"Divine Arrow", "FUSION: Holy damage + Heal\nDeal damage and restore health!", 5, 5, 1, CardType::Fusion, CardTheme::Gold}},
@@ -195,52 +213,61 @@ public:
                 break;
 
             // ranger
-            case CardType::PrimalArrow:   card.effect = std::make_unique<PrimalArrowEffect>();    break;
-            case CardType::Aim:           card.effect = std::make_unique<Aim>();               break;
-            case CardType::ArrowVolley:    card.effect = std::make_unique<ArrowVolley>();        break;
-            case CardType::Jump:           card.effect = std::make_unique<Jump>();               break;
-            case CardType::Metamorphosis:  card.effect = std::make_unique<Metamorphosis>();      break;
+            case CardType::PrimalArrow:     card.effect = std::make_unique<PrimalArrowEffect>();  break;
+            case CardType::Aim:             card.effect = std::make_unique<Aim>();                break;
+            case CardType::ArrowVolley:     card.effect = std::make_unique<ArrowVolley>();        break;
+            case CardType::Jump:            card.effect = std::make_unique<Jump>();               break;
+            case CardType::Metamorphosis:   card.effect = std::make_unique<Metamorphosis>();      break;
 
             // mage
-            case CardType::UnstableVolley: card.effect = std::make_unique<UnstableVolley>(); break;
-            case CardType::EldritchBlast:  card.effect = std::make_unique<EldritchBlast>();  break;
-            case CardType::VoidGrasp:      card.effect = std::make_unique<VoidGrasp>();      break;
-            case CardType::AstralShift:    card.effect = std::make_unique<AstralShift>();    break;
+            case CardType::UnstableVolley:  card.effect = std::make_unique<UnstableVolley>(); break;
+            case CardType::EldritchBlast:   card.effect = std::make_unique<EldritchBlast>();  break;
+            case CardType::VoidGrasp:       card.effect = std::make_unique<VoidGrasp>();      break;
+            case CardType::AstralShift:     card.effect = std::make_unique<AstralShift>();    break;
 
             // warrior
-            case CardType::AegisStrike:    card.effect = std::make_unique<AegisStrike>();      break;
-            case CardType::IronWill:       card.effect = std::make_unique<IronWill>();         break;
-            case CardType::ShatterSpleen:  card.effect = std::make_unique<ShatterSpleen>();    break;
-            case CardType::ShieldBash:     card.effect = std::make_unique<ShieldBash>();       break;
-            case CardType::WarriorPact:    card.effect = std::make_unique<WarriorPact>();      break;
+            case CardType::AegisStrike:     card.effect = std::make_unique<AegisStrike>();      break;
+            case CardType::IronWill:        card.effect = std::make_unique<IronWill>();         break;
+            case CardType::ShatterSpleen:   card.effect = std::make_unique<ShatterSpleen>();    break;
+            case CardType::ShieldBash:      card.effect = std::make_unique<ShieldBash>();       break;
+            case CardType::WarriorPact:     card.effect = std::make_unique<WarriorPact>();      break;
 
             // cleric
-            case CardType::BlindingLight: card.effect = std::make_unique<BlindingLight>();  break;
-            case CardType::Condemn:       card.effect = std::make_unique<Condemn>();        break;
-            case CardType::Purge:         card.effect = std::make_unique<Purge>();          break;
-            case CardType::Ritual:        card.effect = std::make_unique<Ritual>();         break;
+            case CardType::BlindingLight:   card.effect = std::make_unique<BlindingLight>();  break;
+            case CardType::Condemn:         card.effect = std::make_unique<Condemn>();        break;
+            case CardType::Purge:           card.effect = std::make_unique<Purge>();          break;
+            case CardType::Ritual:          card.effect = std::make_unique<Ritual>();         break;
 
             // necromancer
-            case CardType::RaiseDead:     card.effect = std::make_unique<RaiseDead>();      break;
-            case CardType::BoneLegion:    card.effect = std::make_unique<BoneLegion>();     break;
-            case CardType::BoneSplinter:  card.effect = std::make_unique<BoneSplinter>();   break;
-            case CardType::RottingBite:   card.effect = std::make_unique<RottingBite>();    break;
-            case CardType::SoulHarvest:    card.effect = std::make_unique<SoulHarvest>();    break;
-            case CardType::DeathMark:     card.effect = std::make_unique<DeathMark>();      break;
-            case CardType::ArmySurge:     card.effect = std::make_unique<ArmySurge>();      break;
-            case CardType::CryptShield:   card.effect = std::make_unique<CryptShield>();    break;
+            case CardType::RaiseDead:       card.effect = std::make_unique<RaiseDead>();      break;
+            case CardType::BoneLegion:      card.effect = std::make_unique<BoneLegion>();     break;
+            case CardType::BoneSplinter:    card.effect = std::make_unique<BoneSplinter>();   break;
+            case CardType::RottingBite:     card.effect = std::make_unique<RottingBite>();    break;
+            case CardType::SoulHarvest:     card.effect = std::make_unique<SoulHarvest>();    break;
+            case CardType::DeathMark:       card.effect = std::make_unique<DeathMark>();      break;
+            case CardType::ArmySurge:       card.effect = std::make_unique<ArmySurge>();      break;
+            case CardType::CryptShield:     card.effect = std::make_unique<CryptShield>();    break;
 
             // alchemist
-            case CardType::PotionBrew:   card.effect = std::make_unique<PotionBrew>();     break;
-            case CardType::Toss:         card.effect = std::make_unique<Toss>();           break;
+            case CardType::PotionBrew:    card.effect = std::make_unique<PotionBrew>();     break;
+            case CardType::Toss:          card.effect = std::make_unique<Toss>();           break;
             case CardType::Reaction:      card.effect = std::make_unique<Reaction>();       break;
-            case CardType::LeadCard:      card.effect = std::make_unique<LeadEffect>();      break;
-            case CardType::GoldCard:      card.effect = std::make_unique<GoldEffect>();      break;
-            case CardType::CopperCard:    card.effect = std::make_unique<Copper>();          break;
-            case CardType::IronCard:      card.effect = std::make_unique<IronEffect>();      break;
-            case CardType::MercuryCard:   card.effect = std::make_unique<MercuryEffect>();   break;
-            case CardType::SilverCard:    card.effect = std::make_unique<SilverEffect>();    break;
+            case CardType::LeadCard:      card.effect = std::make_unique<LeadEffect>();     break;
+            case CardType::GoldCard:      card.effect = std::make_unique<GoldEffect>();     break;
+            case CardType::CopperCard:    card.effect = std::make_unique<Copper>();         break;
+            case CardType::IronCard:      card.effect = std::make_unique<IronEffect>();     break;
+            case CardType::MercuryCard:   card.effect = std::make_unique<MercuryEffect>();  break;
+            case CardType::SilverCard:    card.effect = std::make_unique<SilverEffect>();   break;
             case CardType::TinCard:       card.effect = std::make_unique<TinEffect>();      break;
+
+            // technomancer
+            case CardType::MachinePower:    card.effect = std::make_unique<MachinePower>();    break;
+            case CardType::Overclock:        card.effect = std::make_unique<Overclock>();        break;
+            case CardType::BleedInject:     card.effect = std::make_unique<BleedInject>();     break;
+            case CardType::ShockInject:     card.effect = std::make_unique<ShockInject>();     break;
+            case CardType::VampiricInject:  card.effect = std::make_unique<VampiricInject>();  break;
+            case CardType::ArmorInject:     card.effect = std::make_unique<ArmorInject>();     break;
+            case CardType::StatusDrive:      card.effect = std::make_unique<StatusDrive>();      break;
         }
         return card;
     }

@@ -95,6 +95,15 @@ int CombatState::addShield(int amount) {
 
 void CombatState::applyStatus(std::unique_ptr<Status> newStatus) {
     if (!newStatus) return;
+    
+    // Check if we have Suprime Machine - increment when receiving any status
+    for (auto& s : statuses) {
+        if (s->getType() == StatusType::SupremeMachine) {
+            s->intensity += 1;
+            break;
+        }
+    }
+    
     for (auto& s : statuses) {
         if (s->name == newStatus->name) {
             s->duration  += newStatus->duration;
@@ -182,27 +191,29 @@ int CombatState::getSoulFragmentCount() const {
     return count;
 }
 
-void CombatState::addCardToHand(const std::string& cardKey) {
-    pendingCardKeys.push_back(cardKey);
+void CombatState::addCardToHand(const std::string& cardKey, bool makeTemporary) {
+    pendingCards.push_back({cardKey, makeTemporary});
 }
 
 void CombatState::flushPendingCards() {
     if (deck) {
         auto& hand = deck->getHand();
-        std::vector<std::string> metalNames = {"Lead", "Gold", "Copper", "Iron", "Mercury", "Silver", "Tin", "Reaction"};
+        std::vector<std::string> tempCards = {"Lead", "Gold", "Copper", "Iron", "Mercury", "Silver", "Tin", "Reaction", "Machine Power"};
 
-        for (const auto& key : pendingCardKeys) {
-            Card card = CardFactory::create(key);
-            // mark metal and reaction cards as temporary
-            if (std::find(metalNames.begin(), metalNames.end(), key) != metalNames.end()) {
+        for (const auto& pending : pendingCards) {
+            Card card = CardFactory::create(pending.key);
+            
+            bool isTemp = std::find(tempCards.begin(), tempCards.end(), pending.key) != tempCards.end();
+            
+            if (isTemp || pending.forceTemporary) {
                 card.isTemporary = true;
             }
+
             hand.push_back(std::move(card));
         }
-        pendingCardKeys.clear();
+        pendingCards.clear();
     }
 }
-
 bool CombatState::hasMetalStatus(StatusType metal) const {
     for (const auto& s : statuses) {
         if (s && s->getType() == metal) {
@@ -256,8 +267,8 @@ void CombatState::removeRandomMetalStatus() {
     }
 }
 
-void CombatState::removeRandomMetalCardFromHand() {
-    if (!deck) return;
+std::string CombatState::removeRandomMetalCardFromHand() {
+    if (!deck) return "";
  
     auto& hand = deck->getHand();
     std::vector<std::string> metalNames = {"Lead", "Gold", "Copper", "Iron", "Mercury", "Silver", "Tin"};
@@ -265,8 +276,20 @@ void CombatState::removeRandomMetalCardFromHand() {
     for (auto it = hand.begin(); it != hand.end(); ++it) {
         auto nameIt = std::find(metalNames.begin(), metalNames.end(), it->name);
         if (nameIt != metalNames.end()) {
+            std::string removedName = it->name;
             hand.erase(it);
-            return;
+            return removedName;
+        }
+    }
+    return "";
+}
+
+void CombatState::removeUpgradeStatus() {
+    for (auto it = statuses.begin(); it != statuses.end(); ) {
+        if (*it && (*it)->getType() == StatusType::MachineUpgrade) {
+            it = statuses.erase(it);
+        } else {
+            ++it;
         }
     }
 }

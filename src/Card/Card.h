@@ -64,7 +64,16 @@ enum class CardType {
     IronCard,
     MercuryCard,
     SilverCard,
-    TinCard
+    TinCard,
+
+    // technomancer
+    MachinePower,
+    Overclock,
+    BleedInject,
+    ShockInject,
+    VampiricInject,
+    ArmorInject,
+    StatusDrive
 };
 
 enum class CardTheme {

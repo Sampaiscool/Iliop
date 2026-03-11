@@ -30,7 +30,11 @@ enum class StatusType {
     Iron,
     Mercury,
     Silver,
-    Tin
+    Tin,
+    // technomancer
+    WeakerCreator,
+    SupremeMachine,
+    MachineUpgrade
 };
 
 struct CombatState;

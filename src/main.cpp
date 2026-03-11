@@ -186,7 +186,7 @@ int main() {
                         {"Ranger", Class::Ranger},
                         {"Necromancer", Class::Necromancer},
                         {"Alchemist", Class::Alchemist},
-                        {"Paladin", Class::Paladin},
+                        {"Technomancer", Class::Technomancer},
                         {"Rogue", Class::Rogue}
                     };
 
@@ -241,7 +241,7 @@ int main() {
                         {"Mathews Lift", CharacterName::MathewsLift},
                         {"Djin", CharacterName::Djin},
                         {"Kobalt", CharacterName::Kobalt},
-                        {"doobie3", CharacterName::doobie3},
+                        {"1XNAO", CharacterName::OneXNAO},
                         {"doobie4", CharacterName::doobie4}
                     };
 
@@ -264,6 +264,11 @@ int main() {
                             deck.setDeck(std::move(character.starterDeck));
                             deck.shuffle();
                             deck.drawCard(4);
+
+                            // Apply Weaker Creator to enemy for Technomancer
+                            if (selectedClass == Class::Technomancer) {
+                                enemy.getState().applyStatus(std::make_unique<WeakerCreatorStatus>(99, 0));
+                            }
 
                             player.emplace(std::move(character));
 
@@ -288,38 +293,38 @@ int main() {
                         else if (ui.getTransformBounds().contains(mousePos) && playerState.mana.current == playerState.mana.max) {
                             if (playerState.isTransformed != true) {
                                 playerState.mana.current -= playerState.mana.max;
+                                playerState.deck = &deck;
                                 playerState.transform(enemy.getState());
+                                playerState.flushPendingCards();
                             }
                         }
                         else {
                             // card clicks
-                            Card* playedCard = nullptr;
-                            for (Card& card : deck.getHand()) {
-                                if (card.contains(mousePos.x, mousePos.y)) {
+                            int playedIndex = -1;
+                            for (size_t i = 0; i < deck.getHand().size(); ++i) {
+                                if (deck.getHand()[i].contains(mousePos.x, mousePos.y)) {
                                     if (CardResolver::play(
-                                            card,
+                                            deck.getHand()[i],
                                             playerState,
                                             enemy.getState(),
                                             deck))
                                     {
-                                        playedCard = &card;
+                                        playedIndex = i;
                                         break;
                                     }
                                 }
                             }
-                            if (playedCard) {
-                                if (!playedCard->isTemporary) {
-                                    deck.discardCard(*playedCard);
+                            if (playedIndex >= 0) {
+                                if (!deck.getHand()[playedIndex].isTemporary) {
+                                    deck.discardCard(deck.getHand()[playedIndex]);
                                 } else {
-                                    auto& hand = deck.getHand();
-                                    hand.erase(std::remove_if(hand.begin(), hand.end(),
-                                        [&](const Card& c) { return c.x == playedCard->x && c.y == playedCard->y; }), hand.end());
+                                    deck.getHand().erase(deck.getHand().begin() + playedIndex);
                                 }
                             }
                         }
                     }
                 }
-                // victory screen 
+                // victory screen
                 else if (gameState == GameState::Victory) {
                     sf::FloatRect continueBtn(
                         sf::Vector2f(winW / 2.f - 125.f, winH * 0.55f),
@@ -375,6 +380,11 @@ int main() {
 
                         enemy = EnemyFactory::create(currentFloor);
                         enemy.rollIntent();
+
+                        // Apply Weaker Creator for Technomancer
+                        if (selectedClass == Class::Technomancer) {
+                            enemy.getState().applyStatus(std::make_unique<WeakerCreatorStatus>(99, 0));
+                        }
 
                         ui.resetHPTracking();
                         ui.resetStatusScrolls();
@@ -610,7 +620,7 @@ int main() {
                 {"Ranger", Class::Ranger},
                 {"Necromancer", Class::Necromancer},
                 {"Alchemist", Class::Alchemist},
-                {"Paladin", Class::Paladin},
+                {"Technomancer", Class::Technomancer},
                 {"Rogue", Class::Rogue}
             };
 
@@ -678,7 +688,7 @@ int main() {
                 {"Mathews Lift", CharacterName::MathewsLift},
                 {"Djin", CharacterName::Djin},
                 {"Kobalt", CharacterName::Kobalt},
-                {"doobie3", CharacterName::doobie3},
+                {"1XNAO", CharacterName::OneXNAO},
                 {"doobie4", CharacterName::doobie4}
             };
 
@@ -942,13 +952,13 @@ int main() {
             sf::RectangleShape bg(sf::Vector2f(winW, winH));
             bg.setFillColor(sf::Color(0, 0, 0, 180));
             window.draw(bg);
-            
+
             // title
             sf::Text title(font, "SETTINGS", 50);
             title.setPosition({winW / 2.f - 120.f, winH * 0.15f});
             title.setFillColor(sf::Color::White);
             window.draw(title);
-            
+
             // fps button
             sf::RectangleShape fpsButton({200.f, 50.f});
             fpsButton.setPosition({winW / 2.f - 100.f, winH * 0.3f});
@@ -956,12 +966,12 @@ int main() {
             fpsButton.setOutlineColor(sf::Color::Black);
             fpsButton.setOutlineThickness(3.f);
             window.draw(fpsButton);
-            
+
             sf::Text fpsText(font, "FPS: " + std::to_string(targetFPS), 24);
             fpsText.setPosition({winW / 2.f - 60.f, winH * 0.3f + 12.f});
             fpsText.setFillColor(sf::Color::White);
             window.draw(fpsText);
-            
+
             // restart button
             sf::RectangleShape restartButton({200.f, 50.f});
             restartButton.setPosition({winW / 2.f - 100.f, winH * 0.45f});
@@ -969,12 +979,12 @@ int main() {
             restartButton.setOutlineColor(sf::Color::Black);
             restartButton.setOutlineThickness(3.f);
             window.draw(restartButton);
-            
+
             sf::Text restartText(font, "Restart", 24);
             restartText.setPosition({winW / 2.f - 55.f, winH * 0.45f + 12.f});
             restartText.setFillColor(sf::Color::White);
             window.draw(restartText);
-            
+
             // quit button
             sf::RectangleShape quitButton({200.f, 50.f});
             quitButton.setPosition({winW / 2.f - 100.f, winH * 0.6f});
@@ -982,12 +992,12 @@ int main() {
             quitButton.setOutlineColor(sf::Color::Black);
             quitButton.setOutlineThickness(3.f);
             window.draw(quitButton);
-            
+
             sf::Text quitText(font, "Quit", 24);
             quitText.setPosition({winW / 2.f - 35.f, winH * 0.6f + 12.f});
             quitText.setFillColor(sf::Color::White);
             window.draw(quitText);
-            
+
             // back button
             sf::RectangleShape backButton({200.f, 50.f});
             backButton.setPosition({winW / 2.f - 100.f, winH * 0.75f});
@@ -995,12 +1005,12 @@ int main() {
             backButton.setOutlineColor(sf::Color::Black);
             backButton.setOutlineThickness(3.f);
             window.draw(backButton);
-            
+
             sf::Text backText(font, "Back", 24);
             backText.setPosition({winW / 2.f - 45.f, winH * 0.75f + 12.f});
             backText.setFillColor(sf::Color::White);
             window.draw(backText);
-            
+
             // esc hint
             sf::Text escHint(font, "Press ESC to go back", 18);
             escHint.setPosition({winW / 2.f - 90.f, winH * 0.9f});

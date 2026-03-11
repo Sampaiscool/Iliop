@@ -6,7 +6,10 @@
 #include <random>
 
 class PotionBrew : public Effect {
+    int amount = 0;
 public:
+    PotionBrew(int value) : amount(value) {}
+    PotionBrew() = default;
     void apply(CombatState& self, CombatState& target, int value) override {
         std::vector<std::string> metals = {"Lead", "Gold", "Copper", "Iron", "Mercury", "Silver", "Tin"};
 
@@ -24,7 +27,7 @@ public:
             secondIdx = dis(gen);
         } while (secondIdx == firstIdx);
 
-        self.addCardToHand(metals[firstIdx]);
-        self.addCardToHand(metals[secondIdx]);
+        self.addCardToHand(metals[firstIdx], true);
+        self.addCardToHand(metals[secondIdx], true);
     }
 };

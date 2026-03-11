@@ -325,3 +325,42 @@ public:
     }
 };
 
+class WeakerCreatorStatus : public Status {
+public:
+    WeakerCreatorStatus(int dur, int intens) { name = "Weaker Creator"; duration = dur; intensity = intens; }
+    StatusType getType() const override { return StatusType::WeakerCreator; }
+    std::string getDescription() const override { return "Cards played: " + std::to_string(intensity) + "/7\nAt 7: Transform"; }
+    void onTurnStart(CombatState& owner) override { duration--; }
+};
+
+class SuprimeMachineStatus : public Status {
+public:
+    SuprimeMachineStatus(int dur, int intens) { name = "Suprime Machine"; duration = dur; intensity = intens; }
+    StatusType getType() const override { return StatusType::SupremeMachine; }
+    std::string getDescription() const override { return "Statuses received: " + std::to_string(intensity) + "/4\nAt 4: True Void + draw"; }
+    void onTurnStart(CombatState& owner) override { duration--; }
+};
+
+class MachineUpgradeStatus : public Status {
+public:
+    MachineUpgradeStatus(int dur, int intens, std::string upgradeName = "Machine")
+        : upgradeType(upgradeName) {
+        name = upgradeType;
+        duration = dur;
+        intensity = intens;
+    }
+    StatusType getType() const override { return StatusType::MachineUpgrade; }
+    std::string getDescription() const override { 
+        if (upgradeType == "Overclocked") return "Machine Power deals +5 damage";
+        if (upgradeType == "Bleeding") return "Machine Power applies Bleed";
+        if (upgradeType == "Shocking") return "Machine Power applies Stun";
+        if (upgradeType == "Vampiric") return "Machine Power heals you";
+        if (upgradeType == "Armored") return "Machine Power gives Shield";
+        return "Machine Power: " + upgradeType;
+    }
+    void onTurnStart(CombatState& owner) override { duration--; }
+    std::string getUpgradeType() const { return upgradeType; }
+private:
+    std::string upgradeType;
+};
+

@@ -8,7 +8,7 @@ public:
     void apply(CombatState& self, CombatState& target, int value) override {
         self.applyStatus(std::make_unique<GoldStatus>(99, value));
         if (self.getMetalStatusCount() >= 2) {
-            self.addCardToHand("Reaction");
+            self.addCardToHand("Reaction", true);
         }
     }
 };
