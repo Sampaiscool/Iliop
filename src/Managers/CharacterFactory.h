@@ -26,6 +26,7 @@ public:
                 for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Void Grasp"));
                 for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Eldritch Blast"));
                 for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Astral Shift"));
+                for (int i = 0; i < 9; ++i) deck.push_back(CardFactory::create("Void Prowess"));
                 break;
             case Class::Warrior:
                 stats = CombatState{{40, 40}, {0, 20}, {2, 2}, {0, 1}};
@@ -73,8 +74,8 @@ public:
                 for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Toss"));
                 break;
             case Class::Technomancer:
-                stats = CombatState{{30, 30}, {0, 10}, {5, 5}, {0, 2}};
-                transformCorruption = 2; transformTime = 2;
+                stats = CombatState{{20, 20}, {0, 20}, {5, 5}, {0, 3}};
+                transformCorruption = 3; transformTime = 2;
                 for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Overclock"));
                 for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Bleed Inject"));
                 for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Shock Inject"));
@@ -105,7 +106,7 @@ public:
             case CharacterName::Vortex: {
                 displayName = "Vortex";
                 stats.mana.max += 1; stats.mana.current += 1;
-                stats.onTransform = std::make_unique<VoidProwess>(3);
+                stats.onTransform = std::make_unique<VoidProwess>(2);
                 auto multi = std::make_unique<MultiEffect>();
                 multi->add(std::make_unique<DamageEffect>(1));
                 multi->add(std::make_unique<Infinity>(1));
@@ -143,14 +144,13 @@ public:
                 displayName = "Kobalt";
                 stats.mana.max += 1; stats.mana.current += 1;
                 stats.transformThreshold += 1;
-                stats.onTransform = std::make_unique<VoidProwess>(3);
+                stats.onTransform = std::make_unique<VoidProwess>(2);
                 stats.onCardPlayProc = std::make_unique<PotionBrew>(2);
                 stats.passiveValue = 1;
                 break;
             }
             case CharacterName::OneXNAO: {
                 displayName = "1X NAO";
-                stats.transformThreshold = 7;
                 stats.onTransform = std::make_unique<PerfectCreation>();
                 stats.passiveValue = 1;
                 break;
