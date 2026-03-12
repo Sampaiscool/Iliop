@@ -97,7 +97,7 @@ private:
     void applyElectrumSteel(CombatState& self, CombatState& target) {
         // Gold + Iron
         for (int i = 0; i < 2; i++) target.takeDamage(self.getModifiedDamage(5));
-        target.applyStatus(std::make_unique<VulnerableStatus>(2, 3));
+        target.applyStatus(std::make_unique<DefenceDownStatus>(2, 3));
     }
 
     void applyShimmering(CombatState& self, CombatState& target) {

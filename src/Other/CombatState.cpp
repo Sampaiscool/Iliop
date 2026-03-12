@@ -24,7 +24,7 @@ int CombatState::takeDamage(int amount) {
         if (s->name == "Void Mark") finalDamage += s->intensity;
         if (s->name == "Defence Up") finalDamage = std::max(0, finalDamage - s->intensity);
         if (s->name == "Defence Down") finalDamage += s->intensity;
-        if (s->name == "Vulnerable") finalDamage += s->intensity;
+        if (s->name == "Flight") finalDamage /= (s->intensity + 1);
     }
 
     int remainingDamage = finalDamage;
@@ -93,6 +93,12 @@ int CombatState::addShield(int amount) {
     return gained;
 }
 
+void CombatState::draw(int drawAmount) {
+    if (deck) {
+        deck->drawCard(drawAmount);
+    }
+}
+
 void CombatState::applyStatus(std::unique_ptr<Status> newStatus) {
     if (!newStatus) return;
 
@@ -142,6 +148,22 @@ void CombatState::transform(CombatState& enemy) {
 
     if (onTransform) {
         onTransform->apply(*this, enemy, 0);
+    }
+}
+
+void CombatState::gainCorruption(int corruptionGain) {
+
+    corruption.current += corruptionGain;
+    if (corruption.current > corruption.max) {
+        corruption.current = corruption.max;
+    }
+}
+
+void CombatState::gainMana(int manaGain) {
+
+    mana.current += manaGain;
+    if (mana.current > mana.max) {
+        mana.current = mana.max;
     }
 }
 
@@ -198,7 +220,7 @@ void CombatState::addCardToHand(const std::string& cardKey, bool makeTemporary) 
 void CombatState::flushPendingCards() {
     if (deck) {
         auto& hand = deck->getHand();
-        std::vector<std::string> tempCards = {"Lead", "Gold", "Copper", "Iron", "Mercury", "Silver", "Tin", "Reaction", "Machine Power"};
+        std::vector<std::string> tempCards = {"Lead", "Gold", "Copper", "Iron", "Mercury", "Silver", "Tin", "Reaction", "Machine Power", "Spirit Slash"};
 
         for (const auto& pending : pendingCards) {
             Card card = CardFactory::create(pending.key);

@@ -78,6 +78,16 @@
 #include "../Effects/EffectTypes/Technomancer/ArmorInject.h"
 #include "../Effects/EffectTypes/Technomancer/StatusDrive.h"
 
+// war angel
+#include "../Effects/EffectTypes/WarAngel/Betray.h"
+#include "../Effects/EffectTypes/WarAngel/BlessedSword.h"
+#include "../Effects/EffectTypes/WarAngel/EthernalFlight.h"
+#include "../Effects/EffectTypes/WarAngel/GoldenLance.h"
+#include "../Effects/EffectTypes/WarAngel/HolyArrows.h"
+#include "../Effects/EffectTypes/WarAngel/Savior.h"
+#include "../Effects/EffectTypes/WarAngel/SpiralSlash.h"
+#include "../Effects/EffectTypes/WarAngel/SpiritSlash.h"
+
 #include <map>
 #include <string>
 #include <vector>
@@ -163,6 +173,16 @@ private:
         {"Vampiric Inject", {"Vampiric Inject", "Upgrade Machine Power:\nHeal on hit", 1, 1, 1, CardType::VampiricInject, CardTheme::Green}},
         {"Armor Inject",    {"Armor Inject", "Upgrade Machine Power:\nGain Shield", 1, 1, 1, CardType::ArmorInject, CardTheme::Gray}},
         {"Status Drive",    {"Status Drive", "WIP", 2, 3, 1, CardType::StatusDrive, CardTheme::Purple}},
+
+        // war angel
+        {"Betray",          {"Betray", "Deal damage for each\nblessed intensity the enemy has\nGain 5 corruption (+ 2 corruption)", 2, 2, 2, CardType::Betray, CardTheme::Red}},
+        {"Blessed Sword",   {"Blessed Sword", "Deal damage and give the enemy blessed \nBased on damage done (+ Slash twice)", 1, 7, 1, CardType::BlessedSword, CardTheme::Red}},
+        {"Ethernal Flight", {"Ethernal Flight", "Gain flight and corruption", 1, 1, 3, CardType::EthernalFlight, CardTheme::Gold}},
+        {"Golden Lance",    {"Golden Lance", "Deal damage, If enemy has +5 blessed:\nGain true void (+ Gain corruption)", 3, 2, 1, CardType::GoldenLance, CardTheme::Red}},
+        {"Holy Arrows",     {"Holy Arrows", "Gain locked (if corrupted also gain damage up)\nIf you are under half corruption: Double corruption\n(+ Gain blessed)", 2, 4, 2, CardType::HolyArrows, CardTheme::Purple}},
+        {"Savior",          {"Savior", "Gain holy spirit + mana + draw\n(+ increased bonuses and corruption)", 1, 1, 0, CardType::Savior, CardTheme::Gold}},
+        {"Spiral Slash",    {"Spiral Slash", "Deal damage and gain spirit slash cards\nIf you are under 2 corruption: Gain flight\n(+ Gain True Void)", 3, 3, 3, CardType::SpiralSlash, CardTheme::Purple}},
+        {"Spirit Slash",    {"Spirit Slash", "Gain corruption and deal damage\nIf you are at max corruption: give damage down", 1, 1, 0, CardType::SpiritSlash, CardTheme::Red}},
 
         // forge fusion
         {"Divine Arrow",    {"Divine Arrow", "FUSION: Holy damage + Heal\nDeal damage and restore health!", 5, 5, 1, CardType::Fusion, CardTheme::Gold}},
@@ -269,6 +289,16 @@ public:
             case CardType::VampiricInject:  card.effect = std::make_unique<VampiricInject>();   break;
             case CardType::ArmorInject:     card.effect = std::make_unique<ArmorInject>();      break;
             case CardType::StatusDrive:     card.effect = std::make_unique<StatusDrive>();      break;
+
+            // war angel
+            case CardType::Betray:          card.effect = std::make_unique<Betray>();         break;
+            case CardType::BlessedSword:    card.effect = std::make_unique<BlessedSword>();   break;
+            case CardType::EthernalFlight:  card.effect = std::make_unique<EthernalFlight>(); break;
+            case CardType::GoldenLance:     card.effect = std::make_unique<GoldenLance>();    break;
+            case CardType::HolyArrows:      card.effect = std::make_unique<HolyArrows>();     break;
+            case CardType::Savior:          card.effect = std::make_unique<Savior>();         break;
+            case CardType::SpiralSlash:     card.effect = std::make_unique<SpiralSlash>();    break;
+            case CardType::SpiritSlash:     card.effect = std::make_unique<SpiritSlash>();    break;
         }
         return card;
     }

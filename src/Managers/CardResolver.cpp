@@ -17,12 +17,18 @@ bool CardResolver::play(
 
     // pay for card
     int remainingCost = card.cost;
-    if (trueVoidMana > 0) {
+
+    // first normal mana
+    int usedFromMana = std::min(player.mana.current, remainingCost);
+    player.mana.current -= usedFromMana;
+    remainingCost -= usedFromMana;
+
+    // whatever is left gets paid by true void
+    if (remainingCost > 0) {
         int usedFromVoid = std::min(trueVoidMana, remainingCost);
         player.consumeTrueVoid(usedFromVoid);
         remainingCost -= usedFromVoid;
     }
-    player.mana.current -= remainingCost;
 
     // check if current corruption amount is enough for a transformation
     bool isCorrupted = (player.corruption.current >= player.transformThreshold);
@@ -53,7 +59,7 @@ bool CardResolver::play(
         }
     }
 
-
+    // void maark increment
     for (auto it = enemy.statuses.begin(); it != enemy.statuses.end(); ) {
         if ((*it)->getType() == StatusType::VoidMark) {
             (*it)->intensity++;
@@ -107,10 +113,42 @@ bool CardResolver::play(
         }
     }
 
+    // holy spirit + forbidden droplet
+    // NOTE: collect intensities first to avoid iterator invalidation when applying new statuses
+    int holySpiritIntensity = 0;
+    bool hasForbiddenDroplet = false;
+    for (auto& status : player.statuses) {
+        if (status->getType() == StatusType::HolySpirit) {
+            holySpiritIntensity = status->intensity;
+        }
+        if (status->getType() == StatusType::ForbiddenDroplet) {
+            hasForbiddenDroplet = true;
+        }
+    }
+    if (holySpiritIntensity > 0) {
+        player.applyStatus(std::make_unique<BlessedStatus>(1, holySpiritIntensity));
+        enemy.applyStatus(std::make_unique<BlessedStatus>(1, holySpiritIntensity));
+    }
+    if (hasForbiddenDroplet) {
+        if (player.corruption.current == player.corruption.max) {
+            player.transform(enemy);
+        }
+    }
+
+    bool hasFlight = false;
+    int flightIntensity = 0;
+
+    for (auto& status : player.statuses) {
+        if (status->getType() == StatusType::Flight) {
+            hasFlight = true;
+            flightIntensity = status->intensity;
+        }
+    }
+
+    int corruptionGain = (hasFlight) ? (1 + flightIntensity) : 1;
+
     // global rules
-    player.corruption.current =
-        std::min(player.corruption.current + 1,
-                 player.corruption.max);
+    player.gainCorruption(corruptionGain);
 
     return true;
 }

@@ -306,14 +306,6 @@ public:
     void onTurnStart(CombatState& owner) override {  }
 };
 
-class VulnerableStatus : public Status {
-public:
-    VulnerableStatus(int dur, int intens) { name = "Vulnerable"; duration = dur; intensity = intens; }
-    StatusType getType() const override { return StatusType::Vulnerable; }
-    std::string getDescription() const override { return "Take " + std::to_string(intensity) + " extra damage"; }
-    void onTurnStart(CombatState& owner) override { duration--; }
-};
-
 class RegenerationStatus : public Status {
 public:
     RegenerationStatus(int dur, int intens) { name = "Regeneration"; duration = dur; intensity = intens; }
@@ -351,11 +343,11 @@ public:
     }
     StatusType getType() const override { return StatusType::MachineUpgrade; }
     std::string getDescription() const override { 
-        if (upgradeType == "Overclocked") return "Machine Power deals +5 damage";
-        if (upgradeType == "Bleeding") return "Machine Power applies Bleed";
-        if (upgradeType == "Shocking") return "Machine Power applies Stun";
-        if (upgradeType == "Vampiric") return "Machine Power heals you";
-        if (upgradeType == "Armored") return "Machine Power gives Shield";
+        if (upgradeType == "Overclocked") return "Machine Power deals +" + std::to_string(intensity * 5) + " damage";
+        if (upgradeType == "Bleeding") return "Machine Power applies " + std::to_string(intensity) + " Bleed";
+        if (upgradeType == "Shocking") return "Machine Power applies " + std::to_string(intensity) + " Stun";
+        if (upgradeType == "Vampiric") return "Machine Power heals you for " + std::to_string(intensity);
+        if (upgradeType == "Armored") return  "Machine Power gives " + std::to_string(intensity) + " Shield";
         return "Machine Power: " + upgradeType;
     }
     void onTurnStart(CombatState& owner) override { duration--; }
@@ -364,3 +356,27 @@ private:
     std::string upgradeType;
 };
 
+class FlightStatus : public Status {
+public:
+    FlightStatus(int dur, int intens) { name = "Flight"; duration = dur; intensity = intens; }
+    StatusType getType() const override { return StatusType::Flight; }
+    std::string getDescription() const override { return  "Reduce damage taken to " + std::to_string(100 / (intensity + 1)) + "%\n" +
+                                                          "Gain +" + std::to_string(intensity) + " corrpution from playing cards"; }
+    void onTurnStart(CombatState& owner) override { duration--; }
+};
+
+class HolySpiritStatus : public Status {
+public:
+    HolySpiritStatus(int dur, int intens) { name = "Holy Spirit"; duration = dur; intensity = intens; }
+    StatusType getType() const override { return StatusType::HolySpirit; }
+    std::string getDescription() const override { return "If you play a card: \nGive yourself and the enemy " + std::to_string(intensity) + " Blessed"; }
+    void onTurnStart(CombatState& owner) override { duration--; }
+};
+
+class ForbiddenDropletStatus : public Status {
+public:
+    ForbiddenDropletStatus(int dur, int intens) { name = "Forbidden Droplet"; duration = dur; intensity = intens; }
+    StatusType getType() const override { return StatusType::ForbiddenDroplet; }
+    std::string getDescription() const override { return "If you play a card while corrupted: Transform"; }
+    void onTurnStart(CombatState& owner) override {  }
+};

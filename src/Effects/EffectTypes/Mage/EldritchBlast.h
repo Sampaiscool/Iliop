@@ -10,13 +10,9 @@ public:
     EldritchBlast() = default;
 
     void apply(CombatState& self, CombatState& target, int value) override {
-        // Base damage + current corruption
         int finalVal = self.getModifiedDamage(value) + self.corruption.current;
         target.takeDamage(finalVal);
 
-        // Minor corruption gain to fuel future turns
-        self.corruption.current =
-        std::min(self.corruption.current + 2,
-                 self.corruption.max);
+        self.gainCorruption(2);
     }
 };

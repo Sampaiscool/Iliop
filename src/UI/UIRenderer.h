@@ -39,6 +39,7 @@ public:
         (void)portraitTextures[CharacterName::Phlox].loadFromFile("../assets/portraits/PhloxPortrait.png");
         (void)portraitTextures[CharacterName::Vortex].loadFromFile("../assets/portraits/VortexPortrait.png");
         (void)portraitTextures[CharacterName::OneXNAO].loadFromFile("../assets/portraits/1XNAOPortrait.png");
+        (void)portraitTextures[CharacterName::Roshka].loadFromFile("../assets/portraits/RoshkaPortrait.png");
     }
 
     void spawnFCT(sf::Vector2f pos, std::string str, sf::Color color, const sf::Font& font, int charSize = 24);

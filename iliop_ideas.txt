@@ -52,4 +52,9 @@ Classes:
           At the start of combat applies 1 "Weaker Creator" to the enemy, Everytime you play a card it's counter goes up by 1 (2 if corrupted)
           If "Weaker Creator" is at max (7) stacks; you transform. and you gain 1 "Suprime Machine".
           Everytime you get a status its counter goes up by 1 (2 if corrupted) at max (4) stacks; gain 3 "True Void" and draw 3 cards.
+    - War Angel:
+          Has a unique status that reduces any damage by half + gives him more corruption gain,
+          Has more corruption,
+          Gives blessed to both herself and enemy,
+          While corrupted if you play a card transform,
 

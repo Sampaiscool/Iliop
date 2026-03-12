@@ -23,7 +23,6 @@ enum class StatusType {
     DeathMark,
     Vulnerable,
     Regeneration,
-    // metals
     Lead,
     Gold,
     Copper,
@@ -31,10 +30,12 @@ enum class StatusType {
     Mercury,
     Silver,
     Tin,
-    // technomancer
     WeakerCreator,
     SupremeMachine,
-    MachineUpgrade
+    MachineUpgrade,
+    Flight,
+    HolySpirit,
+    ForbiddenDroplet
 };
 
 struct CombatState;

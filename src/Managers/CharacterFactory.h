@@ -83,6 +83,17 @@ public:
                 for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Armor Inject"));
                 for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Status Drive"));
                 break;
+            case Class::WarAngel:
+                stats = CombatState{{40, 40}, {0, 5}, {3, 3}, {0, 10}};
+                transformCorruption = 10; transformTime = 2;
+                for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Betray"));
+                for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Blessed Sword"));
+                for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Ethernal Flight"));
+                for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Golden Lance"));
+                for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Holy Arrows"));
+                for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Savior"));
+                for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Spiral Slash"));
+                break;
         }
 
         // create the identity of the characters
@@ -155,6 +166,12 @@ public:
                 stats.passiveValue = 1;
                 break;
             }
+            case CharacterName::Roshka: {
+                displayName = "Roshka";
+                stats.passiveValue = 1;
+                stats.statuses.push_back(std::make_unique<ForbiddenDropletStatus>(99, 1));
+                break;
+            }
         }
 
         return Character(classType, nameType, displayName, std::move(deck), std::move(stats), transformCorruption, transformTime);
@@ -176,7 +193,7 @@ public:
                 key == "Iron" || key == "Lead" ||
                 key == "Mercury" || key == "Silver" ||
                 key == "Tin" || key == "Reaction" ||
-                key == "Machine Power";
+                key == "Machine Power" || key == "Spirit Slash";
         }), keys.end());
 
         std::shuffle(keys.begin(), keys.end(), std::mt19937(std::random_device()()));

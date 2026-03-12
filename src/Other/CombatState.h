@@ -57,11 +57,14 @@ struct CombatState {
     int takeDamage(int amount);
     int heal(int amount);
     int addShield(int amount);
+    void draw(int drawAmount);
     void applyStatus(std::unique_ptr<Status> newStatus);
     void updateStatuses();
     void endTurn(CombatState& currentActor);
     int getModifiedDamage(int baseDamage);
     void transform(CombatState& enemy);
+    void gainCorruption(int corruptionGain);
+    void gainMana(int manaGain);
     int getTrueVoidMana() const;
     void consumeTrueVoid(int amount);
     int getZombieArmyIntensity() const;

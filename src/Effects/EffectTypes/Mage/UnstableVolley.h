@@ -13,9 +13,7 @@ public:
 
         if (!self.isTransformed) {
             // gain corruption, if you are at max, transform
-            self.corruption.current =
-            std::min(self.corruption.current + 2,
-                    self.corruption.max);
+            self.gainCorruption(2);
             if (self.corruption.current >= self.transformThreshold) {
                 self.transform(target);
             }

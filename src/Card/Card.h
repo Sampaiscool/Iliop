@@ -73,7 +73,17 @@ enum class CardType {
     ShockInject,
     VampiricInject,
     ArmorInject,
-    StatusDrive
+    StatusDrive,
+
+    // war angel
+    Betray,
+    BlessedSword,
+    EthernalFlight,
+    GoldenLance,
+    HolyArrows,
+    Savior,
+    SpiralSlash,
+    SpiritSlash
 };
 
 enum class CardTheme {

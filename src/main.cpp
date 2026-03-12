@@ -187,7 +187,7 @@ int main() {
                         {"Necromancer", Class::Necromancer},
                         {"Alchemist", Class::Alchemist},
                         {"Technomancer", Class::Technomancer},
-                        {"Rogue", Class::Rogue}
+                        {"War Angel", Class::WarAngel}
                     };
 
                     for (int i = 0; i < 4; ++i) {
@@ -242,7 +242,7 @@ int main() {
                         {"Djin", CharacterName::Djin},
                         {"Kobalt", CharacterName::Kobalt},
                         {"1XNAO", CharacterName::OneXNAO},
-                        {"doobie4", CharacterName::doobie4}
+                        {"Roshka", CharacterName::Roshka}
                     };
 
                     for (int i = 0; i < 4; ++i) {
@@ -621,7 +621,7 @@ int main() {
                 {"Necromancer", Class::Necromancer},
                 {"Alchemist", Class::Alchemist},
                 {"Technomancer", Class::Technomancer},
-                {"Rogue", Class::Rogue}
+                {"War Angel", Class::WarAngel}
             };
 
             for (int i = 0; i < 4; ++i) {
@@ -689,7 +689,7 @@ int main() {
                 {"Djin", CharacterName::Djin},
                 {"Kobalt", CharacterName::Kobalt},
                 {"1XNAO", CharacterName::OneXNAO},
-                {"doobie4", CharacterName::doobie4}
+                {"Roshka", CharacterName::Roshka}
             };
 
             // draw < and > buttons
