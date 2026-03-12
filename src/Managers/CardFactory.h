@@ -117,7 +117,7 @@ private:
         {"Eldritch Blast",  {"Eldritch Blast", "Deal damage, scales with corruption.\nThen gain 2 corruption", 4, 2, 2, CardType::EldritchBlast, CardTheme::Purple}},
         {"Void Grasp",      {"Void Grasp", "Deal damage and apply void mark.\nAlso shreds shields \n(+ More void mark)", 1, 1, 1, CardType::VoidGrasp, CardTheme::Red}},
         {"Astral Shift",    {"Astral Shift", "Gain shield + Lose all corruption \n(Transform)", 5, 5, 1, CardType::AstralShift, CardTheme::Gray}},
-        {"Void Prowess",    {"Void Prowess", "Gain true void", 2, 2, 0, CardType::VoidProwess, CardTheme::Blue}},
+        {"Void Prowess",    {"Void Prowess", "Gain true void", 2, 2, 2, CardType::VoidProwess, CardTheme::Blue}},
 
         // warrior
         {"Aegis Strike",    {"Aegis Strike", "Deal damage to yourself and enemy.\nTransform after", 6, 8, 1, CardType::AegisStrike, CardTheme::Red}},
