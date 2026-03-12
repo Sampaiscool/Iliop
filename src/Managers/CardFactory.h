@@ -113,16 +113,16 @@ private:
         {"Metamorphosis",   {"Metamorphosis", "Transform.\n(Extend transform + heal)", 1, 2, 1, CardType::Metamorphosis, CardTheme::Green}},
 
         // mage
-        {"Unstable Volley", {"Unstable Volley", "Deal damage + gain 2 corruption, \nThen if you are at max: transform\n(Gain Overload)", 2, 4, 1, CardType::UnstableVolley, CardTheme::Purple}},
+        {"Unstable Volley", {"Unstable Volley", "Deal damage + gain 2 corruption, \nThen if you are at max: transform\n(+ Gain Overload)", 2, 4, 1, CardType::UnstableVolley, CardTheme::Purple}},
         {"Eldritch Blast",  {"Eldritch Blast", "Deal damage, scales with corruption.\nThen gain 2 corruption", 4, 2, 2, CardType::EldritchBlast, CardTheme::Purple}},
-        {"Void Grasp",      {"Void Grasp", "Deal damage and Apply Void Mark.\nStronger if transformed.\nAlso shreds shields", 1, 1, 1, CardType::VoidGrasp, CardTheme::Red}},
-        {"Astral Shift",    {"Astral Shift", "Transformed: transform\nElse: Gain shield + Lose all corruption", 5, 5, 1, CardType::AstralShift, CardTheme::Gray}},
-        {"Void Prowess",    {"Void Prowess", "Gain true void", 2, 2, 2, CardType::VoidProwess, CardTheme::Blue}},
+        {"Void Grasp",      {"Void Grasp", "Deal damage and apply void mark.\nAlso shreds shields \n(+ More void mark)", 1, 1, 1, CardType::VoidGrasp, CardTheme::Red}},
+        {"Astral Shift",    {"Astral Shift", "Gain shield + Lose all corruption \n(Transform)", 5, 5, 1, CardType::AstralShift, CardTheme::Gray}},
+        {"Void Prowess",    {"Void Prowess", "Gain true void", 2, 2, 0, CardType::VoidProwess, CardTheme::Blue}},
 
         // warrior
         {"Aegis Strike",    {"Aegis Strike", "Deal damage to yourself and enemy.\nTransform after", 6, 8, 1, CardType::AegisStrike, CardTheme::Red}},
         {"Iron Will",       {"Iron Will", "Deal some damage to yourself,\nGain a shield", 10, 15, 1, CardType::IronWill, CardTheme::Gray}},
-        {"Shatter Spleen",  {"Shatter Spleen", "Gain Defense Up based on Shield.\nDeals damage if you have max shield\n(Give weaken)", 5, 8, 2, CardType::ShatterSpleen, CardTheme::Red}},
+        {"Shatter Spleen",  {"Shatter Spleen", "Gain Defense Up based on Shield.\nDeals damage if you have max shield\n(+ Give weaken)", 5, 8, 2, CardType::ShatterSpleen, CardTheme::Red}},
         {"Shield Bash",     {"Shield Bash", "Consume Max Shield to Stun\nAlso deals damage.", 10, 20, 2, CardType::ShieldBash, CardTheme::Red}},
         {"Warrior Pact",    {"Warrior Pact", "Sacrifice HP for 2 Mana.", 5, 0, 0, CardType::WarriorPact, CardTheme::Purple}},
 
@@ -156,7 +156,7 @@ private:
         {"Tin",             {"Tin", "Apply Tin status", 1, 2, 1, CardType::TinCard, CardTheme::Gray}},
 
         // technomancer
-        {"Machine Power",   {"Machine Power", "Deal damage.\nUpgrades apply additional effects", 5, 8, 1, CardType::MachinePower, CardTheme::Blue}},
+        {"Machine Power",   {"Machine Power", "Deal damage.\nUpgrades apply additional effects", 5, 8, 1, CardType::MachinePower, CardTheme::Red}},
         {"Overclock",       {"Overclock", "Upgrade Machine Power:\n+5 damage", 1, 1, 1, CardType::Overclock, CardTheme::Red}},
         {"Bleed Inject",    {"Bleed Inject", "Upgrade Machine Power:\nApply Bleed", 1, 1, 1, CardType::BleedInject, CardTheme::Red}},
         {"Shock Inject",    {"Shock Inject", "Upgrade Machine Power:\nApply Stun", 1, 1, 1, CardType::ShockInject, CardTheme::Blue}},
@@ -172,10 +172,10 @@ private:
         {"Blood Frenzy",    {"Blood Frenzy", "FUSION: Bleed + Attack\nDeal damage + apply bleed + heal!", 6, 10, 1, CardType::Fusion, CardTheme::Red}},
 
         // double fusions
-        {"Omega Annihilation", {"Omega Annihilation", "DOUBLE FUSION: THE END\nDeal insane damage \napply ALL statuses + transform!", 20, 20, 4, CardType::DoubleFusion, CardTheme::Gold}},
+        {"Omega Annihilation",    {"Omega Annihilation", "DOUBLE FUSION: THE END\nDeal insane damage \napply ALL statuses + transform!", 20, 20, 4, CardType::DoubleFusion, CardTheme::Gold}},
         {"Universal Singularity", {"Universal Singularity", "DOUBLE FUSION: BLACK HOLE\nApply Void Mark x10 + True Void x10\n And corruption + Overload!", 15, 15, 2, CardType::DoubleFusion, CardTheme::Purple}},
-        {"Primordial Chaos", {"Primordial Chaos", "DOUBLE FUSION: PURE CHAOS\n50% chance: Double damage OR Full heal \nOR Full shield OR Transform!", 25, 25, 2, CardType::DoubleFusion, CardTheme::Red}},
-        {"Existential Crisis", {"Existential Crisis", "DOUBLE FUSION: REALITY BREAK\nIf enemy > 50% HP: 999 damage!\nElse: Heal to full + Max shield!", 50, 50, 4, CardType::DoubleFusion, CardTheme::Teal}}
+        {"Primordial Chaos",      {"Primordial Chaos", "DOUBLE FUSION: PURE CHAOS\n50% chance: Double damage OR Full heal \nOR Full shield OR Transform!", 25, 25, 2, CardType::DoubleFusion, CardTheme::Red}},
+        {"Existential Crisis",    {"Existential Crisis", "DOUBLE FUSION: REALITY BREAK\nIf enemy > 50% HP: 999 damage!\nElse: Heal to full + Max shield!", 50, 50, 4, CardType::DoubleFusion, CardTheme::Teal}}
     };
 
 public:
@@ -224,6 +224,7 @@ public:
             case CardType::EldritchBlast:   card.effect = std::make_unique<EldritchBlast>();  break;
             case CardType::VoidGrasp:       card.effect = std::make_unique<VoidGrasp>();      break;
             case CardType::AstralShift:     card.effect = std::make_unique<AstralShift>();    break;
+            case CardType::VoidProwess:     card.effect = std::make_unique<VoidProwess>();    break;
 
             // warrior
             case CardType::AegisStrike:     card.effect = std::make_unique<AegisStrike>();      break;
@@ -261,13 +262,13 @@ public:
             case CardType::TinCard:       card.effect = std::make_unique<TinEffect>();      break;
 
             // technomancer
-            case CardType::MachinePower:    card.effect = std::make_unique<MachinePower>();    break;
-            case CardType::Overclock:        card.effect = std::make_unique<Overclock>();        break;
-            case CardType::BleedInject:     card.effect = std::make_unique<BleedInject>();     break;
-            case CardType::ShockInject:     card.effect = std::make_unique<ShockInject>();     break;
-            case CardType::VampiricInject:  card.effect = std::make_unique<VampiricInject>();  break;
-            case CardType::ArmorInject:     card.effect = std::make_unique<ArmorInject>();     break;
-            case CardType::StatusDrive:      card.effect = std::make_unique<StatusDrive>();      break;
+            case CardType::MachinePower:    card.effect = std::make_unique<MachinePower>();     break;
+            case CardType::Overclock:       card.effect = std::make_unique<Overclock>();        break;
+            case CardType::BleedInject:     card.effect = std::make_unique<BleedInject>();      break;
+            case CardType::ShockInject:     card.effect = std::make_unique<ShockInject>();      break;
+            case CardType::VampiricInject:  card.effect = std::make_unique<VampiricInject>();   break;
+            case CardType::ArmorInject:     card.effect = std::make_unique<ArmorInject>();      break;
+            case CardType::StatusDrive:     card.effect = std::make_unique<StatusDrive>();      break;
         }
         return card;
     }

@@ -25,8 +25,8 @@ public:
                 for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Unstable Volley"));
                 for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Void Grasp"));
                 for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Eldritch Blast"));
-                for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Astral Shift"));
-                for (int i = 0; i < 9; ++i) deck.push_back(CardFactory::create("Void Prowess"));
+                for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Astral Shift"));
+                for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Void Prowess"));
                 break;
             case Class::Warrior:
                 stats = CombatState{{40, 40}, {0, 20}, {2, 2}, {0, 1}};

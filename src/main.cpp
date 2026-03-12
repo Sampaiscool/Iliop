@@ -717,12 +717,6 @@ int main() {
             nextCharArrow.setFillColor(sf::Color::White);
             if (characterScreen < 1) window.draw(nextCharArrow);
 
-            // screen indicator
-            sf::Text charScreenIndicator(font, "Page " + std::to_string(characterScreen + 1) + "/2", 20);
-            charScreenIndicator.setPosition({winW / 2.f - 30.f, winH * 0.08f});
-            charScreenIndicator.setFillColor(sf::Color::White);
-            window.draw(charScreenIndicator);
-
             for (int i = 0; i < 4; ++i) {
                 int actualIndex = characterScreen * 4 + i;
                 if (actualIndex >= (int)characters.size()) break;
@@ -741,6 +735,12 @@ int main() {
                 text.setFillColor(sf::Color::White);
                 window.draw(text);
             }
+
+            // screen indicator
+            sf::Text charScreenIndicator(font, "Page " + std::to_string(characterScreen + 1) + "/2", 20);
+            charScreenIndicator.setPosition({winW / 2.f - 30.f, winH * 0.08f});
+            charScreenIndicator.setFillColor(sf::Color::White);
+            window.draw(charScreenIndicator);
         }
         // render combat screen
         else if (gameState == GameState::Combat) {

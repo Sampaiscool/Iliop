@@ -88,22 +88,22 @@ int CombatState::addShield(int amount) {
     shield.current = std::min(shield.max, shield.current + amount);
     int gained = shield.current - oldShield;
     if (gained > 0) {
-        damageEvents.emplace_back(gained, false); // Show shield as damage-type (blue)
+        damageEvents.emplace_back(gained, false);
     }
     return gained;
 }
 
 void CombatState::applyStatus(std::unique_ptr<Status> newStatus) {
     if (!newStatus) return;
-    
-    // Check if we have Suprime Machine - increment when receiving any status
+
+    // suprime machine increment
     for (auto& s : statuses) {
         if (s->getType() == StatusType::SupremeMachine) {
             s->intensity += 1;
             break;
         }
     }
-    
+ 
     for (auto& s : statuses) {
         if (s->name == newStatus->name) {
             s->duration  += newStatus->duration;
@@ -202,9 +202,9 @@ void CombatState::flushPendingCards() {
 
         for (const auto& pending : pendingCards) {
             Card card = CardFactory::create(pending.key);
-            
+
             bool isTemp = std::find(tempCards.begin(), tempCards.end(), pending.key) != tempCards.end();
-            
+
             if (isTemp || pending.forceTemporary) {
                 card.isTemporary = true;
             }
@@ -214,6 +214,7 @@ void CombatState::flushPendingCards() {
         pendingCards.clear();
     }
 }
+
 bool CombatState::hasMetalStatus(StatusType metal) const {
     for (const auto& s : statuses) {
         if (s && s->getType() == metal) {

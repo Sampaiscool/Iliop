@@ -4,7 +4,7 @@
 
 class BleedStatus : public Status {
 public:
-    BleedStatus(int dur, int intens) { 
+    BleedStatus(int dur, int intens) {
         name = "Bleed";
         duration = dur;
         intensity = intens;
@@ -32,8 +32,8 @@ public:
         intensity = intens;
     }
     StatusType getType() const override { return StatusType::Overload; }
-    std::string getDescription() const override { 
-        return "Deal " + std::to_string(intensity) + " more damage\nStart turn: take " + std::to_string(intensity / 2)  + " damage."; 
+    std::string getDescription() const override {
+        return "Deal " + std::to_string(intensity) + " more damage\nStart turn: take " + std::to_string(intensity / 2)  + " damage.";
     }
 
     void onTurnStart(CombatState& owner) override {
@@ -44,7 +44,7 @@ public:
 
 class VoidMarkStatus : public Status {
 public:
-    VoidMarkStatus(int dur, int intens = 0) { 
+    VoidMarkStatus(int dur, int intens = 0) {
         name = "Void Mark";
         duration = dur;
         intensity = intens;
