@@ -2,6 +2,7 @@
 #include "../Effects/EffectTypes/DamageEffect.h"
 #include "../Effects/EffectTypes/HealEffect.h"
 #include "../Effects/EffectTypes/ShieldEffect.h"
+#include "../Managers/CardFactory.h"
 #include <algorithm>
 #include <random>
 
@@ -15,6 +16,13 @@ void Deck::setDeck(std::vector<Card> cards) {
     drawPile = std::move(cards);
     discardPile.clear();
     hand.clear();
+    // populate permanent collection by creating copies of each card
+    permanentCollection.clear();
+    for (const auto& card : drawPile) {
+        // create a new card using CardFactory to get a fresh copy
+        Card copy = CardFactory::create(card.name);
+        permanentCollection.push_back(std::move(copy));
+    }
 }
 
 std::vector<Card>& Deck::getHand() {
@@ -27,6 +35,15 @@ std::vector<Card>& Deck::getPermanentCollection() {
 
 void Deck::addCardToDrawPile(Card card) {
     drawPile.push_back(std::move(card));
+}
+
+void Deck::removeCardFromDrawPile(const std::string& cardName) {
+    for (auto it = drawPile.begin(); it != drawPile.end(); ++it) {
+        if (it->name == cardName) {
+            drawPile.erase(it);
+            return;
+        }
+    }
 }
 
 void Deck::shuffle() {
@@ -110,6 +127,30 @@ void Deck::render(sf::RenderWindow& window, int winW, int winH, const sf::Font& 
             float spawnY = card.y; 
             // emit particles per frame
             particles.emit({spawnX, spawnY}, 1);
+        }
+    }
+}
+
+void Deck::syncAugmentations() {
+    // sync augmentations from permanent collection to draw pile and discard pile
+    for (auto& permCard : permanentCollection) {
+        for (auto& drawCard : drawPile) {
+            if (drawCard.name == permCard.name) {
+                drawCard.bonusValue = permCard.bonusValue;
+                drawCard.costReduction = permCard.costReduction;
+                drawCard.drawOnUse = permCard.drawOnUse;
+                drawCard.replay = permCard.replay;
+                drawCard.freeOnce = permCard.freeOnce;
+            }
+        }
+        for (auto& discCard : discardPile) {
+            if (discCard.name == permCard.name) {
+                discCard.bonusValue = permCard.bonusValue;
+                discCard.costReduction = permCard.costReduction;
+                discCard.drawOnUse = permCard.drawOnUse;
+                discCard.replay = permCard.replay;
+                discCard.freeOnce = permCard.freeOnce;
+            }
         }
     }
 }

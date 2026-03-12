@@ -12,11 +12,17 @@ bool CardResolver::play(
     int trueVoidMana = player.getTrueVoidMana();
     int totalAvailable = player.mana.current + trueVoidMana;
 
-    if (totalAvailable < card.cost)
+    int effectiveCost = std::max(0, card.cost - card.costReduction);
+    
+    if (card.freeOnce && card.costReduction > 0) {
+        effectiveCost = 0;
+    }
+
+    if (totalAvailable < effectiveCost)
         return false;
 
     // pay for card
-    int remainingCost = card.cost;
+    int remainingCost = effectiveCost;
 
     // first normal mana
     int usedFromMana = std::min(player.mana.current, remainingCost);
@@ -35,6 +41,16 @@ bool CardResolver::play(
 
     // trigger card behavior
     card.play(player, enemy, isCorrupted);
+    
+    // handle replay
+    if (card.replay) {
+        card.play(player, enemy, isCorrupted);
+    }
+    
+    // use up freeOnce
+    if (card.freeOnce && card.costReduction > 0) {
+        const_cast<Card&>(card).freeOnce = false;
+    }
 
     // flush any pending cards
     player.flushPendingCards();

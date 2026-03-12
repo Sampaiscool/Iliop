@@ -379,6 +379,26 @@ void UIRenderer::drawTooltip(sf::RenderWindow& window, const sf::Font& font, con
 
     oss << "\n------------------\n" 
         << card.description;
+    
+    // show orb augmentations/imprints
+    if (card.bonusValue > 0 || card.costReduction > 0 || card.drawOnUse > 0 || card.replay || card.freeOnce) {
+        oss << "\n------------------\n[IMPRINTS]";
+        if (card.bonusValue > 0) {
+            oss << "\n+" << card.bonusValue << " Value";
+        }
+        if (card.costReduction > 0) {
+            oss << "\n-" << card.costReduction << " Cost";
+        }
+        if (card.drawOnUse > 0) {
+            oss << "\nDraw " << card.drawOnUse;
+        }
+        if (card.replay) {
+            oss << "\nReplay";
+        }
+        if (card.freeOnce) {
+            oss << "\nFree Once";
+        }
+    }
 
     sf::Text descText(font, sf::String(oss.str()), (window.getSize().x / 40));
     descText.setFillColor(sf::Color::White);

@@ -106,6 +106,13 @@ struct Card {
     int cost;
     bool isTemporary = false;
 
+    // Orb augmentations
+    int costReduction = 0;
+    int bonusValue = 0;
+    int drawOnUse = 0;
+    bool replay = false;
+    bool freeOnce = false;
+
     Card() = default;
 
     // forbid copy
@@ -123,11 +130,15 @@ struct Card {
 
     void play(CombatState& self, CombatState& target, bool isCorrupted) const {
         if (effect) {
-            int totalPower = value;
+            int totalPower = value + bonusValue;
             if (isCorrupted) {
                 totalPower += corruptedValue;
             }
             effect->apply(self, target, totalPower);
+            
+            if (drawOnUse > 0) {
+                self.draw(drawOnUse);
+            }
         }
     }
 

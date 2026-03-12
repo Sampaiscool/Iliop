@@ -22,6 +22,8 @@ public:
     std::vector<Card>& getHand();
     std::vector<Card>& getPermanentCollection();
     void addCardToDrawPile(Card card);
+    void removeCardFromDrawPile(const std::string& cardName);
+    void syncAugmentations();
 
 private:
     std::vector<Card> drawPile;

@@ -10,7 +10,7 @@ public:
     VoidProwess(int value) : amount(value) {}
     VoidProwess() = default;
     void apply(CombatState& self, CombatState& target, int value) override {
-        int finalVal = (value != 0) ? self.getModifiedDamage(value) : self.getModifiedDamage(amount);
+        int finalVal = (value != 0) ? value : amount;
         self.applyStatus(std::make_unique<TrueVoidStatus>(2, finalVal));
     }
 };

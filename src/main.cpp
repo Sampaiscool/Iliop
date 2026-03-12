@@ -46,6 +46,12 @@ int main() {
 
     std::vector<Card> lootOptions;
     std::vector<size_t> forgeSelectedIndices;
+    
+    // Orb variables
+    int orbUses = 2;
+    std::optional<size_t> orbSelectedCard;
+    std::vector<std::string> orbInflicts = {"+2 Value", "-1 Cost", "Draw 1", "Replay", "Free Once"};
+    std::vector<std::string> currentInflicts;
 
     UIRenderer ui;
     ui.loadPlayerTextures();
@@ -241,7 +247,7 @@ int main() {
                         {"Mathews Lift", CharacterName::MathewsLift},
                         {"Djin", CharacterName::Djin},
                         {"Kobalt", CharacterName::Kobalt},
-                        {"1XNAO", CharacterName::OneXNAO},
+                        {"1X NAO", CharacterName::OneXNAO},
                         {"Roshka", CharacterName::Roshka}
                     };
 
@@ -265,7 +271,7 @@ int main() {
                             deck.shuffle();
                             deck.drawCard(4);
 
-                            // Apply Weaker Creator to enemy for Technomancer
+                            // give weaker creater to enemy
                             if (selectedClass == Class::Technomancer) {
                                 enemy.getState().applyStatus(std::make_unique<WeakerCreatorStatus>(99, 0));
                             }
@@ -381,7 +387,7 @@ int main() {
                         enemy = EnemyFactory::create(currentFloor);
                         enemy.rollIntent();
 
-                        // Apply Weaker Creator for Technomancer
+                        // give weaker creator to enemy start of combat
                         if (selectedClass == Class::Technomancer) {
                             enemy.getState().applyStatus(std::make_unique<WeakerCreatorStatus>(99, 0));
                         }
@@ -389,9 +395,13 @@ int main() {
                         ui.resetHPTracking();
                         ui.resetStatusScrolls();
 
-                        // go to forge after new floor
+                        // go to forge or orb after new floor (alternate)
                         if (currentFloor > 1 && (currentFloor - 1) % 3 == 0) {
-                            gameState = GameState::Forge;
+                            if ((currentFloor / 3) % 2 == 0) {
+                                gameState = GameState::Forge;
+                            } else {
+                                gameState = GameState::Orb;
+                            }
                         } else {
                             gameState = GameState::Combat;
                         }
@@ -424,13 +434,11 @@ int main() {
                                     std::sort(forgeSelectedIndices.begin(), forgeSelectedIndices.end(), std::greater<size_t>());
 
                                     // check if both cards are already fusions for the double fusion :)
-                                    std::string name1 = allCards[forgeSelectedIndices[0]].name;
-                                    std::string name2 = allCards[forgeSelectedIndices[1]].name;
+                                    CardType type1 = allCards[forgeSelectedIndices[0]].type;
+                                    CardType type2 = allCards[forgeSelectedIndices[1]].type;
 
-                                    bool isFusion1 = (name1 == "Divine Arrow" || name1 == "Void Storm" || 
-                                                     name1 == "Beast Rampage" || name1 == "Cosmic Shield" || name1 == "Blood Frenzy");
-                                    bool isFusion2 = (name2 == "Divine Arrow" || name2 == "Void Storm" || 
-                                                     name2 == "Beast Rampage" || name2 == "Cosmic Shield" || name2 == "Blood Frenzy");
+                                    bool isFusion1 = (type1 == CardType::Fusion); 
+                                    bool isFusion2 = (type2 == CardType::Fusion); 
 
                                     std::string fusionName;
                                     if (isFusion1 && isFusion2) {
@@ -445,9 +453,11 @@ int main() {
                                     // add card to draw + permanent
                                     deck.addCardToDrawPile(CardFactory::create(fusionName));
                                     deck.addCardToPermanentCollection(CardFactory::create(fusionName));
-                                    // remove the selected cards
+                                    // remove the selected cards from permanent collection and draw pile
                                     for (size_t idx : forgeSelectedIndices) {
                                         if (idx < allCards.size()) {
+                                            std::string cardName = allCards[idx].name;
+                                            deck.removeCardFromDrawPile(cardName);
                                             allCards.erase(allCards.begin() + idx);
                                         }
                                     }
@@ -459,6 +469,98 @@ int main() {
                     }
                     if (continueButton.contains(mousePos)) {
                         forgeSelectedIndices.clear();
+                        gameState = GameState::Combat;
+                    }
+                }
+                // orba
+                else if (gameState == GameState::Orb) {
+                    sf::FloatRect continueButton(
+                        sf::Vector2f(window.getSize().x / 2.f - 100.f, window.getSize().y * 0.9f),
+                        sf::Vector2f(200.f, 60.f));
+
+                    // generate 3 random inflicts if not set
+                    if (currentInflicts.empty()) {
+                        for (int i = 0; i < 3; ++i) {
+                            currentInflicts.push_back(orbInflicts[rand() % orbInflicts.size()]);
+                        }
+                    }
+
+                    // card selection
+                    if (orbUses > 0 && !orbSelectedCard) {
+                        auto& allCards = deck.getPermanentCollection();
+
+                        // set card positions first
+                        int cardW = winW / 10;
+                        int cardH = winH / 6;
+                        int cols = 8;
+                        float startX = winW * 0.05f;
+                        float startY = winH * 0.3f;
+                        float gap = cardW + 15.f;
+                        int displayIndex = 0;
+                        for (size_t i = 0; i < allCards.size(); ++i) {
+                            int col = displayIndex % cols;
+                            int row = displayIndex / cols;
+                            allCards[i].x = startX + col * gap;
+                            allCards[i].y = startY + row * (cardH + 30.f);
+                            allCards[i].w = cardW;
+                            allCards[i].h = cardH;
+                            displayIndex++;
+                        }
+
+                        for (size_t i = 0; i < allCards.size(); ++i) {
+                            sf::FloatRect cardRect({(float)allCards[i].x, (float)allCards[i].y},
+                                                  {(float)allCards[i].w, (float)allCards[i].h});
+                            if (cardRect.contains(mousePos)) {
+                                orbSelectedCard = i;
+                                break;
+                            }
+                        }
+                    }
+
+                    // inflict selection
+                    if (orbSelectedCard && orbUses > 0) {
+                        auto& allCards = deck.getPermanentCollection();
+                        size_t idx = *orbSelectedCard;
+
+                        float inflictStartX = winW * 0.2f;
+                        float inflictY = winH * 0.7f;
+                        float buttonW = winW * 0.2f;
+                        float buttonH = 60.f;
+
+                        for (int i = 0; i < 3; ++i) {
+                            sf::FloatRect inflictButton(
+                                sf::Vector2f(inflictStartX + i * (buttonW + 20), inflictY),
+                                sf::Vector2f(buttonW, buttonH));
+
+                            if (inflictButton.contains(mousePos)) {
+                                // apply the inflict
+                                std::string inflict = currentInflicts[i];
+                                if (inflict == "+2 Value") {
+                                    allCards[idx].bonusValue += 2;
+                                } else if (inflict == "-1 Cost") {
+                                    allCards[idx].costReduction += 1;
+                                } else if (inflict == "Draw 1") {
+                                    allCards[idx].drawOnUse += 1;
+                                } else if (inflict == "Replay") {
+                                    allCards[idx].replay = true;
+                                } else if (inflict == "Free Once") {
+                                    allCards[idx].freeOnce = true;
+                                    allCards[idx].costReduction += 1;
+                                }
+
+                                orbUses--;
+                                orbSelectedCard = std::nullopt;
+                                currentInflicts.clear();
+                                break;
+                            }
+                        }
+                    }
+
+                    if (continueButton.contains(mousePos)) {
+                        deck.syncAugmentations();
+                        orbUses = 2;
+                        orbSelectedCard = std::nullopt;
+                        currentInflicts.clear();
                         gameState = GameState::Combat;
                     }
                 }
@@ -650,6 +752,9 @@ int main() {
             prevArrowBtn.setOutlineColor(sf::Color::Black);
             prevArrowBtn.setOutlineThickness(2.f);
             if (classScreen > 0) window.draw(prevArrowBtn);
+            // FIX:   this is a fix muhahaha
+            // NOTE:  this is a note muhahaha
+            // TODO:  this is a todo muhahaha
 
             sf::Text prevArrow(font, "<", 40);
             prevArrow.setPosition({winW * 0.1f + 15.f, winH / 2.f - 25.f});
@@ -688,7 +793,7 @@ int main() {
                 {"Mathews Lift", CharacterName::MathewsLift},
                 {"Djin", CharacterName::Djin},
                 {"Kobalt", CharacterName::Kobalt},
-                {"1XNAO", CharacterName::OneXNAO},
+                {"1X NAO", CharacterName::OneXNAO},
                 {"Roshka", CharacterName::Roshka}
             };
 
@@ -944,6 +1049,98 @@ int main() {
 
             sf::Text cont(font, "Continue", 30);
             cont.setPosition({winW / 2.f - 70.f, winH * 0.85f + 15.f});
+            cont.setFillColor(sf::Color::White);
+            window.draw(cont);
+        }
+        // render orb screen
+        else if (gameState == GameState::Orb) {
+            sf::Text title(font, "THE ORB", (winW / 10));
+            title.setPosition({winW / 2.f - 120.f, winH * 0.1f});
+            title.setFillColor(sf::Color(100, 200, 255));
+            window.draw(title);
+
+            sf::Text subtitle(font, "Select a card, then choose an inflict to augment it!", (winW / 15));
+            subtitle.setPosition({winW / 2.f - 260.f, winH * 0.18f});
+            subtitle.setFillColor(sf::Color::White);
+            window.draw(subtitle);
+
+            sf::Text usesText(font, "Uses remaining: " + std::to_string(orbUses), (winW / 40));
+            usesText.setPosition({winW / 2.f - 80.f, winH * 0.23f});
+            usesText.setFillColor(sf::Color(255, 255, 100));
+            window.draw(usesText);
+
+            // render cards
+            auto& allCards = deck.getPermanentCollection();
+            int cardW = winW / 10;
+            int cardH = winH / 6;
+
+            int cols = 8;
+            float startX = winW * 0.05f;
+            float startY = winH * 0.3f;
+            float gap = cardW + 15.f;
+
+            int displayIndex = 0;
+            for (size_t i = 0; i < allCards.size(); ++i) {
+                int col = displayIndex % cols;
+                int row = displayIndex / cols;
+
+                allCards[i].x = startX + col * gap;
+                allCards[i].y = startY + row * (cardH + 30.f);
+                allCards[i].w = cardW;
+                allCards[i].h = cardH;
+                displayIndex++;
+
+                bool isSelected = orbSelectedCard && *orbSelectedCard == i;
+
+                if (isSelected) {
+                    sf::RectangleShape selectionHighlight(sf::Vector2f(cardW + 8.f, cardH + 8.f));
+                    selectionHighlight.setPosition(sf::Vector2f(allCards[i].x - 4.f, allCards[i].y - 4.f));
+                    selectionHighlight.setFillColor(sf::Color::Transparent);
+                    selectionHighlight.setOutlineColor(sf::Color(100, 200, 255));
+                    selectionHighlight.setOutlineThickness(4.f);
+                    window.draw(selectionHighlight);
+                }
+
+                allCards[i].draw(window, font, false, playerState);
+            }
+
+            // show inflicts if card selected
+            if (orbSelectedCard && orbUses > 0 && !currentInflicts.empty()) {
+                float inflictStartX = winW * 0.2f;
+                float inflictY = winH * 0.7f;
+                float buttonW = winW * 0.2f;
+                float buttonH = 60.f;
+
+                sf::Text inflictTitle(font, "Choose an inflict:", (winW / 40));
+                inflictTitle.setPosition({winW / 2.f - 100.f, winH * 0.65f});
+                inflictTitle.setFillColor(sf::Color::White);
+                window.draw(inflictTitle);
+
+                for (int i = 0; i < 3; ++i) {
+                    sf::RectangleShape button(sf::Vector2f(buttonW, buttonH));
+                    button.setPosition(sf::Vector2f(inflictStartX + i * (buttonW + 20), inflictY));
+                    button.setFillColor(sf::Color(50, 50, 100));
+                    button.setOutlineColor(sf::Color(100, 150, 255));
+                    button.setOutlineThickness(2.f);
+                    window.draw(button);
+
+                    sf::Text buttonText(font, currentInflicts[i], 20);
+                    buttonText.setPosition({inflictStartX + i * (buttonW + 20) + 20.f, inflictY + 15.f});
+                    buttonText.setFillColor(sf::Color::White);
+                    window.draw(buttonText);
+                }
+            }
+
+            // continue button
+            sf::RectangleShape continueButton({200.f, 60.f});
+            continueButton.setPosition({winW / 2.f - 100.f, winH * 0.9f});
+            continueButton.setFillColor(sf::Color(70,70,70));
+            continueButton.setOutlineColor(sf::Color::Black);
+            continueButton.setOutlineThickness(3.f);
+            window.draw(continueButton);
+
+            sf::Text cont(font, "Continue", 30);
+            cont.setPosition({winW / 2.f - 70.f, winH * 0.9f + 15.f});
             cont.setFillColor(sf::Color::White);
             window.draw(cont);
         }
