@@ -381,7 +381,7 @@ void UIRenderer::drawTooltip(sf::RenderWindow& window, const sf::Font& font, con
         << card.description;
     
     // show orb augmentations/imprints
-    if (card.bonusValue > 0 || card.costReduction > 0 || card.drawOnUse > 0 || card.replay || card.freeOnce) {
+    if (card.bonusValue > 0 || card.costReduction > 0 || card.drawOnUse > 0 || card.replayCount > 0 || card.freeOnceCount > 0 || card.applyDamageUp > 0 || card.applyDefenceUp > 0 || card.applyRegen > 0 || card.applyBleed > 0 || card.healOnUse > 0 || card.shieldOnUse > 0) {
         oss << "\n------------------\n[IMPRINTS]";
         if (card.bonusValue > 0) {
             oss << "\n+" << card.bonusValue << " Value";
@@ -392,11 +392,29 @@ void UIRenderer::drawTooltip(sf::RenderWindow& window, const sf::Font& font, con
         if (card.drawOnUse > 0) {
             oss << "\nDraw " << card.drawOnUse;
         }
-        if (card.replay) {
-            oss << "\nReplay";
+        if (card.replayCount > 0) {
+            oss << "\nReplay x" << card.replayCount;
         }
-        if (card.freeOnce) {
-            oss << "\nFree Once";
+        if (card.freeOnceCount > 0) {
+            oss << "\nFree " << card.freeOnceCount << "x";
+        }
+        if (card.applyDamageUp > 0) {
+            oss << "\n+Damage Up x" << card.applyDamageUp;
+        }
+        if (card.applyDefenceUp > 0) {
+            oss << "\n+Defence Up x" << card.applyDefenceUp;
+        }
+        if (card.applyRegen > 0) {
+            oss << "\n+Regen x" << card.applyRegen;
+        }
+        if (card.applyBleed > 0) {
+            oss << "\n+Bleed x" << card.applyBleed;
+        }
+        if (card.healOnUse > 0) {
+            oss << "\nHeal " << card.healOnUse;
+        }
+        if (card.shieldOnUse > 0) {
+            oss << "\nShield " << card.shieldOnUse;
         }
     }
 

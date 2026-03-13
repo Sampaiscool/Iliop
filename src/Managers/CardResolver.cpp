@@ -14,7 +14,7 @@ bool CardResolver::play(
 
     int effectiveCost = std::max(0, card.cost - card.costReduction);
     
-    if (card.freeOnce && card.costReduction > 0) {
+    if (card.freeOnceCount > 0) {
         effectiveCost = 0;
     }
 
@@ -42,14 +42,14 @@ bool CardResolver::play(
     // trigger card behavior
     card.play(player, enemy, isCorrupted);
     
-    // handle replay
-    if (card.replay) {
+    // handle replay (stackable - play multiple times)
+    for (int i = 0; i < card.replayCount; i++) {
         card.play(player, enemy, isCorrupted);
     }
     
-    // use up freeOnce
-    if (card.freeOnce && card.costReduction > 0) {
-        const_cast<Card&>(card).freeOnce = false;
+    // use up freeOnce (stackable - each use reduces the count)
+    if (card.freeOnceCount > 0) {
+        const_cast<Card&>(card).freeOnceCount--;
     }
 
     // flush any pending cards

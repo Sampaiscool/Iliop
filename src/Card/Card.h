@@ -4,6 +4,7 @@
 #include <memory>
 #include "../Effects/Effect.h"
 #include "../Other/CombatState.h"
+#include "../Other/AllStatuses.h"
 
 enum class CardType { 
     Damage,
@@ -110,8 +111,18 @@ struct Card {
     int costReduction = 0;
     int bonusValue = 0;
     int drawOnUse = 0;
-    bool replay = false;
-    bool freeOnce = false;
+    int replayCount = 0;
+    int freeOnceCount = 0;
+    
+    // Status on play
+    int applyDamageUp = 0;
+    int applyDefenceUp = 0;
+    int applyRegen = 0;
+    int applyBleed = 0;
+    
+    // Other
+    int healOnUse = 0;
+    int shieldOnUse = 0;
 
     Card() = default;
 
@@ -139,6 +150,24 @@ struct Card {
             if (drawOnUse > 0) {
                 self.draw(drawOnUse);
             }
+            
+            // apply statuses (stackable - apply multiple times based on intensity)
+            for (int i = 0; i < applyDamageUp; i++) {
+                self.applyStatus(std::make_unique<DamageUpStatus>(3, 2));
+            }
+            for (int i = 0; i < applyDefenceUp; i++) {
+                self.applyStatus(std::make_unique<DefenceUpStatus>(3, 3));
+            }
+            for (int i = 0; i < applyRegen; i++) {
+                self.applyStatus(std::make_unique<RegenerationStatus>(3, 3));
+            }
+            for (int i = 0; i < applyBleed; i++) {
+                target.applyStatus(std::make_unique<BleedStatus>(3, 2));
+            }
+            
+            // heal and shield
+            if (healOnUse > 0) self.heal(healOnUse);
+            if (shieldOnUse > 0) self.addShield(shieldOnUse);
         }
     }
 
