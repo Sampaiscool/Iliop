@@ -141,16 +141,16 @@ int main() {
                 }
                 if (gameState == GameState::Forge) {
                     if (wheel->delta > 0) {
-                        forgeScrollY = std::max(0.f, forgeScrollY - 50.f);
+                        forgeScrollY = std::max(0.f, forgeScrollY - 1.f);
                     } else {
-                        forgeScrollY = std::min(maxScroll, forgeScrollY + 50.f);
+                        forgeScrollY += 1.f;
                     }
                 }
                 if (gameState == GameState::Orb) {
                     if (wheel->delta > 0) {
-                        orbScrollY = std::max(0.f, orbScrollY - 50.f);
+                        orbScrollY = std::max(0.f, orbScrollY - 1.f);
                     } else {
-                        orbScrollY = std::min(maxScroll, orbScrollY + 50.f);
+                        orbScrollY += 1.f;
                     }
                 }
             }
@@ -444,10 +444,61 @@ int main() {
                         sf::Vector2f(window.getSize().x / 2.f - 100.f, window.getSize().y * 0.85f),
                         sf::Vector2f(200.f, 60.f));
 
-                    // get all cards from permanent collection
+                    // page buttons
+                    int winW = window.getSize().x;
+                    int winH = window.getSize().y;
+                    int cols = 8;
+                    int rowsVisible = 2;
+                    int cardsPerPage = cols * rowsVisible;
                     auto& allCards = deck.getPermanentCollection();
-
+                    
+                    // count non-double-fusion cards
+                    int cardCount = 0;
                     for (size_t i = 0; i < allCards.size(); ++i) {
+                        bool isDoubleFusion = (allCards[i].name == "Omega Annihilation" || 
+                                               allCards[i].name == "Universal Singularity" ||
+                                               allCards[i].name == "Primordial Chaos" ||
+                                               allCards[i].name == "Existential Crisis");
+                        if (!isDoubleFusion) cardCount++;
+                    }
+                    int totalPages = (cardCount + cardsPerPage - 1) / cardsPerPage;
+                    if (totalPages < 1) totalPages = 1;
+                    if (forgeScrollY >= totalPages) forgeScrollY = totalPages - 1;
+                    if (forgeScrollY < 0) forgeScrollY = 0;
+                    
+                    // page buttons
+                    sf::FloatRect prevPageBtn(sf::Vector2f(30.f, 50.f), sf::Vector2f(winW * 0.03f, winH * 0.28f));
+                    sf::FloatRect nextPageBtn(sf::Vector2f(30.f, 50.f), sf::Vector2f(winW * 0.93f, winH * 0.28f));
+                    
+                    if (prevPageBtn.contains(mousePos) && forgeScrollY > 0) {
+                        forgeScrollY--;
+                    }
+                    if (nextPageBtn.contains(mousePos) && forgeScrollY < totalPages - 1) {
+                        forgeScrollY++;
+                    }
+
+                    // card clicks - only cards on current page
+                    int currentPage = (int)forgeScrollY;
+                    int startCardIndex = currentPage * cardsPerPage;
+                    int endCardIndex = startCardIndex + cardsPerPage;
+                    int currentCardIndex = 0;
+                    
+                    for (size_t i = 0; i < allCards.size(); ++i) {
+                        bool isDoubleFusion = (allCards[i].name == "Omega Annihilation" || 
+                                               allCards[i].name == "Universal Singularity" ||
+                                               allCards[i].name == "Primordial Chaos" ||
+                                               allCards[i].name == "Existential Crisis");
+                        if (isDoubleFusion) continue;
+                        
+                        if (currentCardIndex < startCardIndex) {
+                            currentCardIndex++;
+                            continue;
+                        }
+                        if (currentCardIndex >= endCardIndex) {
+                            break;
+                        }
+                        currentCardIndex++;
+                        
                         sf::FloatRect cardRect({(float)allCards[i].x, (float)allCards[i].y},
                                               {(float)allCards[i].w, (float)allCards[i].h});
 
@@ -1047,22 +1098,60 @@ int main() {
             int cardW = winW / 10;
             int cardH = winH / 6;
 
-            std::vector<std::string> fusionNames = {"Divine Arrow", "Void Storm", "Beast Rampage", "Cosmic Shield", "Blood Frenzy"};
-
-            // display cards in grid
-            int cols = 8;
+            // display cards in grid - only show 2 rows at a time
+            int cols = 6;
+            int rowsVisible = 2;
+            int cardsPerPage = cols * rowsVisible;
+            
+            // calculate total pages
+            int cardCount = 0;
+            for (size_t i = 0; i < allCards.size(); ++i) {
+                bool isDoubleFusion = (allCards[i].name == "Omega Annihilation" || 
+                                       allCards[i].name == "Universal Singularity" ||
+                                       allCards[i].name == "Primordial Chaos" ||
+                                       allCards[i].name == "Existential Crisis");
+                if (!isDoubleFusion) cardCount++;
+            }
+            int totalPages = (cardCount + cardsPerPage - 1) / cardsPerPage;
+            if (totalPages < 1) totalPages = 1;
+            
+            // clamp scroll to valid range
+            if (forgeScrollY < 0) forgeScrollY = 0;
+            if (forgeScrollY >= totalPages) forgeScrollY = totalPages - 1;
+            int currentPage = (int)forgeScrollY;
+            
             float startX = winW * 0.05f;
-            float startY = winH * 0.25f - forgeScrollY;
+            float startY = winH * 0.25f;
             float gap = cardW + 15.f;
 
+            // show page indicator
+            sf::Text pageText(font, "Page " + std::to_string(currentPage + 1) + "/" + std::to_string(totalPages), (winW / 40));
+            pageText.setPosition({winW / 2.f - 40.f, winH * 0.22f});
+            pageText.setFillColor(sf::Color(200, 200, 200));
+            window.draw(pageText);
+
             int displayIndex = 0;
+            int startCardIndex = currentPage * cardsPerPage;
+            int endCardIndex = startCardIndex + cardsPerPage;
+            int currentCardIndex = 0;
+            
             for (size_t i = 0; i < allCards.size(); ++i) {
-                // skip thah double fusions
+                // skip double fusions
                 bool isDoubleFusion = (allCards[i].name == "Omega Annihilation" || 
                                        allCards[i].name == "Universal Singularity" ||
                                        allCards[i].name == "Primordial Chaos" ||
                                        allCards[i].name == "Existential Crisis");
                 if (isDoubleFusion) continue;
+                
+                // skip cards not on current page
+                if (currentCardIndex < startCardIndex) {
+                    currentCardIndex++;
+                    continue;
+                }
+                if (currentCardIndex >= endCardIndex) {
+                    break;
+                }
+                currentCardIndex++;
 
                 int col = displayIndex % cols;
                 int row = displayIndex / cols;
@@ -1127,18 +1216,50 @@ int main() {
             subtitle.setFillColor(sf::Color::White);
             window.draw(subtitle);
 
-            // render cards
+            // render cards - only show 2 rows at a time
             auto& allCards = deck.getPermanentCollection();
             int cardW = winW / 10;
             int cardH = winH / 6;
 
             int cols = 6;
+            int rowsVisible = 2;
+            int cardsPerPage = cols * rowsVisible;
+            
+            // calculate total pages
+            int totalPages = (allCards.size() + cardsPerPage - 1) / cardsPerPage;
+            if (totalPages < 1) totalPages = 1;
+            
+            // clamp scroll to valid range
+            if (orbScrollY < 0) orbScrollY = 0;
+            if (orbScrollY >= totalPages) orbScrollY = totalPages - 1;
+            int currentPage = (int)orbScrollY;
+            
             float startX = winW * 0.05f;
-            float startY = winH * 0.3f - orbScrollY;
+            float startY = winH * 0.3f;
             float gap = cardW + 15.f;
 
+            // show page indicator
+            sf::Text pageText(font, "Page " + std::to_string(currentPage + 1) + "/" + std::to_string(totalPages), (winW / 40));
+            pageText.setPosition({winW / 2.f - 40.f, winH * 0.27f});
+            pageText.setFillColor(sf::Color(200, 200, 200));
+            window.draw(pageText);
+
             int displayIndex = 0;
+            int startCardIndex = currentPage * cardsPerPage;
+            int endCardIndex = startCardIndex + cardsPerPage;
+            int currentCardIndex = 0;
+            
             for (size_t i = 0; i < allCards.size(); ++i) {
+                // skip cards not on current page
+                if (currentCardIndex < startCardIndex) {
+                    currentCardIndex++;
+                    continue;
+                }
+                if (currentCardIndex >= endCardIndex) {
+                    break;
+                }
+                currentCardIndex++;
+
                 int col = displayIndex % cols;
                 int row = displayIndex / cols;
 
