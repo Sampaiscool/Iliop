@@ -213,6 +213,50 @@ int CombatState::getSoulFragmentCount() const {
     return count;
 }
 
+int CombatState::getCatalystIntensity() const {
+    for (const auto& s : statuses) {
+        if (s && s->getType() == StatusType::Catalyst) {
+            return s->intensity;
+        }
+    }
+    return 0;
+}
+
+int CombatState::getPotionCount() const {
+    int count = 0;
+    for (const auto& s : statuses) {
+        if (s && s->getType() == StatusType::Potion) {
+            count += s->intensity;
+        }
+    }
+    return count;
+}
+
+int CombatState::getElixirCount() const {
+    int count = 0;
+    for (const auto& s : statuses) {
+        if (s && s->getType() == StatusType::Elixir) {
+            count += s->intensity;
+        }
+    }
+    return count;
+}
+
+int CombatState::getModifiedHeal(int baseHeal) const {
+    int catalyst = getCatalystIntensity();
+    return baseHeal + (catalyst * 2);
+}
+
+int CombatState::getModifiedShield(int baseShield) const {
+    int catalyst = getCatalystIntensity();
+    return baseShield + (catalyst * 2);
+}
+
+int CombatState::getManaCostReduction() const {
+    int elixir = getElixirCount();
+    return std::min(elixir, 3);
+}
+
 void CombatState::addCardToHand(const std::string& cardKey, bool makeTemporary) {
     pendingCards.push_back({cardKey, makeTemporary});
 }

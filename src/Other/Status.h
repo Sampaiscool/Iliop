@@ -35,7 +35,10 @@ enum class StatusType {
     MachineUpgrade,
     Flight,
     HolySpirit,
-    ForbiddenDroplet
+    ForbiddenDroplet,
+    Catalyst,
+    Potion,
+    Elixir
 };
 
 struct CombatState;

@@ -70,6 +70,12 @@ struct CombatState {
     int getZombieArmyIntensity() const;
     int getSkeletonArmyIntensity() const;
     int getSoulFragmentCount() const;
+    int getCatalystIntensity() const;
+    int getPotionCount() const;
+    int getElixirCount() const;
+    int getModifiedHeal(int baseHeal) const;
+    int getModifiedShield(int baseShield) const;
+    int getManaCostReduction() const;
 
     void addDamageEvent(int amount, bool isHeal);
     void clearDamageEvents() const { damageEvents.clear(); }

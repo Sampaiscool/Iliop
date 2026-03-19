@@ -98,18 +98,18 @@ bool CardResolver::play(
             int increment = isCorrupted ? 2 : 1;
             status->intensity += increment;
 
-            // at 7, transform and give Suprime Machine
+            // at 7, transform and give Supreme Machine
             if (status->intensity >= 7) {
                 player.transform(enemy);
-                bool hasSuprimeMachine = false;
+                bool hasSupremeMachine = false;
                 for (const auto& s : player.statuses) {
                     if (s && s->getType() == StatusType::SupremeMachine) {
-                        hasSuprimeMachine = true;
+                        hasSupremeMachine = true;
                         break;
                     }
                 }
-                if (!hasSuprimeMachine) {
-                    player.applyStatus(std::make_unique<SuprimeMachineStatus>(3, 0));
+                if (!hasSupremeMachine) {
+                    player.applyStatus(std::make_unique<SupremeMachineStatus>(3, 0));
                 }
                 status->intensity = 0;
             }

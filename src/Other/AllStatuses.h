@@ -325,9 +325,9 @@ public:
     void onTurnStart(CombatState& owner) override { duration--; }
 };
 
-class SuprimeMachineStatus : public Status {
+class SupremeMachineStatus : public Status {
 public:
-    SuprimeMachineStatus(int dur, int intens) { name = "Suprime Machine"; duration = dur; intensity = intens; }
+    SupremeMachineStatus(int dur, int intens) { name = "Supreme Machine"; duration = dur; intensity = intens; }
     StatusType getType() const override { return StatusType::SupremeMachine; }
     std::string getDescription() const override { return "Statuses received: " + std::to_string(intensity) + "/4\nAt 4: True Void + draw"; }
     void onTurnStart(CombatState& owner) override { duration--; }
@@ -379,4 +379,46 @@ public:
     StatusType getType() const override { return StatusType::ForbiddenDroplet; }
     std::string getDescription() const override { return "If you play a card while corrupted: Transform"; }
     void onTurnStart(CombatState& owner) override {  }
+};
+
+class CatalystStatus : public Status {
+public:
+    CatalystStatus(int dur, int intens) { 
+        name = "Catalyst"; 
+        duration = dur; 
+        intensity = intens; 
+    }
+    StatusType getType() const override { return StatusType::Catalyst; }
+    std::string getDescription() const override {
+        return "Heal and Shield +" + std::to_string(intensity * 2);
+    }
+    void onTurnStart(CombatState& owner) override { duration--; }
+};
+
+class PotionStatus : public Status {
+public:
+    PotionStatus(int dur, int intens) { 
+        name = "Potion"; 
+        duration = dur; 
+        intensity = intens; 
+    }
+    StatusType getType() const override { return StatusType::Potion; }
+    std::string getDescription() const override {
+        return "Click to heal " + std::to_string(intensity * 3);
+    }
+    void onTurnStart(CombatState& owner) override { duration--; }
+};
+
+class ElixirStatus : public Status {
+public:
+    ElixirStatus(int dur, int intens) { 
+        name = "Elixir"; 
+        duration = dur; 
+        intensity = intens; 
+    }
+    StatusType getType() const override { return StatusType::Elixir; }
+    std::string getDescription() const override {
+        return "Cards cost -1\nClick 5+ to Transform";
+    }
+    void onTurnStart(CombatState& owner) override { duration--; }
 };

@@ -87,6 +87,16 @@
 #include "../Effects/EffectTypes/WarAngel/Savior.h"
 #include "../Effects/EffectTypes/WarAngel/SpiralSlash.h"
 #include "../Effects/EffectTypes/WarAngel/SpiritSlash.h"
+#include "../Effects/EffectTypes/WarAngel/DivinePunishment.h"
+
+// new loot cards
+#include "../Effects/EffectTypes/Mage/VoidEcho.h"
+#include "../Effects/EffectTypes/Warrior/Fortify.h"
+#include "../Effects/EffectTypes/Cleric/Redemption.h"
+#include "../Effects/EffectTypes/Ranger/PredatorsMaul.h"
+#include "../Effects/EffectTypes/Necromancer/CorpseExplosion.h"
+#include "../Effects/EffectTypes/Alchemist/CatalystBomb.h"
+#include "../Effects/EffectTypes/Technomancer/SystemCrash.h"
 
 #include <map>
 #include <string>
@@ -121,6 +131,7 @@ private:
         {"Arrow Volley",    {"Arrow Volley", "Fire a volley of arrows.\n(More hits + chance to bleed)", 3, 3, 1, CardType::ArrowVolley, CardTheme::Red}},
         {"Jump",            {"Jump", "Shield and Defence Up.\n(Deal damage + Defence Up)", 2, 2, 1, CardType::Jump, CardTheme::Blue}},
         {"Metamorphosis",   {"Metamorphosis", "Transform.\n(Extend transform + heal)", 1, 2, 1, CardType::Metamorphosis, CardTheme::Green}},
+        {"Predator's Maul", {"Predator's Maul", "Big bleed + Beast bonus.\nTransform: Extra bleed + Heal", 4, 6, 1, CardType::PredatorsMaul, CardTheme::Red}},
 
         // mage
         {"Unstable Volley", {"Unstable Volley", "Deal damage + gain 2 corruption, \nThen if you are at max: transform\n(+ Gain Overload)", 2, 4, 1, CardType::UnstableVolley, CardTheme::Purple}},
@@ -128,6 +139,7 @@ private:
         {"Void Grasp",      {"Void Grasp", "Deal damage and apply void mark.\nAlso shreds shields \n(+ More void mark)", 1, 1, 1, CardType::VoidGrasp, CardTheme::Red}},
         {"Astral Shift",    {"Astral Shift", "Gain shield + Lose all corruption \n(Transform)", 5, 5, 1, CardType::AstralShift, CardTheme::Gray}},
         {"Void Prowess",    {"Void Prowess", "Gain true void", 2, 2, 2, CardType::VoidProwess, CardTheme::Blue}},
+        {"Void Echo",       {"Void Echo", "Build Void Mark faster.\nCorrupted: Apply Overload", 2, 3, 1, CardType::VoidEcho, CardTheme::Purple}},
 
         // warrior
         {"Aegis Strike",    {"Aegis Strike", "Deal damage to yourself and enemy.\nTransform after", 6, 8, 1, CardType::AegisStrike, CardTheme::Red}},
@@ -135,6 +147,7 @@ private:
         {"Shatter Spleen",  {"Shatter Spleen", "Gain Defense Up based on Shield.\nDeals damage if you have max shield\n(+ Give weaken)", 5, 8, 2, CardType::ShatterSpleen, CardTheme::Red}},
         {"Shield Bash",     {"Shield Bash", "Consume Max Shield to Stun\nAlso deals damage.", 10, 20, 2, CardType::ShieldBash, CardTheme::Red}},
         {"Warrior Pact",    {"Warrior Pact", "Sacrifice HP for 2 Mana.", 5, 0, 0, CardType::WarriorPact, CardTheme::Purple}},
+        {"Fortify",         {"Fortify", "Gain shield based on value.\nTransform: Extra shield + Defence Up", 3, 5, 1, CardType::Fortify, CardTheme::Gray}},
 
         // cleric
         {"Holy Light",      {"Holy Light", "Restore health.", 7, 3, 1, CardType::Heal, CardTheme::Green}},
@@ -142,6 +155,7 @@ private:
         {"Condemn",         {"Condemn", "Apply Bleed and Defense Down.\nIf transformed: give Judged + Bleed self.", 4, 4, 1, CardType::Condemn, CardTheme::Gold}},
         {"Purge",           {"Purge", "Deal damage for every unique\nstatus effect on the target.", 3, 8, 2, CardType::Purge, CardTheme::Red}},
         {"Ritual",          {"Ritual", "Transform (Gain blessed)", 2, 4, 2, CardType::Ritual, CardTheme::Green}},
+        {"Redemption",      {"Redemption", "Heal + damage based on Blessed.\nTransform: Apply Judged", 3, 5, 1, CardType::Redemption, CardTheme::Gold}},
 
         // necromancer
         {"Raise Dead",      {"Raise Dead", "Summon Zombie Army.\nTransform: Double zombies + heal", 1, 1, 1, CardType::RaiseDead, CardTheme::Gold}},
@@ -152,10 +166,12 @@ private:
         {"Death Mark",      {"Death Mark", "Mark enemy: Extra damage taken.\n(Double marks + Bleed)", 1, 1, 1, CardType::DeathMark, CardTheme::Red}},
         {"Army Surge",      {"Army Surge", "Transform + Army + Soul\n (Increased army boost)", 2, 4, 3, CardType::ArmySurge, CardTheme::Green}},
         {"Crypt Shield",    {"Crypt Shield", "Shield + skeleton bonus.\n(+ Extra shield + Defence Up)", 0, 2, 1, CardType::CryptShield, CardTheme::Gray}},
+        {"Corpse Explosion",{"Corpse Explosion", "Deal damage based on Army size.\nTransform: Soul Fragments + Heal", 2, 4, 1, CardType::CorpseExplosion, CardTheme::Purple}},
 
         // alchemist
         {"Potion Brew",     {"Potion Brew", "Create 2 random metals.", 0, 0, 1, CardType::PotionBrew, CardTheme::Blue}},
         {"Toss",            {"Toss", "Remove 1 metal and deal increased damage\nbased on removed metal value", 3, 7, 1, CardType::Toss, CardTheme::Red}},
+        {"Catalyst Bomb",   {"Catalyst Bomb", "CONSUME Catalyst for massive dmg.\n(+ Potion)", 3, 7, 1, CardType::CatalystBomb, CardTheme::Teal}},
         {"Reaction",        {"Reaction", "Mix 2 metals for a powerful effect", 8, 3, 0, CardType::Reaction, CardTheme::Purple}},
         {"Lead",            {"Lead", "Apply Lead status", 3, 1, 1, CardType::LeadCard, CardTheme::Gray}},
         {"Gold",            {"Gold", "Apply Gold status", 4, 4, 1, CardType::GoldCard, CardTheme::Gray}},
@@ -173,16 +189,18 @@ private:
         {"Vampiric Inject", {"Vampiric Inject", "Upgrade Machine Power:\nHeal on hit", 1, 1, 1, CardType::VampiricInject, CardTheme::Green}},
         {"Armor Inject",    {"Armor Inject", "Upgrade Machine Power:\nGain Shield", 1, 1, 1, CardType::ArmorInject, CardTheme::Gray}},
         {"Status Drive",    {"Status Drive", "WIP", 2, 3, 1, CardType::StatusDrive, CardTheme::Purple}},
+        {"System Crash",    {"System Crash", "Deal dmg + Upgrade bonus.\n3+ Upgrades: Stun", 4, 7, 1, CardType::SystemCrash, CardTheme::Red}},
 
         // war angel
-        {"Betray",          {"Betray", "Deal damage for each\nblessed intensity the enemy has\nGain 5 corruption (+ 2 corruption)", 2, 2, 2, CardType::Betray, CardTheme::Red}},
-        {"Blessed Sword",   {"Blessed Sword", "Deal damage and give the enemy blessed \nBased on damage done (+ Slash twice)", 1, 7, 1, CardType::BlessedSword, CardTheme::Red}},
-        {"Ethernal Flight", {"Ethernal Flight", "Gain flight and corruption", 1, 1, 3, CardType::EthernalFlight, CardTheme::Gold}},
-        {"Golden Lance",    {"Golden Lance", "Deal damage, If enemy has +5 blessed:\nGain true void (+ Gain corruption)", 3, 2, 1, CardType::GoldenLance, CardTheme::Red}},
-        {"Holy Arrows",     {"Holy Arrows", "Gain locked (if corrupted also gain damage up)\nIf you are under half corruption: Double corruption\n(+ Gain blessed)", 2, 4, 2, CardType::HolyArrows, CardTheme::Purple}},
-        {"Savior",          {"Savior", "Gain holy spirit + mana + draw\n(+ increased bonuses and corruption)", 1, 1, 0, CardType::Savior, CardTheme::Gold}},
-        {"Spiral Slash",    {"Spiral Slash", "Deal damage and gain spirit slash cards\nIf you are under 2 corruption: Gain flight\n(+ Gain True Void)", 3, 3, 3, CardType::SpiralSlash, CardTheme::Purple}},
-        {"Spirit Slash",    {"Spirit Slash", "Gain corruption and deal damage\nIf you are at max corruption: give damage down", 1, 1, 0, CardType::SpiritSlash, CardTheme::Red}},
+        {"Betray",            {"Betray", "Deal damage for each\nblessed intensity the enemy has\nGain 5 corruption (+ 2 corruption)", 2, 2, 2, CardType::Betray, CardTheme::Red}},
+        {"Blessed Sword",     {"Blessed Sword", "Deal damage and give the enemy blessed \nBased on damage done (+ Slash twice)", 1, 7, 1, CardType::BlessedSword, CardTheme::Red}},
+        {"Ethernal Flight",   {"Ethernal Flight", "Gain flight and corruption", 1, 1, 3, CardType::EthernalFlight, CardTheme::Gold}},
+        {"Golden Lance",      {"Golden Lance", "Deal damage, If enemy has +5 blessed:\nGain true void (+ Gain corruption)", 3, 2, 1, CardType::GoldenLance, CardTheme::Red}},
+        {"Holy Arrows",       {"Holy Arrows", "Gain locked (if corrupted also gain damage up)\nIf you are under half corruption: Double corruption\n(+ Gain blessed)", 2, 4, 2, CardType::HolyArrows, CardTheme::Purple}},
+        {"Savior",            {"Savior", "Gain holy spirit + mana + draw\n(+ increased bonuses and corruption)", 1, 1, 0, CardType::Savior, CardTheme::Gold}},
+        {"Spiral Slash",      {"Spiral Slash", "Deal damage and gain spirit slash cards\nIf you are under 2 corruption: Gain flight\n(+ Gain True Void)", 3, 3, 3, CardType::SpiralSlash, CardTheme::Purple}},
+        {"Spirit Slash",      {"Spirit Slash", "Gain corruption and deal damage\nIf you are at max corruption: give damage down", 1, 1, 0, CardType::SpiritSlash, CardTheme::Red}},
+        {"Divine Punishment", {"Divine Punishment", "BIG dmg if enemy has Blessed.\nTransform: Flight + Holy Spirit", 3, 6, 1, CardType::DivinePunishment, CardTheme::Gold}},
 
         // forge fusion
         {"Divine Arrow",    {"Divine Arrow", "FUSION: Holy damage + Heal\nDeal damage and restore health!", 5, 5, 1, CardType::Fusion, CardTheme::Gold}},
@@ -299,6 +317,16 @@ public:
             case CardType::Savior:          card.effect = std::make_unique<Savior>();         break;
             case CardType::SpiralSlash:     card.effect = std::make_unique<SpiralSlash>();    break;
             case CardType::SpiritSlash:     card.effect = std::make_unique<SpiritSlash>();    break;
+
+            // new loot cards
+            case CardType::VoidEcho:        card.effect = std::make_unique<VoidEcho>();        break;
+            case CardType::Fortify:         card.effect = std::make_unique<Fortify>();         break;
+            case CardType::Redemption:      card.effect = std::make_unique<Redemption>();     break;
+            case CardType::PredatorsMaul:   card.effect = std::make_unique<PredatorsMaul>();  break;
+            case CardType::CorpseExplosion: card.effect = std::make_unique<CorpseExplosion>(); break;
+            case CardType::CatalystBomb:    card.effect = std::make_unique<CatalystBomb>();   break;
+            case CardType::SystemCrash:     card.effect = std::make_unique<SystemCrash>();     break;
+            case CardType::DivinePunishment: card.effect = std::make_unique<DivinePunishment>(); break;
         }
         return card;
     }

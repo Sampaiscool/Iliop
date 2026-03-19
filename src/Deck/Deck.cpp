@@ -15,11 +15,11 @@ Deck::Deck(std::vector<Card> startingCards) {
 void Deck::setDeck(std::vector<Card> cards) {
     // first populate permanent collection with starter deck (with any augmentations)
     permanentCollection = std::move(cards);
-    // rebuild draw pile from permanent collection (preserving augmentations)
+    // rebuild draw pile from permanent collection (preserving inflicts)
     drawPile.clear();
     for (auto& permCard : permanentCollection) {
         Card newCard = CardFactory::create(permCard.name);
-        // copy augmentations
+        // copy inflicts 
         newCard.bonusValue = permCard.bonusValue;
         newCard.costReduction = permCard.costReduction;
         newCard.drawOnUse = permCard.drawOnUse;
@@ -46,7 +46,7 @@ std::vector<Card>& Deck::getPermanentCollection() {
 }
 
 void Deck::addCardToDrawPile(Card card) {
-    // look up imprints from permanent collection
+    // look up inflicts from permanent collection
     for (const auto& permCard : permanentCollection) {
         if (permCard.name == card.name) {
             card.bonusValue = permCard.bonusValue;

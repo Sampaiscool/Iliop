@@ -21,6 +21,7 @@ enum class CardType {
     ArrowVolley,
     Jump,
     Metamorphosis,
+    PredatorsMaul,
 
     // mage
     UnstableVolley,
@@ -28,6 +29,7 @@ enum class CardType {
     VoidGrasp,
     AstralShift,
     VoidProwess,
+    VoidEcho,
 
     // warrior
     AegisStrike,
@@ -35,12 +37,14 @@ enum class CardType {
     ShatterSpleen,
     ShieldBash,
     WarriorPact,
+    Fortify,
 
     // cleric
     BlindingLight,
     Condemn,
     Purge,
     Ritual,
+    Redemption,
 
     // necromancer
     GraveCall,
@@ -52,11 +56,13 @@ enum class CardType {
     CryptShield,
     RaiseDead,
     BoneLegion,
+    CorpseExplosion,
 
     // alchemist
     PotionBrew,
     Toss,
     Reaction,
+    CatalystBomb,
 
     // metals
     LeadCard,
@@ -75,6 +81,7 @@ enum class CardType {
     VampiricInject,
     ArmorInject,
     StatusDrive,
+    SystemCrash,
 
     // war angel
     Betray,
@@ -84,7 +91,8 @@ enum class CardType {
     HolyArrows,
     Savior,
     SpiralSlash,
-    SpiritSlash
+    SpiritSlash,
+    DivinePunishment
 };
 
 enum class CardTheme {
