@@ -22,6 +22,7 @@
 #include "../Effects/EffectTypes/Ranger/ArrowVolley.h"
 #include "../Effects/EffectTypes/Ranger/Jump.h"
 #include "../Effects/EffectTypes/Ranger/Metamorphosis.h"
+#include "../Effects/EffectTypes/Ranger/HuntersMark.h"
 
 // mage:
 #include "../Effects/EffectTypes/Mage/AstralShift.h"
@@ -30,6 +31,7 @@
 #include "../Effects/EffectTypes/Mage/VoidGrasp.h"
 #include "../Effects/EffectTypes/Mage/VoidProwess.h"
 #include "../Effects/EffectTypes/Mage/Infinity.h"
+#include "../Effects/EffectTypes/Mage/ArcaneSurge.h"
 
 // warrior:
 #include "../Effects/EffectTypes/Warrior/AegisStrike.h"
@@ -38,6 +40,7 @@
 #include "../Effects/EffectTypes/Warrior/ShieldBash.h"
 #include "../Effects/EffectTypes/Warrior/WarriorPact.h"
 #include "../Effects/EffectTypes/Warrior/RagingDefence.h"
+#include "../Effects/EffectTypes/Warrior/BloodRampage.h"
 
 // cleric:
 #include "../Effects/EffectTypes/Cleric/BlindingLight.h"
@@ -45,6 +48,7 @@
 #include "../Effects/EffectTypes/Cleric/HolyZeal.h"
 #include "../Effects/EffectTypes/Cleric/Purge.h"
 #include "../Effects/EffectTypes/Cleric/Ritual.h"
+#include "../Effects/EffectTypes/Cleric/DivineAegis.h"
 
 // necromancer:
 #include "../Effects/EffectTypes/Necromancer/GraveCall.h"
@@ -56,6 +60,7 @@
 #include "../Effects/EffectTypes/Necromancer/CryptShield.h"
 #include "../Effects/EffectTypes/Necromancer/RaiseDead.h"
 #include "../Effects/EffectTypes/Necromancer/BoneLegion.h"
+#include "../Effects/EffectTypes/Necromancer/Plague.h"
 
 // alchemist:
 #include "../Effects/EffectTypes/Alchemist/PotionBrew.h"
@@ -68,6 +73,7 @@
 #include "../Effects/EffectTypes/Alchemist/Mercury.h"
 #include "../Effects/EffectTypes/Alchemist/Silver.h"
 #include "../Effects/EffectTypes/Alchemist/Tin.h"
+#include "../Effects/EffectTypes/Alchemist/AcidSplash.h"
 
 // technomancer:
 #include "../Effects/EffectTypes/Technomancer/MachinePower.h"
@@ -76,7 +82,10 @@
 #include "../Effects/EffectTypes/Technomancer/ShockInject.h"
 #include "../Effects/EffectTypes/Technomancer/VampiricInject.h"
 #include "../Effects/EffectTypes/Technomancer/ArmorInject.h"
-#include "../Effects/EffectTypes/Technomancer/StatusDrive.h"
+#include "../Effects/EffectTypes/Technomancer/VoidInject.h"
+#include "../Effects/EffectTypes/Technomancer/PowerInject.h"
+#include "../Effects/EffectTypes/Technomancer/DefensiveMode.h"
+#include "../Effects/EffectTypes/Technomancer/Overdrive.h"
 
 // war angel
 #include "../Effects/EffectTypes/WarAngel/Betray.h"
@@ -88,6 +97,7 @@
 #include "../Effects/EffectTypes/WarAngel/SpiralSlash.h"
 #include "../Effects/EffectTypes/WarAngel/SpiritSlash.h"
 #include "../Effects/EffectTypes/WarAngel/DivinePunishment.h"
+#include "../Effects/EffectTypes/WarAngel/CelestialWrath.h"
 
 // new loot cards
 #include "../Effects/EffectTypes/Mage/VoidEcho.h"
@@ -132,6 +142,7 @@ private:
         {"Jump",            {"Jump", "Shield and Defence Up.\n(Deal damage + Defence Up)", 2, 2, 1, CardType::Jump, CardTheme::Blue}},
         {"Metamorphosis",   {"Metamorphosis", "Transform.\n(Extend transform + heal)", 1, 2, 1, CardType::Metamorphosis, CardTheme::Green}},
         {"Predator's Maul", {"Predator's Maul", "Big bleed + Beast bonus.\nTransform: Extra bleed + Heal", 4, 6, 1, CardType::PredatorsMaul, CardTheme::Red}},
+        {"Hunter's Mark",   {"Hunter's Mark", "Deal damage + apply Damage Up + Bleed.\nTransform: Also apply Damage Down + Heal", 5, 3, 1, CardType::HuntersMark, CardTheme::Red}},
 
         // mage
         {"Unstable Volley", {"Unstable Volley", "Deal damage + gain 2 corruption, \nThen if you are at max: transform\n(+ Gain Overload)", 2, 4, 1, CardType::UnstableVolley, CardTheme::Purple}},
@@ -140,6 +151,7 @@ private:
         {"Astral Shift",    {"Astral Shift", "Gain shield + Lose all corruption \n(Transform)", 5, 5, 1, CardType::AstralShift, CardTheme::Gray}},
         {"Void Prowess",    {"Void Prowess", "Gain true void", 2, 2, 2, CardType::VoidProwess, CardTheme::Blue}},
         {"Void Echo",       {"Void Echo", "Build Void Mark faster.\nCorrupted: Apply Overload", 2, 3, 1, CardType::VoidEcho, CardTheme::Purple}},
+        {"Arcane Surge",    {"Arcane Surge", "Deal damage 3 times + corruption.\nTransform: Extra hits + more corruption", 4, 5, 2, CardType::ArcaneSurge, CardTheme::Purple}},
 
         // warrior
         {"Aegis Strike",    {"Aegis Strike", "Deal damage to yourself and enemy.\nTransform after", 6, 8, 1, CardType::AegisStrike, CardTheme::Red}},
@@ -148,6 +160,7 @@ private:
         {"Shield Bash",     {"Shield Bash", "Consume Max Shield to Stun\nAlso deals damage.", 10, 20, 2, CardType::ShieldBash, CardTheme::Red}},
         {"Warrior Pact",    {"Warrior Pact", "Sacrifice HP for 2 Mana.", 5, 0, 0, CardType::WarriorPact, CardTheme::Purple}},
         {"Fortify",         {"Fortify", "Gain shield based on value.\nTransform: Extra shield + Defence Up", 3, 5, 1, CardType::Fortify, CardTheme::Gray}},
+        {"Blood Rampage",   {"Blood Rampage", "Deal damage to enemy + yourself.\nTransform: Extra hit + heal", 6, 8, 2, CardType::BloodRampage, CardTheme::Red}},
 
         // cleric
         {"Holy Light",      {"Holy Light", "Restore health.", 7, 3, 1, CardType::Heal, CardTheme::Green}},
@@ -156,6 +169,7 @@ private:
         {"Purge",           {"Purge", "Deal damage for every unique\nstatus effect on the target.", 3, 8, 2, CardType::Purge, CardTheme::Red}},
         {"Ritual",          {"Ritual", "Transform (Gain blessed)", 2, 4, 2, CardType::Ritual, CardTheme::Green}},
         {"Redemption",      {"Redemption", "Heal + damage based on Blessed.\nTransform: Apply Judged", 3, 5, 1, CardType::Redemption, CardTheme::Gold}},
+        {"Divine Aegis",    {"Divine Aegis", "Gain shield + heal + Defence Up.\nTransform: Extra shield + Regen", 5, 7, 2, CardType::DivineAegis, CardTheme::Blue}},
 
         // necromancer
         {"Raise Dead",      {"Raise Dead", "Summon Zombie Army.\nTransform: Double zombies + heal", 1, 1, 1, CardType::RaiseDead, CardTheme::Gold}},
@@ -167,6 +181,7 @@ private:
         {"Army Surge",      {"Army Surge", "Transform + Army + Soul\n (Increased army boost)", 2, 4, 3, CardType::ArmySurge, CardTheme::Green}},
         {"Crypt Shield",    {"Crypt Shield", "Shield + skeleton bonus.\n(+ Extra shield + Defence Up)", 0, 2, 1, CardType::CryptShield, CardTheme::Gray}},
         {"Corpse Explosion",{"Corpse Explosion", "Deal damage based on Army size.\nTransform: Soul Fragments + Heal", 2, 4, 1, CardType::CorpseExplosion, CardTheme::Purple}},
+        {"Plague",          {"Plague", "Deal damage + Bleed + Damage Down + Stun.\nTransform: More bleed + Defence Down + Heal", 4, 6, 2, CardType::Plague, CardTheme::Red}},
 
         // alchemist
         {"Potion Brew",     {"Potion Brew", "Create 2 random metals.", 0, 0, 1, CardType::PotionBrew, CardTheme::Blue}},
@@ -180,6 +195,7 @@ private:
         {"Mercury",         {"Mercury", "Apply Mercury status", 2, 4, 1, CardType::MercuryCard, CardTheme::Gray}},
         {"Silver",          {"Silver", "Apply Silver status", 3, 1, 1, CardType::SilverCard, CardTheme::Gray}},
         {"Tin",             {"Tin", "Apply Tin status", 1, 2, 1, CardType::TinCard, CardTheme::Gray}},
+        {"Acid Splash",     {"Acid Splash", "Deal damage + Damage Down.\nTransform: Defence Down + Bonus damage", 4, 6, 1, CardType::AcidSplash, CardTheme::Teal}},
 
         // technomancer
         {"Machine Power",   {"Machine Power", "Deal damage.\nUpgrades apply additional effects", 5, 8, 1, CardType::MachinePower, CardTheme::Red}},
@@ -188,8 +204,9 @@ private:
         {"Shock Inject",    {"Shock Inject", "Upgrade Machine Power:\nApply Stun", 1, 1, 1, CardType::ShockInject, CardTheme::Blue}},
         {"Vampiric Inject", {"Vampiric Inject", "Upgrade Machine Power:\nHeal on hit", 1, 1, 1, CardType::VampiricInject, CardTheme::Green}},
         {"Armor Inject",    {"Armor Inject", "Upgrade Machine Power:\nGain Shield", 1, 1, 1, CardType::ArmorInject, CardTheme::Gray}},
-        {"Status Drive",    {"Status Drive", "WIP", 2, 3, 1, CardType::StatusDrive, CardTheme::Purple}},
-        {"System Crash",    {"System Crash", "Deal dmg + Upgrade bonus.\n3+ Upgrades: Stun", 4, 7, 1, CardType::SystemCrash, CardTheme::Red}},
+        {"Void Inject",     {"Void Inject", "Upgrade Machine Power:\nGain True Void", 2, 1, 2, CardType::VoidInject, CardTheme::Blue}},
+        {"Power Inject",    {"Power Inject", "Upgrade Machine Power:\nApply Damage Up", 1, 1, 1, CardType::PowerInject, CardTheme::Gold}},
+        {"Defensive Mode",  {"Defensive Mode", "Upgrade Machine Power:\nApply Defence Up", 2, 3, 1, CardType::DefensiveMode, CardTheme::Gold}},
 
         // war angel
         {"Betray",            {"Betray", "Deal damage for each\nblessed intensity the enemy has\nGain 5 corruption (+ 2 corruption)", 2, 2, 2, CardType::Betray, CardTheme::Red}},
@@ -200,7 +217,8 @@ private:
         {"Savior",            {"Savior", "Gain holy spirit + mana + draw\n(+ increased bonuses and corruption)", 1, 1, 0, CardType::Savior, CardTheme::Gold}},
         {"Spiral Slash",      {"Spiral Slash", "Deal damage and gain spirit slash cards\nIf you are under 2 corruption: Gain flight\n(+ Gain True Void)", 3, 3, 3, CardType::SpiralSlash, CardTheme::Purple}},
         {"Spirit Slash",      {"Spirit Slash", "Gain corruption and deal damage\nIf you are at max corruption: give damage down", 1, 1, 0, CardType::SpiritSlash, CardTheme::Red}},
-        {"Divine Punishment", {"Divine Punishment", "BIG dmg if enemy has Blessed.\nTransform: Flight + Holy Spirit", 3, 6, 1, CardType::DivinePunishment, CardTheme::Gold}},
+        {"Divine Punishment", {"Divine Punishment", "BIG dmg if enemy has Blessed.\n(+ Flight + Holy Spirit)", 3, 6, 1, CardType::DivinePunishment, CardTheme::Gold}},
+        {"Celestial Wrath",   {"Celestial Wrath", "Deal damage + Damage Up.\n(Double damage + shield + Blessed)", 5, 10, 3, CardType::CelestialWrath, CardTheme::Gold}},
 
         // forge fusion
         {"Divine Arrow",    {"Divine Arrow", "FUSION: Holy damage + Heal\nDeal damage and restore health!", 5, 5, 1, CardType::Fusion, CardTheme::Gold}},
@@ -256,6 +274,7 @@ public:
             case CardType::ArrowVolley:     card.effect = std::make_unique<ArrowVolley>();        break;
             case CardType::Jump:            card.effect = std::make_unique<Jump>();               break;
             case CardType::Metamorphosis:   card.effect = std::make_unique<Metamorphosis>();      break;
+            case CardType::HuntersMark:      card.effect = std::make_unique<HuntersMarkEffect>();   break;
 
             // mage
             case CardType::UnstableVolley:  card.effect = std::make_unique<UnstableVolley>(); break;
@@ -263,6 +282,7 @@ public:
             case CardType::VoidGrasp:       card.effect = std::make_unique<VoidGrasp>();      break;
             case CardType::AstralShift:     card.effect = std::make_unique<AstralShift>();    break;
             case CardType::VoidProwess:     card.effect = std::make_unique<VoidProwess>();    break;
+            case CardType::ArcaneSurge:     card.effect = std::make_unique<ArcaneSurgeEffect>(); break;
 
             // warrior
             case CardType::AegisStrike:     card.effect = std::make_unique<AegisStrike>();      break;
@@ -270,12 +290,14 @@ public:
             case CardType::ShatterSpleen:   card.effect = std::make_unique<ShatterSpleen>();    break;
             case CardType::ShieldBash:      card.effect = std::make_unique<ShieldBash>();       break;
             case CardType::WarriorPact:     card.effect = std::make_unique<WarriorPact>();      break;
+            case CardType::BloodRampage:    card.effect = std::make_unique<BloodRampageEffect>(); break;
 
             // cleric
             case CardType::BlindingLight:   card.effect = std::make_unique<BlindingLight>();  break;
             case CardType::Condemn:         card.effect = std::make_unique<Condemn>();        break;
             case CardType::Purge:           card.effect = std::make_unique<Purge>();          break;
             case CardType::Ritual:          card.effect = std::make_unique<Ritual>();         break;
+            case CardType::DivineAegis:     card.effect = std::make_unique<DivineAegisEffect>(); break;
 
             // necromancer
             case CardType::RaiseDead:       card.effect = std::make_unique<RaiseDead>();      break;
@@ -286,6 +308,7 @@ public:
             case CardType::DeathMark:       card.effect = std::make_unique<DeathMark>();      break;
             case CardType::ArmySurge:       card.effect = std::make_unique<ArmySurge>();      break;
             case CardType::CryptShield:     card.effect = std::make_unique<CryptShield>();    break;
+            case CardType::Plague:          card.effect = std::make_unique<PlagueEffect>();   break;
 
             // alchemist
             case CardType::PotionBrew:    card.effect = std::make_unique<PotionBrew>();     break;
@@ -298,6 +321,7 @@ public:
             case CardType::MercuryCard:   card.effect = std::make_unique<MercuryEffect>();  break;
             case CardType::SilverCard:    card.effect = std::make_unique<SilverEffect>();   break;
             case CardType::TinCard:       card.effect = std::make_unique<TinEffect>();      break;
+            case CardType::AcidSplash:    card.effect = std::make_unique<AcidSplashEffect>(); break;
 
             // technomancer
             case CardType::MachinePower:    card.effect = std::make_unique<MachinePower>();     break;
@@ -306,7 +330,10 @@ public:
             case CardType::ShockInject:     card.effect = std::make_unique<ShockInject>();      break;
             case CardType::VampiricInject:  card.effect = std::make_unique<VampiricInject>();   break;
             case CardType::ArmorInject:     card.effect = std::make_unique<ArmorInject>();      break;
-            case CardType::StatusDrive:     card.effect = std::make_unique<StatusDrive>();      break;
+            case CardType::VoidInject:      card.effect = std::make_unique<VoidInject>();       break;
+            case CardType::PowerInject:     card.effect = std::make_unique<PowerInject>();      break;
+            case CardType::DefensiveMode:   card.effect = std::make_unique<DefensiveMode>();    break;
+            case CardType::Overdrive:       card.effect = std::make_unique<OverdriveEffect>(); break;
 
             // war angel
             case CardType::Betray:          card.effect = std::make_unique<Betray>();         break;
@@ -317,6 +344,7 @@ public:
             case CardType::Savior:          card.effect = std::make_unique<Savior>();         break;
             case CardType::SpiralSlash:     card.effect = std::make_unique<SpiralSlash>();    break;
             case CardType::SpiritSlash:     card.effect = std::make_unique<SpiritSlash>();    break;
+            case CardType::CelestialWrath:  card.effect = std::make_unique<CelestialWrathEffect>(); break;
 
             // new loot cards
             case CardType::VoidEcho:        card.effect = std::make_unique<VoidEcho>();        break;

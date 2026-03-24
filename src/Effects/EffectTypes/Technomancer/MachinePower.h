@@ -29,6 +29,15 @@ public:
                 else if (upgradeName == "Armored") {
                     self.addShield(4 * intens);
                 }
+                else if (upgradeName == "Void") {
+                    self.applyStatus(std::make_unique<TrueVoidStatus>(2, intens));
+                }
+                else if (upgradeName == "Damage Up") {
+                    target.applyStatus(std::make_unique<DamageUpStatus>(2, 2 * intens));
+                }
+                else if (upgradeName == "Defence Up") {
+                    target.applyStatus(std::make_unique<DefenceUpStatus>(2, 2 * intens));
+                }
 
                 it = self.statuses.erase(it);
             } else {

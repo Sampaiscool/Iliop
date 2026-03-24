@@ -20,7 +20,7 @@ public:
         // character: hp - shield - mana - corruption
         switch (classType) {
             case Class::Mage:
-                stats = CombatState{{15, 15}, {0, 10}, {4, 4}, {0, 3}};
+                stats = CombatState{{30, 30}, {0, 10}, {4, 4}, {0, 3}};
                 transformCorruption = 3; transformTime = 2;
                 for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Unstable Volley"));
                 for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Void Grasp"));
@@ -29,7 +29,7 @@ public:
                 for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Void Prowess"));
                 break;
             case Class::Warrior:
-                stats = CombatState{{40, 40}, {0, 20}, {2, 2}, {0, 1}};
+                stats = CombatState{{80, 80}, {0, 30}, {2, 2}, {0, 1}};
                 transformCorruption = 1; transformTime = 2;
                 for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Iron Will"));
                 for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Shatter Spleen"));
@@ -38,7 +38,7 @@ public:
                 for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Shield Bash"));
                 break;
             case Class::Cleric:
-                stats = CombatState{{30, 30}, {0, 10}, {3, 3}, {0, 2}};
+                stats = CombatState{{60, 60}, {0, 10}, {3, 3}, {0, 2}};
                 transformCorruption = 2; transformTime = 2;
                 for (int i = 0; i < 5; ++i) deck.push_back(CardFactory::create("Holy Light"));
                 for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Purge"));
@@ -47,7 +47,7 @@ public:
                 for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Blinding Light"));
                 break;
             case Class::Ranger:
-                stats = CombatState{{25, 25}, {0, 10}, {3, 3}, {0, 2}};
+                stats = CombatState{{50, 50}, {0, 10}, {3, 3}, {0, 2}};
                 transformCorruption = 2; transformTime = 2;
                 for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Primal Arrow"));
                 for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Aim"));
@@ -56,7 +56,7 @@ public:
                 for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Metamorphosis"));
                 break;
             case Class::Necromancer:
-                stats = CombatState{{30, 30}, {0, 8}, {3, 3}, {0, 2}};
+                stats = CombatState{{60, 60}, {0, 8}, {3, 3}, {0, 2}};
                 transformCorruption = 2; transformTime = 2;
                 for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Raise Dead"));
                 for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Bone Legion"));
@@ -68,23 +68,23 @@ public:
                 for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Crypt Shield"));
                 break;
             case Class::Alchemist:
-                stats = CombatState{{25, 25}, {0, 10}, {3, 3}, {0, 2}};
+                stats = CombatState{{60, 60}, {0, 10}, {3, 3}, {0, 2}};
                 transformCorruption = 2; transformTime = 2;
                 for (int i = 0; i < 8; ++i) deck.push_back(CardFactory::create("Potion Brew"));
                 for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Toss"));
                 break;
             case Class::Technomancer:
-                stats = CombatState{{20, 20}, {0, 20}, {5, 5}, {0, 3}};
+                stats = CombatState{{50, 50}, {0, 30}, {5, 5}, {0, 3}};
                 transformCorruption = 3; transformTime = 2;
                 for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Overclock"));
                 for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Bleed Inject"));
                 for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Shock Inject"));
                 for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Vampiric Inject"));
                 for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Armor Inject"));
-                for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Status Drive"));
+                for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Void Inject"));
                 break;
             case Class::WarAngel:
-                stats = CombatState{{40, 40}, {0, 5}, {3, 3}, {0, 10}};
+                stats = CombatState{{55, 55}, {0, 5}, {3, 3}, {0, 10}};
                 transformCorruption = 10; transformTime = 2;
                 for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Betray"));
                 for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Blessed Sword"));

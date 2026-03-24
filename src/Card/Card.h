@@ -80,7 +80,9 @@ enum class CardType {
     ShockInject,
     VampiricInject,
     ArmorInject,
-    StatusDrive,
+    VoidInject,
+    PowerInject,
+    DefensiveMode,
     SystemCrash,
 
     // war angel
@@ -92,7 +94,17 @@ enum class CardType {
     Savior,
     SpiralSlash,
     SpiritSlash,
-    DivinePunishment
+    DivinePunishment,
+
+    // new class cards
+    HuntersMark,
+    ArcaneSurge,
+    BloodRampage,
+    DivineAegis,
+    Plague,
+    AcidSplash,
+    Overdrive,
+    CelestialWrath
 };
 
 enum class CardTheme {

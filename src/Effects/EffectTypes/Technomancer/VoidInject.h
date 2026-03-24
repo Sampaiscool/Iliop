@@ -3,9 +3,10 @@
 #include "../../../Other/CombatState.h"
 #include "../../../Other/AllStatuses.h"
 
-class StatusDrive : public Effect {
+class VoidInject : public Effect {
 public:
     void apply(CombatState& self, CombatState& target, int value) override {
-        self.applyStatus(std::make_unique<MachineUpgradeStatus>(3, value, "True Void"));
+        // Apply Void upgrade - Machine Power gains True Void
+        self.applyStatus(std::make_unique<MachineUpgradeStatus>(3, value, "Void"));
     }
 };

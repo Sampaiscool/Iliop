@@ -48,7 +48,7 @@ int main() {
     std::vector<size_t> forgeSelectedIndices;
     
     // Orb variables
-    int orbUses = 20;
+    int orbUses = 2;
     std::optional<size_t> orbSelectedCard;
     std::vector<std::string> orbInflicts = {
         "+2 Value", "+4 Value", "-1 Cost", "-2 Cost",
@@ -447,11 +447,11 @@ int main() {
                     // page buttons
                     int winW = window.getSize().x;
                     int winH = window.getSize().y;
-                    int cols = 8;
+                    int cols = 6;
                     int rowsVisible = 2;
                     int cardsPerPage = cols * rowsVisible;
                     auto& allCards = deck.getPermanentCollection();
-                    
+
                     // count non-double-fusion cards
                     int cardCount = 0;
                     for (size_t i = 0; i < allCards.size(); ++i) {
@@ -465,11 +465,11 @@ int main() {
                     if (totalPages < 1) totalPages = 1;
                     if (forgeScrollY >= totalPages) forgeScrollY = totalPages - 1;
                     if (forgeScrollY < 0) forgeScrollY = 0;
-                    
+
                     // page buttons
                     sf::FloatRect prevPageBtn(sf::Vector2f(30.f, 50.f), sf::Vector2f(winW * 0.03f, winH * 0.28f));
                     sf::FloatRect nextPageBtn(sf::Vector2f(30.f, 50.f), sf::Vector2f(winW * 0.93f, winH * 0.28f));
-                    
+
                     if (prevPageBtn.contains(mousePos) && forgeScrollY > 0) {
                         forgeScrollY--;
                     }
@@ -477,38 +477,56 @@ int main() {
                         forgeScrollY++;
                     }
 
-                    // card clicks - only cards on current page
+                    // first set card positions
                     int currentPage = (int)forgeScrollY;
                     int startCardIndex = currentPage * cardsPerPage;
                     int endCardIndex = startCardIndex + cardsPerPage;
                     int currentCardIndex = 0;
-                    
+                    int displayIdx = 0;
+                    float cardW = winW / 10;
+                    float cardH = winH / 6;
+                    float startX = winW * 0.05f;
+                    float startY = winH * 0.25f;
+                    float gap = cardW + 15.f;
+
+                    // calculate which cards to show
+                    std::vector<size_t> visibleIndices;
                     for (size_t i = 0; i < allCards.size(); ++i) {
                         bool isDoubleFusion = (allCards[i].name == "Omega Annihilation" || 
                                                allCards[i].name == "Universal Singularity" ||
                                                allCards[i].name == "Primordial Chaos" ||
                                                allCards[i].name == "Existential Crisis");
                         if (isDoubleFusion) continue;
-                        
+
                         if (currentCardIndex < startCardIndex) {
                             currentCardIndex++;
                             continue;
                         }
-                        if (currentCardIndex >= endCardIndex) {
-                            break;
-                        }
+                        if (currentCardIndex >= endCardIndex) break;
                         currentCardIndex++;
-                        
-                        sf::FloatRect cardRect({(float)allCards[i].x, (float)allCards[i].y},
-                                              {(float)allCards[i].w, (float)allCards[i].h});
+
+                        int col = displayIdx % cols;
+                        int row = displayIdx / cols;
+                        allCards[i].x = startX + col * gap;
+                        allCards[i].y = startY + row * (cardH + 30.f);
+                        allCards[i].w = cardW;
+                        allCards[i].h = cardH;
+                        visibleIndices.push_back(i);
+                        displayIdx++;
+                    }
+
+                    // now check clicks on visible cards
+                    for (size_t idx : visibleIndices) {
+                        sf::FloatRect cardRect({(float)allCards[idx].x, (float)allCards[idx].y},
+                                              {(float)allCards[idx].w, (float)allCards[idx].h});
 
                         if (cardRect.contains(mousePos)) {
                             // check if already selected
-                            auto it = std::find(forgeSelectedIndices.begin(), forgeSelectedIndices.end(), i);
+                            auto it = std::find(forgeSelectedIndices.begin(), forgeSelectedIndices.end(), idx);
                             if (it != forgeSelectedIndices.end()) {
                                 forgeSelectedIndices.erase(it);
                             } else if (forgeSelectedIndices.size() < 2) {
-                                forgeSelectedIndices.push_back(i);
+                                forgeSelectedIndices.push_back(idx);
 
                                 // if 2 selected, fuse them
                                 if (forgeSelectedIndices.size() == 2) {
@@ -519,11 +537,8 @@ int main() {
                                     CardType type1 = allCards[forgeSelectedIndices[0]].type;
                                     CardType type2 = allCards[forgeSelectedIndices[1]].type;
 
-                                    bool isFusion1 = (type1 == CardType::Fusion); 
-                                    bool isFusion2 = (type2 == CardType::Fusion); 
-
                                     std::string fusionName;
-                                    if (isFusion1 && isFusion2) {
+                                    if (type1 == CardType::Fusion && type2 == CardType::Fusion) {
                                         // double
                                         std::vector<std::string> doubleFusionCards = {"Omega Annihilation", "Universal Singularity", "Primordial Chaos", "Existential Crisis"};
                                         fusionName = doubleFusionCards[rand() % doubleFusionCards.size()];
@@ -573,15 +588,16 @@ int main() {
                     // card selection
                     if (orbUses > 0) {
                         auto& allCards = deck.getPermanentCollection();
-
-                        // set card positions first
                         int cardW = winW / 10;
                         int cardH = winH / 6;
                         int cols = 6;
+                        int rowsVisible = 2;
+                        int cardsPerPage = cols * rowsVisible;
                         float startX = winW * 0.05f;
                         float startY = winH * 0.3f - orbScrollY;
                         float gap = cardW + 15.f;
                         int displayIndex = 0;
+
                         for (size_t i = 0; i < allCards.size(); ++i) {
                             int col = displayIndex % cols;
                             int row = displayIndex / cols;
@@ -592,14 +608,40 @@ int main() {
                             displayIndex++;
                         }
 
+                        // card selection - only current page
+                        int currentPage = (int)orbScrollY;
+                        int startCardIndex = currentPage * cardsPerPage;
+                        int endCardIndex = startCardIndex + cardsPerPage;
+                        int cardIdx = 0;
+
+                        // set positions for visible cards first
+                        int dispIdx = 0;
+                        std::vector<size_t> visibleOrbIndices;
+
                         for (size_t i = 0; i < allCards.size(); ++i) {
-                            sf::FloatRect cardRect({(float)allCards[i].x, (float)allCards[i].y},
-                                                  {(float)allCards[i].w, (float)allCards[i].h});
+                            if (cardIdx < startCardIndex) { cardIdx++; continue; }
+                            if (cardIdx >= endCardIndex) break;
+                            cardIdx++;
+
+                            int col = dispIdx % cols;
+                            int row = dispIdx / cols;
+                            allCards[i].x = startX + col * gap;
+                            allCards[i].y = startY + row * (cardH + 30.f);
+                            allCards[i].w = cardW;
+                            allCards[i].h = cardH;
+                            visibleOrbIndices.push_back(i);
+                            dispIdx++;
+                        }
+
+                        // now check clicks on visible cards
+                        for (size_t idx : visibleOrbIndices) {
+                            sf::FloatRect cardRect({(float)allCards[idx].x, (float)allCards[idx].y},
+                                                  {(float)allCards[idx].w, (float)allCards[idx].h});
                             if (cardRect.contains(mousePos)) {
-                                if (orbSelectedCard && *orbSelectedCard == i) {
+                                if (orbSelectedCard && *orbSelectedCard == idx) {
                                     orbSelectedCard = std::nullopt;
                                 } else {
-                                    orbSelectedCard = i;
+                                    orbSelectedCard = idx;
                                 }
                                 break;
                             }
@@ -1114,7 +1156,7 @@ int main() {
             }
             int totalPages = (cardCount + cardsPerPage - 1) / cardsPerPage;
             if (totalPages < 1) totalPages = 1;
-            
+
             // clamp scroll to valid range
             if (forgeScrollY < 0) forgeScrollY = 0;
             if (forgeScrollY >= totalPages) forgeScrollY = totalPages - 1;
@@ -1134,7 +1176,7 @@ int main() {
             int startCardIndex = currentPage * cardsPerPage;
             int endCardIndex = startCardIndex + cardsPerPage;
             int currentCardIndex = 0;
-            
+
             for (size_t i = 0; i < allCards.size(); ++i) {
                 // skip double fusions
                 bool isDoubleFusion = (allCards[i].name == "Omega Annihilation" || 
@@ -1142,7 +1184,7 @@ int main() {
                                        allCards[i].name == "Primordial Chaos" ||
                                        allCards[i].name == "Existential Crisis");
                 if (isDoubleFusion) continue;
-                
+
                 // skip cards not on current page
                 if (currentCardIndex < startCardIndex) {
                     currentCardIndex++;
@@ -1178,12 +1220,26 @@ int main() {
                 allCards[i].draw(window, font, false, playerState);
             }
 
-            // draw tooltip if hovered
+            // draw tooltip if hovered - only current page
             sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
             Card* hoveredCard = nullptr;
-            for (Card& card : allCards) {
-                if (card.getBounds().contains(mousePos)) {
-                    hoveredCard = &card;
+            int tpPage = (int)forgeScrollY;
+            int tpStart = tpPage * cardsPerPage;
+            int tpEnd = tpStart + cardsPerPage;
+            int cardIdx = 0;
+            for (size_t i = 0; i < allCards.size(); ++i) {
+                bool isDoubleFusion = (allCards[i].name == "Omega Annihilation" || 
+                                       allCards[i].name == "Universal Singularity" ||
+                                       allCards[i].name == "Primordial Chaos" ||
+                                       allCards[i].name == "Existential Crisis");
+                if (isDoubleFusion) continue;
+                if (cardIdx < tpStart) { cardIdx++; continue; }
+                if (cardIdx >= tpEnd) break;
+                cardIdx++;
+                
+                if (allCards[i].getBounds().contains(mousePos)) {
+                    hoveredCard = &allCards[i];
+                    break;
                 }
             }
 
@@ -1224,16 +1280,16 @@ int main() {
             int cols = 6;
             int rowsVisible = 2;
             int cardsPerPage = cols * rowsVisible;
-            
+
             // calculate total pages
             int totalPages = (allCards.size() + cardsPerPage - 1) / cardsPerPage;
             if (totalPages < 1) totalPages = 1;
-            
+
             // clamp scroll to valid range
             if (orbScrollY < 0) orbScrollY = 0;
             if (orbScrollY >= totalPages) orbScrollY = totalPages - 1;
             int currentPage = (int)orbScrollY;
-            
+
             float startX = winW * 0.05f;
             float startY = winH * 0.3f;
             float gap = cardW + 15.f;
@@ -1248,7 +1304,7 @@ int main() {
             int startCardIndex = currentPage * cardsPerPage;
             int endCardIndex = startCardIndex + cardsPerPage;
             int currentCardIndex = 0;
-            
+
             for (size_t i = 0; i < allCards.size(); ++i) {
                 // skip cards not on current page
                 if (currentCardIndex < startCardIndex) {
@@ -1283,12 +1339,21 @@ int main() {
                 allCards[i].draw(window, font, false, playerState);
             }
 
-            // draw tooltip if hovered
+            // draw tooltip if hovered - only current page
             sf::Vector2f mousePos = window.mapPixelToCoords(sf::Mouse::getPosition(window));
             Card* hoveredCard = nullptr;
-            for (Card& card : allCards) {
-                if (card.getBounds().contains(mousePos)) {
-                    hoveredCard = &card;
+            int orbPage = (int)orbScrollY;
+            int orbStart = orbPage * cardsPerPage;
+            int orbEnd = orbStart + cardsPerPage;
+            int orbCardIdx = 0;
+            for (size_t i = 0; i < allCards.size(); ++i) {
+                if (orbCardIdx < orbStart) { orbCardIdx++; continue; }
+                if (orbCardIdx >= orbEnd) break;
+                orbCardIdx++;
+                
+                if (allCards[i].getBounds().contains(mousePos)) {
+                    hoveredCard = &allCards[i];
+                    break;
                 }
             }
 

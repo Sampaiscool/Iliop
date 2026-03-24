@@ -343,11 +343,14 @@ public:
     }
     StatusType getType() const override { return StatusType::MachineUpgrade; }
     std::string getDescription() const override { 
-        if (upgradeType == "Overclocked") return "Machine Power deals +" + std::to_string(intensity * 5) + " damage";
-        if (upgradeType == "Bleeding") return "Machine Power applies " + std::to_string(intensity) + " Bleed";
-        if (upgradeType == "Shocking") return "Machine Power applies " + std::to_string(intensity) + " Stun";
-        if (upgradeType == "Vampiric") return "Machine Power heals you for " + std::to_string(intensity);
-        if (upgradeType == "Armored") return  "Machine Power gives " + std::to_string(intensity) + " Shield";
+        if (upgradeType == "Overclocked") return "Machine Power deals +"  + std::to_string(intensity * 5) + " damage";
+        if (upgradeType == "Bleeding")    return "Machine Power applies " + std::to_string(intensity * 3) + " Bleed";
+        if (upgradeType == "Shocking")    return "Machine Power applies " + std::to_string(intensity)     + " Stun";
+        if (upgradeType == "Vampiric")    return "Machine Power gives "   + std::to_string(intensity)     + " Heal";
+        if (upgradeType == "Armored")     return "Machine Power gives "   + std::to_string(intensity)     + " Shield";
+        if (upgradeType == "True Void")   return "Machine Power gives "   + std::to_string(intensity)     + " True Void";
+        if (upgradeType == "Damage Up")   return "Machine Power gives "   + std::to_string(intensity)     + " Damage Up";
+        if (upgradeType == "Defence Up")  return "Machine Power gives "   + std::to_string(intensity)     + " Defence Up";
         return "Machine Power: " + upgradeType;
     }
     void onTurnStart(CombatState& owner) override { duration--; }

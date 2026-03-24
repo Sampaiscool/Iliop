@@ -3,9 +3,9 @@
 #include "../../../Other/CombatState.h"
 #include "../../../Other/AllStatuses.h"
 
-class StatusDrive : public Effect {
+class DefensiveMode : public Effect {
 public:
     void apply(CombatState& self, CombatState& target, int value) override {
-        self.applyStatus(std::make_unique<MachineUpgradeStatus>(3, value, "True Void"));
+        self.applyStatus(std::make_unique<MachineUpgradeStatus>(3, value, "Defence Up"));
     }
 };
