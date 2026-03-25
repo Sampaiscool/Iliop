@@ -1,6 +1,12 @@
 #include "CardResolver.h"
 #include <algorithm>
 
+/// @brief plays a card, applies its effects, then handles any interaction with statusses and more
+/// @param card the card to play
+/// @param player the state of the player
+/// @param enemy the state of the enemy
+/// @param deck the deck of the player
+/// @return true if the carsd was played correctly
 bool CardResolver::play(
     const Card& card,
     CombatState& player,

@@ -1,6 +1,9 @@
 #include "EnemyFactory.h"
 #include <random>
 
+/// @brief creates an enemy based on the floor
+/// @param floor the floor the player is on
+/// @return the created enemy
 Enemy EnemyFactory::create(int floor)
 {
     std::vector<EnemyType> pool;

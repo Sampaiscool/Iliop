@@ -155,7 +155,7 @@ int main() {
                 }
             }
 
-            // mouse is clciked
+            // mouse is clicked
             if (auto mouse = event.getIf<sf::Event::MouseButtonPressed>()) {
                 if (mouse->button != sf::Mouse::Button::Left)
                     continue;

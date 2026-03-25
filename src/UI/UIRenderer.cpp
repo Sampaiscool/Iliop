@@ -3,6 +3,16 @@
 #include <sstream>
 #include <iostream>
 
+/// @brief draws a bar with smfl
+/// @param window the window to draw on
+/// @param x the x position of the bar
+/// @param y the y position of the bar
+/// @param w the width of the bar
+/// @param h the height of the bar
+/// @param current the current value
+/// @param max the maximum value
+/// @param fill the color of the inside of the bar
+/// @param back the color of the inside that shows the missing fill
 static void drawBar(sf::RenderWindow& window,
     int x,
     int y,
@@ -26,6 +36,14 @@ static void drawBar(sf::RenderWindow& window,
     window.draw(fg);
 }
 
+/// @brief draws text with sfml
+/// @param window the window to draw on
+/// @param font the font to use
+/// @param str the string to display
+/// @param x the x position of the text
+/// @param y the y position of the text
+/// @param charSize the size of the characters
+/// @param color the color of the text
 static void drawText(sf::RenderWindow& window,
     const sf::Font& font,
     const std::string& str,
@@ -40,6 +58,9 @@ static void drawText(sf::RenderWindow& window,
     window.draw(text);
 }
 
+/// @brief gets the associated color for a class
+/// @param type the class type to use
+/// @return the correct color based on the given class
 sf::Color getClassColor(Class type) {
     switch (type) {
         case Class::Mage:    return sf::Color(50, 150, 255); // blue
@@ -49,6 +70,13 @@ sf::Color getClassColor(Class type) {
     }
 }
 
+/// @brief draws the portrait box for the player
+/// @param window the window to draw on
+/// @param font what font to use
+/// @param player the Character to use
+/// @param winW the width of the window
+/// @param winH the height of the window
+/// @param portraitTextures all the textures of the portraits
 void drawPlayerPortrait(sf::RenderWindow& window, const sf::Font& font, const Character& player, int winW, int winH, const std::map<CharacterName, sf::Texture>& portraitTextures) {
     float boxW = winW / 5.f;
     float boxH = winW / 5.f;
@@ -78,6 +106,16 @@ void drawPlayerPortrait(sf::RenderWindow& window, const sf::Font& font, const Ch
     drawText(window, font, player.nameStr, x, y - 25, 18, sf::Color::White);
 }
 
+/// @brief draws all the status icons in a scrollable bar
+/// @param window the window to draw on
+/// @param font the font to use
+/// @param statuses the list of statusses to draw
+/// @param x the x position of the bar
+/// @param y the y position of the bar
+/// @param mousePos the position of the mouse
+/// @param textures the textures of the status icons
+/// @param scrollOffset the offset for scrolling trough the bar
+/// @return a pointer to hovered status, nullptr if none
 static const Status* drawStatusIcons(sf::RenderWindow& window, const sf::Font& font,
     const std::vector<std::unique_ptr<Status>>& statuses,
     int x, int y, sf::Vector2f mousePos, const std::map<StatusType, sf::Texture>& textures,
@@ -135,6 +173,16 @@ static const Status* drawStatusIcons(sf::RenderWindow& window, const sf::Font& f
     }
     return hoveredStatus;
 }
+
+/// @brief renders the whole combat UI
+/// @param window the window to draw on
+/// @param player the player's Character object
+/// @param playerState the player's combat state
+/// @param enemyState the enemies combat state
+/// @param winW the width of the window
+/// @param winH the height of the window
+/// @param font the font to use
+/// @param enemyIntentDescription refrence to the enemies intent
 void UIRenderer::render(sf::RenderWindow& window,
     const Character& player,
     const CombatState& playerState,
@@ -331,6 +379,12 @@ void UIRenderer::render(sf::RenderWindow& window,
     }
 }
 
+/// @brief spawn floating text of the correct healthbar
+/// @param pos the position where the text should spawn
+/// @param str the string to display
+/// @param color the color of the text
+/// @param font the font to use
+/// @param charSize the size of the characters
 void UIRenderer::spawnFCT(sf::Vector2f pos, std::string str, sf::Color color, const sf::Font& font, int charSize) {
     sf::Text txt(font, sf::String(str), static_cast<unsigned int>(charSize > 0 ? charSize : 24));
     txt.setFillColor(color);
@@ -344,6 +398,9 @@ void UIRenderer::spawnFCT(sf::Vector2f pos, std::string str, sf::Color color, co
     floatingTexts.push_back({txt, pos, color, 1.0f});
 }
 
+/// @brief updates and draws floating combat text
+/// @param window the window to draw on
+/// @param dt the delta time
 void UIRenderer::updateAndDrawFCT(sf::RenderWindow& window, float dt) {
     for (auto it = floatingTexts.begin(); it != floatingTexts.end(); ) {
         it->lifetime -= dt;
@@ -368,6 +425,12 @@ void UIRenderer::updateAndDrawFCT(sf::RenderWindow& window, float dt) {
     }
 }
 
+/// @brief draws a tooltip for the hovered card
+/// @param window the window to draw on
+/// @param font the font to use
+/// @param card the card for wich to draw the tooltip of
+/// @param mouseX the x position of the mouse
+/// @param mouseY the y position of the mouse
 void UIRenderer::drawTooltip(sf::RenderWindow& window, const sf::Font& font, const Card& card, float mouseX, float mouseY) {
     std::ostringstream oss;
     oss << card.name << "\n";
@@ -380,7 +443,7 @@ void UIRenderer::drawTooltip(sf::RenderWindow& window, const sf::Font& font, con
     oss << "\n------------------\n" 
         << card.description;
     
-    // show orb augmentations/imprints
+    // show orb imprints
     if (card.bonusValue > 0 || card.costReduction > 0 || card.drawOnUse > 0 || card.replayCount > 0 || card.freeOnceCount > 0 || card.applyDamageUp > 0 || card.applyDefenceUp > 0 || card.applyRegen > 0 || card.applyBleed > 0 || card.healOnUse > 0 || card.shieldOnUse > 0) {
         oss << "\n------------------\n[IMPRINTS]";
         if (card.bonusValue > 0) {
@@ -428,7 +491,7 @@ void UIRenderer::drawTooltip(sf::RenderWindow& window, const sf::Font& font, con
 
     sf::Vector2f position(mouseX + 15.f, mouseY + 15.f);
 
-    // this way the toolbox cant get out of bounds
+    // this way the tooltip cant get out of bounds
     if (position.x + boxSize.x > window.getSize().x) {
         position.x = mouseX - boxSize.x - 15.f;
     }
@@ -447,6 +510,11 @@ void UIRenderer::drawTooltip(sf::RenderWindow& window, const sf::Font& font, con
     window.draw(descText);
 }
 
+/// @brief draws a tooltip of hovered status
+/// @param window the window to draw on
+/// @param font the font to use
+/// @param status the status for wich to draw the tooltip of
+/// @param mousePos the position of the mouse
 void UIRenderer::drawStatusTooltip(sf::RenderWindow& window, const sf::Font& font, const Status& status, sf::Vector2f mousePos) {
     // works almost the same as card tooltip
     std::ostringstream oss;
@@ -477,6 +545,7 @@ void UIRenderer::drawStatusTooltip(sf::RenderWindow& window, const sf::Font& fon
     window.draw(text);
 }
 
+/// @brief loads all the status textures
 void UIRenderer::loadStatusTextures() {
     std::string pathBleed = "../assets/statusIcons/BleedIcon.png";
     if (!statusTextures[StatusType::Bleed].loadFromFile(pathBleed)) {
@@ -510,27 +579,38 @@ void UIRenderer::loadStatusTextures() {
     }
 }
 
+/// @brief resets the HP tracking
+// BUG: this isn't working, HP still shows after a new enemy is spawned
 void UIRenderer::resetHPTracking() {
     lastPlayerHP = -1;
     lastEnemyHP = -1;
 }
 
+/// @brief gets the bounds of the end turn button
+/// @return the bounds of the end turn button
 sf::FloatRect UIRenderer::getEndTurnBounds() const {
     return endTurnBounds;
 }
 
+/// @brief gets the bounds of the transform button
+/// @return the bounds of the transform button
 sf::FloatRect UIRenderer::getTransformBounds() const {
     return transformBounds;
 }
 
+/// @brief scrolls trough the players statusses
+/// @param delta the amount to scroll
 void UIRenderer::scrollPlayerStatuses(int delta) {
     playerStatusScroll += delta;
 }
 
+/// @brief scrolls through the enemies statusses
+/// @param delta the amount to scroll
 void UIRenderer::scrollEnemyStatuses(int delta) {
     enemyStatusScroll += delta;
 }
 
+/// @brief resets the scroll ofsets in both statues bars
 void UIRenderer::resetStatusScrolls() {
     playerStatusScroll = 0;
     enemyStatusScroll = 0;

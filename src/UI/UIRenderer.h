@@ -18,7 +18,6 @@ struct FloatingText {
 
 class UIRenderer {
 public:
-    // Added enemyIntentDescription so the UI can display what the foe plans to do
     void render(sf::RenderWindow& window,
                 const Character& player,
                 const CombatState& playerState,

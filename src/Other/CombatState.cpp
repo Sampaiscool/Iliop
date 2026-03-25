@@ -15,10 +15,14 @@ CombatState::CombatState(Resource h, Resource s, Resource m, Resource c)
 
 CombatState::~CombatState() = default;
 
+/// @brief deals damage to the state
+/// @param amount the amount of total damage to deal
+/// @return the actual damage dealt
 int CombatState::takeDamage(int amount) {
     if (amount <= 0) return 0;
     int finalDamage = amount;
 
+    // applies modifiers of the damage from statusses
     for (auto& s : statuses) {
         if (s->name == "Death Mark") finalDamage = s->intensity * 2;
         if (s->name == "Void Mark") finalDamage += s->intensity;
@@ -28,6 +32,7 @@ int CombatState::takeDamage(int amount) {
     }
 
     int remainingDamage = finalDamage;
+
     if (shield.current > 0) {
         int absorbed = std::min(shield.current, remainingDamage);
         shield.current -= absorbed;
@@ -44,22 +49,29 @@ int CombatState::takeDamage(int amount) {
         damageEvents.emplace_back(damageDealt, false);
     }
 
-    for (auto& s : statuses) {
-        if (s->name == "Raging Bear") {
-            if (hp.current <= (hp.max / 2)) {
-                applyStatus(std::make_unique<DefenceUpStatus>(2, s->intensity));
-                applyStatus(std::make_unique<DamageUpStatus>(2, s->intensity));
+    // on damage effects
+    if (damageDealt > 0) {
+        for (auto& s : statuses) {
+            if (s->name == "Raging Bear") {
+                if (hp.current <= (hp.max / 2)) {
+                    applyStatus(std::make_unique<DefenceUpStatus>(2, s->intensity));
+                    applyStatus(std::make_unique<DamageUpStatus>(2, s->intensity));
+                }
             }
-        }
-        if (s->name == "Judged") {
-            if (damageDealt >= 5) {
-                applyStatus(std::make_unique<DefenceDownStatus>(2, 2));
+            if (s->name == "Judged") {
+                if (damageDealt >= 5) {
+                    applyStatus(std::make_unique<DefenceDownStatus>(2, 2));
+                }
             }
         }
     }
+    
     return damageDealt;
 }
 
+/// @brief gets the modified damage based on status effects
+/// @param baseDamage the damage to amplify or reduce
+/// @return the total modified damage
 int CombatState::getModifiedDamage(int baseDamage) {
     int total = baseDamage;
     for (auto& s : statuses) {
@@ -71,6 +83,9 @@ int CombatState::getModifiedDamage(int baseDamage) {
     return total;
 }
 
+/// @brief heals the state
+/// @param amount the amount to heal by
+/// @return the amount healed
 int CombatState::heal(int amount) {
     if (amount <= 0) return 0;
     int oldHP = hp.current;
@@ -82,6 +97,9 @@ int CombatState::heal(int amount) {
     return healed;
 }
 
+/// @brief gives a shield to the state
+/// @param amount the amount of shield to give
+/// @return the shield amount it gained
 int CombatState::addShield(int amount) {
     if (amount <= 0) return 0;
     int oldShield = shield.current;
@@ -93,12 +111,16 @@ int CombatState::addShield(int amount) {
     return gained;
 }
 
+/// @brief draws a cards from the deck
+/// @param drawAmount the amount to draw from the deck
 void CombatState::draw(int drawAmount) {
     if (deck) {
         deck->drawCard(drawAmount);
     }
 }
 
+/// @brief applies a status to the state, can also incease a status if it already has it
+/// @param newStatus the status to apply
 void CombatState::applyStatus(std::unique_ptr<Status> newStatus) {
     if (!newStatus) return;
 
@@ -110,6 +132,7 @@ void CombatState::applyStatus(std::unique_ptr<Status> newStatus) {
         }
     }
  
+    // if the status already exists, refresh duration and add intensity
     for (auto& s : statuses) {
         if (s->name == newStatus->name) {
             s->duration  += newStatus->duration;
@@ -120,6 +143,8 @@ void CombatState::applyStatus(std::unique_ptr<Status> newStatus) {
     statuses.push_back(std::move(newStatus));
 }
 
+/// @brief ends the turn of the combat state
+/// @param currentActor which state's turn it is
 void CombatState::endTurn(CombatState& currentActor) {
     for (auto& s : currentActor.statuses) { 
         if (s->name == "Blessed") {
@@ -134,6 +159,7 @@ void CombatState::endTurn(CombatState& currentActor) {
     }
 }
 
+/// @brief updates the statuses of the state
 void CombatState::updateStatuses() {
     for (auto it = statuses.begin(); it != statuses.end(); ) {
         (*it)->onTurnStart(*this);
@@ -142,6 +168,8 @@ void CombatState::updateStatuses() {
     }
 }
 
+/// @brief transforms the state
+/// @param enemy the enemy of the state thats transforming
 void CombatState::transform(CombatState& enemy) {
     isTransformed = true;
     transformTime += transformGain;
@@ -151,6 +179,8 @@ void CombatState::transform(CombatState& enemy) {
     }
 }
 
+/// @brief gives corruption to the state
+/// @param corruptionGain the amount to gain
 void CombatState::gainCorruption(int corruptionGain) {
 
     corruption.current += corruptionGain;
@@ -159,6 +189,8 @@ void CombatState::gainCorruption(int corruptionGain) {
     }
 }
 
+/// @brief gives mana to the state
+/// @param manaGain the amount to gain
 void CombatState::gainMana(int manaGain) {
 
     mana.current += manaGain;
@@ -167,6 +199,8 @@ void CombatState::gainMana(int manaGain) {
     }
 }
 
+/// @brief gets the intensity of the true void status amount
+/// @return the intensity of the true void status
 int CombatState::getTrueVoidMana() const {
     for (const auto& s : statuses) {
         if (s && s->getType() == StatusType::TrueVoid) {
@@ -176,6 +210,8 @@ int CombatState::getTrueVoidMana() const {
     return 0;
 }
 
+/// @brief uses up true void mana
+/// @param amount the amount of true void to use
 void CombatState::consumeTrueVoid(int amount) {
     for (auto& s : statuses) {
         if (s && s->getType() == StatusType::TrueVoid) {
@@ -185,6 +221,8 @@ void CombatState::consumeTrueVoid(int amount) {
     }
 }
 
+/// @brief gets the intensity of the zombie amry status
+/// @return the intensity of the zombie army status
 int CombatState::getZombieArmyIntensity() const {
     for (const auto& s : statuses) {
         if (s && s->getType() == StatusType::ZombieArmy) {
@@ -194,6 +232,8 @@ int CombatState::getZombieArmyIntensity() const {
     return 0;
 }
 
+/// @brief gets the intensity of the skeleton amry status
+/// @return the intensity of the skeleton army status
 int CombatState::getSkeletonArmyIntensity() const {
     for (const auto& s : statuses) {
         if (s && s->getType() == StatusType::SkeletonArmy) {
@@ -203,6 +243,8 @@ int CombatState::getSkeletonArmyIntensity() const {
     return 0;
 }
 
+/// @brief gets the intensity of the soul fragment status
+/// @return the intensity of the soul fragment status
 int CombatState::getSoulFragmentCount() const {
     int count = 0;
     for (const auto& s : statuses) {
@@ -213,54 +255,14 @@ int CombatState::getSoulFragmentCount() const {
     return count;
 }
 
-int CombatState::getCatalystIntensity() const {
-    for (const auto& s : statuses) {
-        if (s && s->getType() == StatusType::Catalyst) {
-            return s->intensity;
-        }
-    }
-    return 0;
-}
-
-int CombatState::getPotionCount() const {
-    int count = 0;
-    for (const auto& s : statuses) {
-        if (s && s->getType() == StatusType::Potion) {
-            count += s->intensity;
-        }
-    }
-    return count;
-}
-
-int CombatState::getElixirCount() const {
-    int count = 0;
-    for (const auto& s : statuses) {
-        if (s && s->getType() == StatusType::Elixir) {
-            count += s->intensity;
-        }
-    }
-    return count;
-}
-
-int CombatState::getModifiedHeal(int baseHeal) const {
-    int catalyst = getCatalystIntensity();
-    return baseHeal + (catalyst * 2);
-}
-
-int CombatState::getModifiedShield(int baseShield) const {
-    int catalyst = getCatalystIntensity();
-    return baseShield + (catalyst * 2);
-}
-
-int CombatState::getManaCostReduction() const {
-    int elixir = getElixirCount();
-    return std::min(elixir, 3);
-}
-
+/// @brief adds a card to the hand of the state
+/// @param cardKey the key (name) of the card to add
+/// @param makeTemporary whether the card should be temporary (99% true)
 void CombatState::addCardToHand(const std::string& cardKey, bool makeTemporary) {
     pendingCards.push_back({cardKey, makeTemporary});
 }
 
+/// @brief flushes the pending cards to the hand
 void CombatState::flushPendingCards() {
     if (deck) {
         auto& hand = deck->getHand();
@@ -281,6 +283,9 @@ void CombatState::flushPendingCards() {
     }
 }
 
+/// @brief check wheter the status has a metal status
+/// @param metal the metal status to check for
+/// @return true if the state has the given metal status
 bool CombatState::hasMetalStatus(StatusType metal) const {
     for (const auto& s : statuses) {
         if (s && s->getType() == metal) {
@@ -290,6 +295,8 @@ bool CombatState::hasMetalStatus(StatusType metal) const {
     return false;
 }
 
+/// @brief gets the amount of metal statuses
+/// @return the amount of metal statuses
 int CombatState::getMetalStatusCount() const {
     int count = 0;
     for (const auto& s : statuses) {
@@ -306,6 +313,8 @@ int CombatState::getMetalStatusCount() const {
     return count;
 }
 
+/// @brief removes the given metal status from the state
+/// @param metal the metal to remove
 void CombatState::removeMetalStatus(StatusType metal) {
     for (auto it = statuses.begin(); it != statuses.end(); ) {
         if (*it && (*it)->getType() == metal) {
@@ -316,6 +325,7 @@ void CombatState::removeMetalStatus(StatusType metal) {
     }
 }
 
+/// @brief removes a random status from the state
 void CombatState::removeRandomMetalStatus() {
     std::vector<StatusType> metals = {
         StatusType::Lead, StatusType::Gold, StatusType::Copper,
@@ -334,6 +344,8 @@ void CombatState::removeRandomMetalStatus() {
     }
 }
 
+/// @brief removes a random metal card from hand
+/// @return the name of the removed card
 std::string CombatState::removeRandomMetalCardFromHand() {
     if (!deck) return "";
  
@@ -351,6 +363,7 @@ std::string CombatState::removeRandomMetalCardFromHand() {
     return "";
 }
 
+/// @brief remobves all the machine power upgrades from the state
 void CombatState::removeUpgradeStatus() {
     for (auto it = statuses.begin(); it != statuses.end(); ) {
         if (*it && (*it)->getType() == StatusType::MachineUpgrade) {

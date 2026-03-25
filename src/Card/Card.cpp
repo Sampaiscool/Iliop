@@ -1,5 +1,8 @@
 #include "Card.h"
 
+/// @brief gets the color to use based on gives theme
+/// @param theme the theme of the card
+/// @return the correct color based on gives theme
 static sf::Color themeToColor(CardTheme theme) {
     switch(theme) {
         case CardTheme::Red:    return sf::Color(200, 50, 50);
@@ -11,6 +14,11 @@ static sf::Color themeToColor(CardTheme theme) {
     }
 }
 
+/// @brief draws the card
+/// @param window the window to draw on
+/// @param font the font to use
+/// @param isCorrupted wheter the player is corrupted
+/// @param playerState the state of the player
 void Card::draw(sf::RenderWindow& window, const sf::Font& font, bool isCorrupted, const CombatState& playerState) const {
     sf::RectangleShape rect(sf::Vector2f(static_cast<float>(w), static_cast<float>(h)));
     rect.setPosition(sf::Vector2f(static_cast<float>(x), static_cast<float>(y)));

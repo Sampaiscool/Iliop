@@ -12,6 +12,8 @@ Deck::Deck(std::vector<Card> startingCards) {
     drawPile = std::move(startingCards);
 }
 
+/// @brief sets the deck to the specified cards
+/// @param cards the cards the player needs in his deck
 void Deck::setDeck(std::vector<Card> cards) {
     // first populate permanent collection with starter deck (with any augmentations)
     permanentCollection = std::move(cards);
@@ -45,6 +47,8 @@ std::vector<Card>& Deck::getPermanentCollection() {
     return permanentCollection;
 }
 
+/// @brief adds a card to draw pile
+/// @param card the card to add to draw pile
 void Deck::addCardToDrawPile(Card card) {
     // look up inflicts from permanent collection
     for (const auto& permCard : permanentCollection) {
@@ -66,6 +70,8 @@ void Deck::addCardToDrawPile(Card card) {
     drawPile.push_back(std::move(card));
 }
 
+/// @brief removes a card from the deck (one copy from each pile)
+/// @param cardName the name of the card to remove
 void Deck::removeCardFromDeck(const std::string& cardName) {
     // remove ONE copy from each pile
     for (auto it = drawPile.begin(); it != drawPile.end(); ++it) {
@@ -88,6 +94,7 @@ void Deck::removeCardFromDeck(const std::string& cardName) {
     }
 }
 
+/// @brief rebuild the draw pile from permanent collection
 void Deck::rebuildFromPermanent() {
     // rebuild draw pile from permanent collection
     drawPile.clear();
@@ -115,12 +122,15 @@ void Deck::rebuildFromPermanent() {
     drawCard(4);
 }
 
+/// @brief shuffle the deck
 void Deck::shuffle() {
     std::random_device rd;
     std::mt19937 g(rd());
     std::shuffle(drawPile.begin(), drawPile.end(), g);
 }
 
+/// @brief draws a card from the draw pile to the hand, reshuffle dicard pile if draw pile is empty
+/// @param amount amount of cards to draw
 void Deck::drawCard(int amount) {
     for (int i = 0; i < amount; ++i) {
         if (drawPile.empty()) {
@@ -135,6 +145,8 @@ void Deck::drawCard(int amount) {
     }
 }
 
+/// @brief discards a card from the hand into the discard pile
+/// @param card the card to discard
 void Deck::discardCard(Card& card) {
     auto it = std::find_if(hand.begin(), hand.end(),
         [&](const Card& c) { return &c == &card; });
@@ -149,6 +161,8 @@ void Deck::discardCard(Card& card) {
 //     discardPile.push_back(std::move(card));
 // } :)
 
+/// @brief adds a card to the permanent collection
+/// @param card the card to add
 void Deck::addCardToPermanentCollection(Card card) {
     // add to permanent collection
     const std::string cardName = card.name;
@@ -175,6 +189,7 @@ void Deck::addCardToPermanentCollection(Card card) {
     }
 }
 
+/// @brief discards all cards in hand
 void Deck::discardHand()
 {
     for (auto& card : hand) {
@@ -187,6 +202,13 @@ void Deck::discardHand()
     hand.clear();
 }
 
+/// @brief renders the cards in the hand
+/// @param window the window to draw on
+/// @param winW the window width
+/// @param winH the window height
+/// @param font the font to use
+/// @param player the combat state of the player
+/// @param particles the particle system to use
 void Deck::render(sf::RenderWindow& window, int winW, int winH, const sf::Font& font, const CombatState& player, ParticleSystem& particles) {
     int cardW = winW / 10;
     int cardH = winH / 6;

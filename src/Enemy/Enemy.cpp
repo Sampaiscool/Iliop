@@ -8,6 +8,12 @@
 #include <map>
 #include <string>
 
+/// @brief constructs an enemy with the specified stats and type
+/// @param hp the enemies health
+/// @param sh the enemies shield
+/// @param mana the enemies mana
+/// @param cor the enemies corruption
+/// @param chosenType the enemies type
 Enemy::Enemy(int hp, int sh, int mana, int cor, EnemyType chosenType) {
     state.hp = {hp, hp};
     state.shield = {0, sh};
@@ -16,6 +22,10 @@ Enemy::Enemy(int hp, int sh, int mana, int cor, EnemyType chosenType) {
     type = chosenType;
 }
 
+/// @brief renders the enemy
+/// @param window the window to draw on
+/// @param winW the width of the window
+/// @param winH the heigh of the window
 void Enemy::render(sf::RenderWindow& window, int winW, int winH) {
     int w = winW / 4;
     int h = winW / 4;
@@ -82,6 +92,8 @@ CombatState& Enemy::getState() {
     return state;
 }
 
+/// @brief plays the enemies turn
+/// @param playerState the player's combat state
 void Enemy::playTurn(CombatState& playerState)
 {
     if (intent)
@@ -90,6 +102,7 @@ void Enemy::playTurn(CombatState& playerState)
     rollIntent();
 }
 
+/// @brief roll intent based on the enemies type
 void Enemy::rollIntent()
 {
     switch (type)
@@ -224,6 +237,8 @@ void Enemy::rollIntent()
     }
 }
 
+/// @brief gets the description based of the enemies intent
+/// @return the description of the intent
 std::string Enemy::getIntentDescription() const {
     switch (currentIntent) {
         case EnemyIntent::Attack: return "Attack " + std::to_string(intentValue);
