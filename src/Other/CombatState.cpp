@@ -150,6 +150,10 @@ void CombatState::endTurn(CombatState& currentActor) {
         if (s->name == "Blessed") {
             currentActor.heal(s->intensity); 
         }
+        
+        if (s->name == "Regeneration") {
+            currentActor.heal(s->intensity);
+        }
     }
 
     for (auto& s : currentActor.statuses) {
