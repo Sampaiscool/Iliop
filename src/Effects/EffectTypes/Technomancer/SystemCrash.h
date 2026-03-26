@@ -21,7 +21,7 @@ public:
         target.takeDamage(self.getModifiedDamage(finalVal * 2 + upgradeCount * 3));
         
         if (upgradeCount >= 3) {
-            target.applyStatus(std::make_unique<StunStatus>(1, 1));
+            target.applyStatus(std::make_unique<DefenceDownStatus>(1, 1));
         }
         
         if (self.isTransformed) {

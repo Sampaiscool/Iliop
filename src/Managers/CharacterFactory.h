@@ -6,6 +6,10 @@
 #include "../Effects/EffectTypes/Necromancer/UnleashArmy.h"
 #include "../Effects/EffectTypes/Necromancer/SoulGathering.h"
 #include "../Effects/EffectTypes/Technomancer/PerfectCreation.h"
+#include "../Effects/EffectTypes/Technomancer/TechSurge.h"
+#include "../Effects/EffectTypes/Cleric/DivineGuidance.h"
+#include "../Effects/EffectTypes/WarAngel/AngelicAscension.h"
+#include "../Effects/EffectTypes/WarAngel/HolyWrath.h"
 #include "../Other/AllStatuses.h"
 
 class CharacterFactory {
@@ -112,6 +116,7 @@ public:
                 multi->add(std::make_unique<HolyZeal>(1));
                 multi->add(std::make_unique<HealEffect>(1));
                 stats.onCardPlayProc = std::move(multi);
+                stats.onTransform = std::make_unique<DivineGuidance>();
                 break;
             }
             case CharacterName::Vortex: {
@@ -163,11 +168,15 @@ public:
             case CharacterName::OneXNAO: {
                 displayName = "1X NAO";
                 stats.onTransform = std::make_unique<PerfectCreation>();
+                stats.onCardPlayProc = std::make_unique<TechSurge>();
                 stats.passiveValue = 1;
                 break;
             }
             case CharacterName::Roshka: {
                 displayName = "Roshka";
+                stats.corruption.max += 5;
+                stats.onTransform = std::make_unique<AngelicAscension>();
+                stats.onCardPlayProc = std::make_unique<DivineGuidance>();
                 stats.passiveValue = 1;
                 stats.statuses.push_back(std::make_unique<ForbiddenDropletStatus>(99, 1));
                 break;
