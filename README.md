@@ -1,3 +1,17 @@
+## How to build
+
+Open Visual Studio.
+
+Go to File > Open > Folder... en select this map
+
+Wait until CMake is done configuring
+
+Select card_engine.exe as start-item in the toolbar
+
+Press F5 (Run)
+
+All Dependencies (SFML 3) are included in the /external en will be compiled automaticly
+
 ## How to play
 
 ###### Character Selection
