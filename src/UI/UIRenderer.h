@@ -34,11 +34,11 @@ public:
     const std::map<StatusType, sf::Texture>& getTextures() const { return statusTextures; }
 
     void loadPlayerTextures() {
-        (void)portraitTextures[CharacterName::Hiroshi].loadFromFile("../assets/portraits/HiroshiPortrait.png");
-        (void)portraitTextures[CharacterName::Phlox].loadFromFile("../assets/portraits/PhloxPortrait.png");
-        (void)portraitTextures[CharacterName::Vortex].loadFromFile("../assets/portraits/VortexPortrait.png");
-        (void)portraitTextures[CharacterName::OneXNAO].loadFromFile("../assets/portraits/1XNAOPortrait.png");
-        (void)portraitTextures[CharacterName::Roshka].loadFromFile("../assets/portraits/RoshkaPortrait.png");
+        (void)portraitTextures[CharacterName::Hiroshi].loadFromFile("assets/portraits/HiroshiPortrait.png");
+        (void)portraitTextures[CharacterName::Phlox].loadFromFile("assets/portraits/PhloxPortrait.png");
+        (void)portraitTextures[CharacterName::Vortex].loadFromFile("assets/portraits/VortexPortrait.png");
+        (void)portraitTextures[CharacterName::OneXNAO].loadFromFile("assets/portraits/1XNAOPortrait.png");
+        (void)portraitTextures[CharacterName::Roshka].loadFromFile("assets/portraits/RoshkaPortrait.png");
     }
 
     void spawnFCT(sf::Vector2f pos, std::string str, sf::Color color, const sf::Font& font, int charSize = 24);

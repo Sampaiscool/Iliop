@@ -30,7 +30,7 @@ int main() {
     window.setFramerateLimit(30);
 
     sf::Font font;
-    if (!font.openFromFile("../assets/fonts/Knewave.ttf")) {
+    if (!font.openFromFile("assets/fonts/Knewave.ttf")) {
         std::cerr << "Failed to load font\n";
         return 1;
     }

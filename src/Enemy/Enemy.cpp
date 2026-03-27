@@ -44,26 +44,26 @@ void Enemy::render(sf::RenderWindow& window, int winW, int winH) {
     };
 
     if (!loaded) {
-        loadTexture(EnemyType::MisterEraser, "../assets/enemies/Mister_Eraser.png");
-        loadTexture(EnemyType::LittleGremlin, "../assets/enemies/LittleGremlin.png");
-        loadTexture(EnemyType::AngerBot, "../assets/enemies/AngerBot.png");
-        loadTexture(EnemyType::Puth, "../assets/enemies/Puth.png");
-        loadTexture(EnemyType::WarChief, "../assets/enemies/GoblinWarChief.png");
-        loadTexture(EnemyType::FatGremlin, "../assets/enemies/FatGremlin.png");
-        loadTexture(EnemyType::Bungus, "../assets/enemies/Bungus.png");
-        loadTexture(EnemyType::CultistMember, "../assets/enemies/CultistMember.png");
-        loadTexture(EnemyType::GiggyGrass, "../assets/enemies/GiggyGrass.png");
-        loadTexture(EnemyType::BulletJunior, "../assets/enemies/BulletJunior.png");
-        loadTexture(EnemyType::MagicSpright, "../assets/enemies/MagicSpright.png");
-        loadTexture(EnemyType::Lihm, "../assets/enemies/Lihm.png");
-        loadTexture(EnemyType::Nutou, "../assets/enemies/Nutou.png");
-        loadTexture(EnemyType::MushroomMan, "../assets/enemies/MushroomMan.png");
-        loadTexture(EnemyType::Biyumi, "../assets/enemies/Biyumi.png");
-        loadTexture(EnemyType::FatedTraveler, "../assets/enemies/FatedTraveler.png");
-        loadTexture(EnemyType::Kazan, "../assets/enemies/Kazan.png");
-        loadTexture(EnemyType::DeathMarcher, "../assets/enemies/DeathMarcher2.png");
-        loadTexture(EnemyType::Menta, "../assets/enemies/Menta.png");
-        loadTexture(EnemyType::CursedKing, "../assets/enemies/CursedKing.png");
+        loadTexture(EnemyType::MisterEraser, "assets/enemies/Mister_Eraser.png");
+        loadTexture(EnemyType::LittleGremlin, "assets/enemies/LittleGremlin.png");
+        loadTexture(EnemyType::AngerBot, "assets/enemies/AngerBot.png");
+        loadTexture(EnemyType::Puth, "assets/enemies/Puth.png");
+        loadTexture(EnemyType::WarChief, "assets/enemies/GoblinWarChief.png");
+        loadTexture(EnemyType::FatGremlin, "assets/enemies/FatGremlin.png");
+        loadTexture(EnemyType::Bungus, "assets/enemies/Bungus.png");
+        loadTexture(EnemyType::CultistMember, "assets/enemies/CultistMember.png");
+        loadTexture(EnemyType::GiggyGrass, "assets/enemies/GiggyGrass.png");
+        loadTexture(EnemyType::BulletJunior, "assets/enemies/BulletJunior.png");
+        loadTexture(EnemyType::MagicSpright, "assets/enemies/MagicSpright.png");
+        loadTexture(EnemyType::Lihm, "assets/enemies/Lihm.png");
+        loadTexture(EnemyType::Nutou, "assets/enemies/Nutou.png");
+        loadTexture(EnemyType::MushroomMan, "assets/enemies/MushroomMan.png");
+        loadTexture(EnemyType::Biyumi, "assets/enemies/Biyumi.png");
+        loadTexture(EnemyType::FatedTraveler, "assets/enemies/FatedTraveler.png");
+        loadTexture(EnemyType::Kazan, "assets/enemies/Kazan.png");
+        loadTexture(EnemyType::DeathMarcher, "assets/enemies/DeathMarcher2.png");
+        loadTexture(EnemyType::Menta, "assets/enemies/Menta.png");
+        loadTexture(EnemyType::CursedKing, "assets/enemies/CursedKing.png");
         loaded = true;
     }
 

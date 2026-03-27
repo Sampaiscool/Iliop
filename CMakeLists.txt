@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 project(CardEngineSFML)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # force static build
@@ -37,7 +37,7 @@ add_custom_command(TARGET card_engine POST_BUILD
 
 if(WIN32)
     # make sure the .exe doesnt open a command prompt
-    set_target_properties(card_engine PROPERTIES WIN32_EXECUTABLE TRUE)
+    # set_target_properties(card_engine PROPERTIES WIN32_EXECUTABLE TRUE)
 
     # force static linking with C++ runtime 
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")

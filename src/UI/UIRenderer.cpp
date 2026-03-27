@@ -550,34 +550,34 @@ void UIRenderer::drawStatusTooltip(sf::RenderWindow& window, const sf::Font& fon
 
 /// @brief loads all the status textures
 void UIRenderer::loadStatusTextures() {
-    std::string pathBleed = "../assets/statusIcons/BleedIcon.png";
+    std::string pathBleed = "assets/statusIcons/BleedIcon.png";
     if (!statusTextures[StatusType::Bleed].loadFromFile(pathBleed)) {
     }
-    std::string pathDefenceDown = "../assets/statusIcons/DefenceDownIcon.png";
+    std::string pathDefenceDown = "assets/statusIcons/DefenceDownIcon.png";
     if (!statusTextures[StatusType::DefenceDown].loadFromFile(pathDefenceDown)) {
     }
-    std::string pathDefenceUp = "../assets/statusIcons/DefenceUpIcon.png";
+    std::string pathDefenceUp = "assets/statusIcons/DefenceUpIcon.png";
     if (!statusTextures[StatusType::DefenceUp].loadFromFile(pathDefenceUp)) {
     }
-    std::string pathDamageUp = "../assets/statusIcons/StrenghtenIcon.png";
+    std::string pathDamageUp = "assets/statusIcons/StrenghtenIcon.png";
     if (!statusTextures[StatusType::DamageUp].loadFromFile(pathDamageUp)) {
     }
-    std::string pathDamageDown = "../assets/statusIcons/WeakenIcon.png";
+    std::string pathDamageDown = "assets/statusIcons/WeakenIcon.png";
     if (!statusTextures[StatusType::DamageDown].loadFromFile(pathDamageDown)) {
     }
-    std::string pathStun = "../assets/statusIcons/StunnedIcon.png";
+    std::string pathStun = "assets/statusIcons/StunnedIcon.png";
     if (!statusTextures[StatusType::Stun].loadFromFile(pathStun)) {
     }
-    std::string pathVoidMark = "../assets/statusIcons/VoidMarkIcon.png";
+    std::string pathVoidMark = "assets/statusIcons/VoidMarkIcon.png";
     if (!statusTextures[StatusType::VoidMark].loadFromFile(pathVoidMark)) {
     }
-    std::string pathBlessed = "../assets/statusIcons/BlessedIcon.png";
+    std::string pathBlessed = "assets/statusIcons/BlessedIcon.png";
     if (!statusTextures[StatusType::Blessed].loadFromFile(pathBlessed)) {
     }
-    std::string pathLocked = "../assets/statusIcons/LockedIcon.png";
+    std::string pathLocked = "assets/statusIcons/LockedIcon.png";
     if (!statusTextures[StatusType::Locked].loadFromFile(pathLocked)) {
     }
-    std::string pathRage = "../assets/statusIcons/RageIcon.png";
+    std::string pathRage = "assets/statusIcons/RageIcon.png";
     if (!statusTextures[StatusType::Rage].loadFromFile(pathRage)) {
     }
 }
