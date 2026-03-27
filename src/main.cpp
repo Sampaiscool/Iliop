@@ -301,7 +301,7 @@ int main() {
                             deck.drawCard(4);
 
                             // give weaker creater to enemy
-                            if (selectedClass == Class::Technomancer) {
+                            if (character.identity == CharacterName::OneXNAO) {
                                 enemy.getState().applyStatus(std::make_unique<WeakerCreatorStatus>(99, 0));
                             }
 
@@ -567,6 +567,7 @@ int main() {
                     if (continueButton.contains(mousePos)) {
                         forgeSelectedIndices.clear();
                         gameState = GameState::Combat;
+                        deck.rebuildFromPermanent();
                     }
                 }
                 // orba
@@ -1131,7 +1132,7 @@ int main() {
             window.draw(title);
 
             sf::Text subtitle(font, "Click 2 cards to transform them into 1!", (winW / 30));
-            subtitle.setPosition({winW / 2.f - 220.f, winH * 0.18f});
+            subtitle.setPosition({winW / 2.f - 220.f, winH * 0.15f});
             subtitle.setFillColor(sf::Color::White);
             window.draw(subtitle);
 
@@ -1268,7 +1269,7 @@ int main() {
             window.draw(title);
 
             sf::Text subtitle(font, "Select a card, \nThen choose an inflict!", (winW / 20));
-            subtitle.setPosition({winW / 2.f - 120.f, winH * 0.10f});
+            subtitle.setPosition({winW / 2.f - 120.f, winH * 0.15f});
             subtitle.setFillColor(sf::Color::White);
             window.draw(subtitle);
 

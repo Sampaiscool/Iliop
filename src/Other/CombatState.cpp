@@ -24,7 +24,7 @@ int CombatState::takeDamage(int amount) {
 
     // applies modifiers of the damage from statusses
     for (auto& s : statuses) {
-        if (s->name == "Death Mark") finalDamage = s->intensity * 2;
+        if (s->name == "Death Mark") finalDamage += s->intensity * 2;
         if (s->name == "Void Mark") finalDamage += s->intensity;
         if (s->name == "Defence Up") finalDamage = std::max(0, finalDamage - s->intensity);
         if (s->name == "Defence Down") finalDamage += s->intensity;
@@ -65,6 +65,8 @@ int CombatState::takeDamage(int amount) {
             }
         }
     }
+
+
     
     return damageDealt;
 }

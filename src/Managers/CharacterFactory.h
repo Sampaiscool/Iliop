@@ -133,7 +133,6 @@ public:
             case CharacterName::MathewsLift: {
                 displayName = "Mathews Lift";
                 stats.hp.max -= 5; stats.hp.current = stats.hp.max;
-                stats.transformThreshold += 2;
                 stats.onTransform = std::make_unique<PredatorInstinct>(3);
                 auto multi = std::make_unique<MultiEffect>();
                 auto prowl = std::make_unique<PredatorInstinct>(1);
@@ -147,9 +146,8 @@ public:
             case CharacterName::Djin: {
                 displayName = "Djin";
                 stats.hp.max += 5; stats.hp.current += 5;
-                stats.transformThreshold -= 1;
                 stats.onTransform = std::make_unique<UnleashArmy>(1);
-                stats.onCardPlayProc = std::make_unique<SoulGathering>(1);
+                stats.onCardPlayProc = std::make_unique<SoulGathering>(4);
                 stats.passiveValue = 1;
                 stats.statuses.push_back(std::make_unique<ZombieArmyStatus>(99, 0));
                 stats.statuses.push_back(std::make_unique<SkeletonArmyStatus>(99, 0));
@@ -159,7 +157,6 @@ public:
             case CharacterName::Kobalt: {
                 displayName = "Kobalt";
                 stats.mana.max += 1; stats.mana.current += 1;
-                stats.transformThreshold += 1;
                 stats.onTransform = std::make_unique<VoidProwess>(2);
                 stats.onCardPlayProc = std::make_unique<PotionBrew>(2);
                 stats.passiveValue = 1;

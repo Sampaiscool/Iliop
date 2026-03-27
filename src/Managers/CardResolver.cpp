@@ -48,12 +48,20 @@ bool CardResolver::play(
     // trigger card behavior
     card.play(player, enemy, isCorrupted);
     
-    // handle replay (stackable - play multiple times)
+    // handle replay
     for (int i = 0; i < card.replayCount; i++) {
         card.play(player, enemy, isCorrupted);
     }
+
+    if (enemy.hp.current <= 0) {
+        for (auto& s : enemy.statuses) {
+            if (s->name == "Death Mark") {
+                player.applyStatus(std::make_unique<SoulFragmentStatus>(3, 2));
+            }
+        }
+    }
     
-    // use up freeOnce (stackable - each use reduces the count)
+    // use up freeOnce
     if (card.freeOnceCount > 0) {
         const_cast<Card&>(card).freeOnceCount--;
     }
@@ -130,6 +138,21 @@ bool CardResolver::play(
                 player.applyStatus(std::make_unique<TrueVoidStatus>(2, 3));
                 deck.drawCard(3);
                 status->intensity = 0;
+            }
+            break;
+        }
+    }
+
+    for (auto& s : player.statuses) {
+        if (s && s->getType() == StatusType::SoulFragment) {
+
+            if (player.isTransformed != true) { break; }
+            s->intensity += 1;
+
+            if (s->intensity >= 10) {
+                s->intensity = 0;
+                player.applyStatus(std::make_unique<ZombieArmyStatus>(1, 3));
+                player.applyStatus(std::make_unique<SkeletonArmyStatus>(1, 3));
             }
             break;
         }

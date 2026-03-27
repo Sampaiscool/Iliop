@@ -21,7 +21,7 @@ public:
                     target.applyStatus(std::make_unique<BleedStatus>(3, 3 * intens));
                 }
                 else if (upgradeName == "Shocking") {
-                    target.applyStatus(std::make_unique<StunStatus>(1, 0));
+                    target.applyStatus(std::make_unique<StunStatus>(1, 1));
                 }
                 else if (upgradeName == "Vampiric") {
                     self.heal(4 * intens);

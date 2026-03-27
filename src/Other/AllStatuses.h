@@ -345,10 +345,10 @@ public:
     std::string getDescription() const override { 
         if (upgradeType == "Overclocked") return "Machine Power deals +"  + std::to_string(intensity * 5) + " damage";
         if (upgradeType == "Bleeding")    return "Machine Power applies " + std::to_string(intensity * 3) + " Bleed";
-        if (upgradeType == "Shocking")    return "Machine Power applies " + std::to_string(intensity)     + " Stun";
-        if (upgradeType == "Vampiric")    return "Machine Power gives "   + std::to_string(intensity)     + " Heal";
-        if (upgradeType == "Armored")     return "Machine Power gives "   + std::to_string(intensity)     + " Shield";
-        if (upgradeType == "True Void")   return "Machine Power gives "   + std::to_string(intensity)     + " True Void";
+        if (upgradeType == "Shocking")    return "Machine Power applies " + std::to_string(1)             + " Stun";
+        if (upgradeType == "Vampiric")    return "Machine Power gives "   + std::to_string(intensity * 4) + " Heal";
+        if (upgradeType == "Armored")     return "Machine Power gives "   + std::to_string(intensity * 4) + " Shield";
+        if (upgradeType == "Void")        return "Machine Power gives "   + std::to_string(intensity)     + " True Void";
         if (upgradeType == "Damage Up")   return "Machine Power gives "   + std::to_string(intensity)     + " Damage Up";
         if (upgradeType == "Defence Up")  return "Machine Power gives "   + std::to_string(intensity)     + " Defence Up";
         return "Machine Power: " + upgradeType;
@@ -382,46 +382,4 @@ public:
     StatusType getType() const override { return StatusType::ForbiddenDroplet; }
     std::string getDescription() const override { return "If you play a card while corrupted: Transform"; }
     void onTurnStart(CombatState& owner) override {  }
-};
-
-class CatalystStatus : public Status {
-public:
-    CatalystStatus(int dur, int intens) { 
-        name = "Catalyst"; 
-        duration = dur; 
-        intensity = intens; 
-    }
-    StatusType getType() const override { return StatusType::Catalyst; }
-    std::string getDescription() const override {
-        return "Heal and Shield +" + std::to_string(intensity * 2);
-    }
-    void onTurnStart(CombatState& owner) override { duration--; }
-};
-
-class PotionStatus : public Status {
-public:
-    PotionStatus(int dur, int intens) { 
-        name = "Potion"; 
-        duration = dur; 
-        intensity = intens; 
-    }
-    StatusType getType() const override { return StatusType::Potion; }
-    std::string getDescription() const override {
-        return "Click to heal " + std::to_string(intensity * 3);
-    }
-    void onTurnStart(CombatState& owner) override { duration--; }
-};
-
-class ElixirStatus : public Status {
-public:
-    ElixirStatus(int dur, int intens) { 
-        name = "Elixir"; 
-        duration = dur; 
-        intensity = intens; 
-    }
-    StatusType getType() const override { return StatusType::Elixir; }
-    std::string getDescription() const override {
-        return "Cards cost -1\nClick 5+ to Transform";
-    }
-    void onTurnStart(CombatState& owner) override { duration--; }
 };
