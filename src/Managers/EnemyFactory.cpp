@@ -101,3 +101,7 @@ Enemy EnemyFactory::create(int floor)
 
     return Enemy(hp, shield, mana, corruption, chosenType);
 }
+
+bool EnemyFactory::hasMoreEnemies(int floor) {
+    return floor <= MAX_FLOORS;
+}

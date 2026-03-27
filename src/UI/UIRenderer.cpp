@@ -260,6 +260,9 @@ void UIRenderer::render(sf::RenderWindow& window,
         if (evt.isHeal) {
             color = sf::Color(100, 255, 100); // Green for heal
             text = "+" + std::to_string(evt.amount);
+        } else if (evt.isShield) {
+            color = sf::Color(100, 200, 255); // Cyan for shield
+            text = "+" + std::to_string(evt.amount);
         } else {
             color = sf::Color(255, 100, 100); // Red for damage
             text = "-" + std::to_string(evt.amount);

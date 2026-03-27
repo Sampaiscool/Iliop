@@ -37,7 +37,7 @@ int CombatState::takeDamage(int amount) {
         int absorbed = std::min(shield.current, remainingDamage);
         shield.current -= absorbed;
         remainingDamage -= absorbed;
-        if (absorbed > 0) damageEvents.emplace_back(absorbed, false);
+        if (absorbed > 0) damageEvents.emplace_back(absorbed, false, true);
     }
 
     int oldHP = hp.current;
@@ -46,7 +46,7 @@ int CombatState::takeDamage(int amount) {
 
     // add damage event
     if (damageDealt > 0) {
-        damageEvents.emplace_back(damageDealt, false);
+        damageEvents.emplace_back(damageDealt, false, false);
     }
 
     // on damage effects
@@ -94,7 +94,7 @@ int CombatState::heal(int amount) {
     hp.current = std::min(hp.max, hp.current + amount);
     int healed = hp.current - oldHP;
     if (healed > 0) {
-        damageEvents.emplace_back(healed, true);
+        damageEvents.emplace_back(healed, true, false);
     }
     return healed;
 }
@@ -108,7 +108,7 @@ int CombatState::addShield(int amount) {
     shield.current = std::min(shield.max, shield.current + amount);
     int gained = shield.current - oldShield;
     if (gained > 0) {
-        damageEvents.emplace_back(gained, false);
+        damageEvents.emplace_back(gained, false, true);
     }
     return gained;
 }

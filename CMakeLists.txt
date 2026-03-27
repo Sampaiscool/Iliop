@@ -4,13 +4,11 @@ project(CardEngineSFML)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# linux
-set(SFML_STATIC_LIBRARIES ON)
+# force static build
+set(SFML_STATIC_LIBRARIES ON CACHE BOOL "" FORCE)
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 
-# windows
-#set(SFML_DIR "C:/Libraries/SFML3/lib/cmake/SFML")
-
-find_package(SFML 3 COMPONENTS Graphics Window System REQUIRED)
+add_subdirectory(external/SFML)
 
 add_executable(card_engine
     src/main.cpp
@@ -23,8 +21,17 @@ add_executable(card_engine
     src/Managers/EnemyFactory.cpp
 )
 
+# links the targets directly
 target_link_libraries(card_engine
-    SFML::Graphics
-    SFML::Window
-    SFML::System
+    sfml-graphics
+    sfml-window
+    sfml-system
 )
+
+if(WIN32)
+    # make sure the .exe doesnt open a command prompt
+    set_target_properties(card_engine PROPERTIES WIN32_EXECUTABLE TRUE)
+
+    # force static linking with C++ runtime 
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()

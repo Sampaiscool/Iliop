@@ -68,6 +68,7 @@ int main() {
     ParticleSystem corruptionParticles;
 
     int currentFloor = 1;
+    bool finalVictory = false;
 
     // screen numbers
     int classScreen = 0;
@@ -111,6 +112,7 @@ int main() {
                         gameState == GameState::Looting ||
                         gameState == GameState::Forge ||
                         gameState == GameState::Orb ||
+                        gameState == GameState::GameOver ||
                         gameState == GameState::Victory) {
                         previousState = gameState;
                         gameState = GameState::Settings;
@@ -361,19 +363,34 @@ int main() {
                 }
                 // victory screen
                 else if (gameState == GameState::Victory) {
-                    sf::FloatRect continueBtn(
-                        sf::Vector2f(winW / 2.f - 125.f, winH * 0.55f),
-                        sf::Vector2f(250.f, 70.f));
+                    if (finalVictory) {
+                        sf::FloatRect restartBtn(
+                            sf::Vector2f(winW / 2.f - 125.f, winH * 0.55f),
+                            sf::Vector2f(250.f, 70.f));
 
-                    if (continueBtn.contains(mousePos)) {
-                        // create loot
-                        currentFloor++;
-                        lootOptions.clear();
-                        std::vector<std::string> lootNames = CharacterFactory::getRandomLootOptions(3);
-                        for(auto& name : lootNames) {
-                            lootOptions.push_back(CardFactory::create(name));
+                        if (restartBtn.contains(mousePos)) {
+                            currentFloor = 1;
+                            finalVictory = false;
+                            playerState.hp.current = playerState.hp.max;
+                            enemy = EnemyFactory::create(currentFloor);
+                            enemy.rollIntent();
+                            gameState = GameState::StartScreen;
                         }
-                        gameState = GameState::Looting;
+                    } else {
+                        sf::FloatRect continueBtn(
+                            sf::Vector2f(winW / 2.f - 125.f, winH * 0.55f),
+                            sf::Vector2f(250.f, 70.f));
+
+                        if (continueBtn.contains(mousePos)) {
+                            // create loot
+                            currentFloor++;
+                            lootOptions.clear();
+                            std::vector<std::string> lootNames = CharacterFactory::getRandomLootOptions(3);
+                            for(auto& name : lootNames) {
+                                lootOptions.push_back(CardFactory::create(name));
+                            }
+                            gameState = GameState::Looting;
+                        }
                     }
                 }
                 // looting screen:
@@ -452,7 +469,7 @@ int main() {
                     int cardsPerPage = cols * rowsVisible;
                     auto& allCards = deck.getPermanentCollection();
 
-                    // count non-double-fusion cards
+                    // count non-double-fusion cards and calculate total pages
                     int cardCount = 0;
                     for (size_t i = 0; i < allCards.size(); ++i) {
                         bool isDoubleFusion = (allCards[i].name == "Omega Annihilation" || 
@@ -466,31 +483,20 @@ int main() {
                     if (forgeScrollY >= totalPages) forgeScrollY = totalPages - 1;
                     if (forgeScrollY < 0) forgeScrollY = 0;
 
-                    // page buttons
-                    sf::FloatRect prevPageBtn(sf::Vector2f(30.f, 50.f), sf::Vector2f(winW * 0.03f, winH * 0.28f));
-                    sf::FloatRect nextPageBtn(sf::Vector2f(30.f, 50.f), sf::Vector2f(winW * 0.93f, winH * 0.28f));
-
-                    if (prevPageBtn.contains(mousePos) && forgeScrollY > 0) {
-                        forgeScrollY--;
-                    }
-                    if (nextPageBtn.contains(mousePos) && forgeScrollY < totalPages - 1) {
-                        forgeScrollY++;
-                    }
-
                     // first set card positions
                     int currentPage = (int)forgeScrollY;
                     int startCardIndex = currentPage * cardsPerPage;
                     int endCardIndex = startCardIndex + cardsPerPage;
                     int currentCardIndex = 0;
-                    int displayIdx = 0;
                     float cardW = winW / 10;
                     float cardH = winH / 6;
                     float startX = winW * 0.05f;
                     float startY = winH * 0.25f;
                     float gap = cardW + 15.f;
 
-                    // calculate which cards to show
+                    // calculate which cards to show (only current page)
                     std::vector<size_t> visibleIndices;
+                    int displayIdx = 0;
                     for (size_t i = 0; i < allCards.size(); ++i) {
                         bool isDoubleFusion = (allCards[i].name == "Omega Annihilation" || 
                                                allCards[i].name == "Universal Singularity" ||
@@ -509,8 +515,6 @@ int main() {
                         int row = displayIdx / cols;
                         allCards[i].x = startX + col * gap;
                         allCards[i].y = startY + row * (cardH + 30.f);
-                        allCards[i].w = cardW;
-                        allCards[i].h = cardH;
                         visibleIndices.push_back(i);
                         displayIdx++;
                     }
@@ -746,6 +750,8 @@ int main() {
                         currentFloor = 1;
                         deck = Deck();
                         player.reset();
+                        enemy = EnemyFactory::create(currentFloor);
+                        enemy.rollIntent();
                         gameState = GameState::StartScreen;
                         forgeSelectedIndices.clear();
                     }
@@ -825,12 +831,17 @@ int main() {
             }
 
             if (enemy.getState().hp.current <= 0) {
-                gameState = GameState::Victory;
+                if (!EnemyFactory::hasMoreEnemies(currentFloor)) {
+                    gameState = GameState::Victory;
+                    finalVictory = true;
+                } else {
+                    gameState = GameState::Victory;
+                }
             }
         }
 
-        if (gameState == GameState::Victory) {
-            // im so lonely...
+        if (gameState == GameState::Victory && finalVictory) {
+            // handled in render section
         }
 
 
@@ -1033,37 +1044,69 @@ int main() {
         }
         // victory screen overlay
         else if (gameState == GameState::Victory) {
-            // also render combat
-            enemy.render(window, winW, winH);
-            deck.render(window, winW, winH, font, playerState, corruptionParticles);
+            if (finalVictory) {
+                // final victory screen
+                sf::RectangleShape overlay(sf::Vector2f(winW, winH));
+                overlay.setFillColor(sf::Color(20, 20, 40));
+                window.draw(overlay);
+ 
+                // text
+                sf::Text victory(font, "YOU WIN!", 80);
+                victory.setPosition({winW / 2.f - 180.f, winH * 0.25f});
+                victory.setFillColor(sf::Color(255, 215, 0));
+                window.draw(victory);
 
-            if (player.has_value()) {
-                ui.render(window, *player, playerState, enemy.getState(), winW, winH, font,enemy.getIntentDescription());
+                sf::Text sub(font, "All enemies defeated!", 40);
+                sub.setPosition({winW / 2.f - 160.f, winH * 0.4f});
+                sub.setFillColor(sf::Color(200, 200, 200));
+                window.draw(sub);
+ 
+                // restart button
+                sf::RectangleShape restartBtn({250.f, 70.f});
+                restartBtn.setPosition({winW / 2.f - 125.f, winH * 0.55f});
+                restartBtn.setFillColor(sf::Color(70, 70, 70));
+                restartBtn.setOutlineColor(sf::Color::Black);
+                restartBtn.setOutlineThickness(3.f);
+                window.draw(restartBtn);
+ 
+                sf::Text restartText(font, "Main Menu", 30);
+                restartText.setPosition({winW / 2.f - 90.f, winH * 0.55f + 15.f});
+                restartText.setFillColor(sf::Color::White);
+                window.draw(restartText);
+            } else {
+                // regular victory screen
+                // also render combat
+                enemy.render(window, winW, winH);
+                deck.render(window, winW, winH, font, playerState, corruptionParticles);
+
+                if (player.has_value()) {
+                    ui.render(window, *player, playerState, enemy.getState(), winW, winH, font,enemy.getIntentDescription());
+                }
+
+                // overlay
+                sf::RectangleShape overlay(sf::Vector2f(winW, winH));
+                overlay.setFillColor(sf::Color(0, 0, 0, 150));
+                window.draw(overlay);
+ 
+                // text
+                sf::Text victory(font, "Victory!", 70);
+                victory.setPosition({winW / 2.f - 150.f, winH * 0.25f});
+                victory.setFillColor(sf::Color(255, 215, 0));
+                window.draw(victory);
+ 
+                // continue button
+                sf::RectangleShape continueBtn({250.f, 70.f});
+                continueBtn.setPosition({winW / 2.f - 125.f, winH * 0.55f});
+                continueBtn.setFillColor(sf::Color(70, 70, 70));
+                continueBtn.setOutlineColor(sf::Color::Black);
+                continueBtn.setOutlineThickness(3.f);
+                window.draw(continueBtn);
+ 
+                sf::Text cont(font, "Continue", 32);
+                cont.setPosition({winW / 2.f - 75.f, winH * 0.55f + 18.f});
+                cont.setFillColor(sf::Color::White);
+                window.draw(cont);
             }
-
-            // overlay
-            sf::RectangleShape overlay(sf::Vector2f(winW, winH));
-            overlay.setFillColor(sf::Color(0, 0, 0, 150));
-            window.draw(overlay);
- 
-            // text
-            sf::Text victory(font, "Victory!", 70);
-            victory.setPosition({winW / 2.f - 150.f, winH * 0.25f});
-            victory.setFillColor(sf::Color(255, 215, 0));
-            window.draw(victory);
- 
-            // continue button
-            sf::RectangleShape continueBtn({250.f, 70.f});
-            continueBtn.setPosition({winW / 2.f - 125.f, winH * 0.55f});
-            continueBtn.setFillColor(sf::Color(70, 70, 70));
-            continueBtn.setOutlineColor(sf::Color::Black);
-            continueBtn.setOutlineThickness(3.f);
-            window.draw(continueBtn);
- 
-            sf::Text cont(font, "Continue", 32);
-            cont.setPosition({winW / 2.f - 75.f, winH * 0.55f + 18.f});
-            cont.setFillColor(sf::Color::White);
-            window.draw(cont);
         }
         // render game over screen
         else if (gameState == GameState::GameOver) {
@@ -1146,7 +1189,7 @@ int main() {
             int rowsVisible = 2;
             int cardsPerPage = cols * rowsVisible;
             
-            // calculate total pages
+            // count non-double-fusion cards and calculate total pages
             int cardCount = 0;
             for (size_t i = 0; i < allCards.size(); ++i) {
                 bool isDoubleFusion = (allCards[i].name == "Omega Annihilation" || 
@@ -1157,8 +1200,6 @@ int main() {
             }
             int totalPages = (cardCount + cardsPerPage - 1) / cardsPerPage;
             if (totalPages < 1) totalPages = 1;
-
-            // clamp scroll to valid range
             if (forgeScrollY < 0) forgeScrollY = 0;
             if (forgeScrollY >= totalPages) forgeScrollY = totalPages - 1;
             int currentPage = (int)forgeScrollY;
@@ -1186,7 +1227,6 @@ int main() {
                                        allCards[i].name == "Existential Crisis");
                 if (isDoubleFusion) continue;
 
-                // skip cards not on current page
                 if (currentCardIndex < startCardIndex) {
                     currentCardIndex++;
                     continue;
@@ -1365,12 +1405,12 @@ int main() {
             // show inflicts if card selected
             if (orbSelectedCard && orbUses > 0 && !currentInflicts.empty()) {
                 float inflictStartX = winW * 0.2f;
-                float inflictY = winH * 0.7f;
+                float inflictY = winH * 0.75f;
                 float buttonW = winW * 0.2f;
                 float buttonH = 60.f;
 
-                sf::Text inflictTitle(font, "Choose an inflict:", (winW / 40));
-                inflictTitle.setPosition({winW / 2.f - 100.f, winH * 0.65f});
+                sf::Text inflictTitle(font, "Choose an inflict:", (winW / 30));
+                inflictTitle.setPosition({winW / 2.f - 100.f, winH * 0.70f});
                 inflictTitle.setFillColor(sf::Color::White);
                 window.draw(inflictTitle);
 

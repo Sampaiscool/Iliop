@@ -54,7 +54,7 @@ public:
                 stats = CombatState{{50, 50}, {0, 10}, {3, 3}, {0, 2}};
                 transformCorruption = 2; transformTime = 2;
                 for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Primal Arrow"));
-                for (int i = 0; i < 4; ++i) deck.push_back(CardFactory::create("Aim"));
+                for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Aim"));
                 for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Arrow Volley"));
                 for (int i = 0; i < 3; ++i) deck.push_back(CardFactory::create("Jump"));
                 for (int i = 0; i < 2; ++i) deck.push_back(CardFactory::create("Metamorphosis"));

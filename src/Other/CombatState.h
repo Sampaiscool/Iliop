@@ -13,7 +13,8 @@ class Deck;
 struct DamageEvent {
     int amount;
     bool isHeal;
-    DamageEvent(int amt, bool heal) : amount(amt), isHeal(heal) {}
+    bool isShield;
+    DamageEvent(int amt, bool heal, bool shield = false) : amount(amt), isHeal(heal), isShield(shield) {}
 };
 
 struct PendingCard {

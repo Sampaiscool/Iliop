@@ -132,12 +132,12 @@ private:
 
         // ranger
         {"Primal Arrow",    {"Primal Arrow", "Deal damage and transform\n(deal damage 5 times (can bleed))", 1, 1, 1, CardType::PrimalArrow, CardTheme::Red}},
-        {"Aim",             {"Aim", "Gain Locked and heal\n(Instead gain Raging Bear and inflict bleed)", 2, 1, 1, CardType::Aim, CardTheme::Gray}},
+        {"Aim",             {"Aim", "Gain Locked and heal\n(Instead gain Raging Bear and inflict bleed)", 2, 1, 1, CardType::Aim, CardTheme::Gold}},
         {"Arrow Volley",    {"Arrow Volley", "Fire a volley of arrows.\n(More hits + chance to bleed)", 3, 3, 1, CardType::ArrowVolley, CardTheme::Red}},
         {"Jump",            {"Jump", "Shield and Defence Up.\n(Deal damage + Defence Up)", 2, 2, 1, CardType::Jump, CardTheme::Blue}},
         {"Metamorphosis",   {"Metamorphosis", "Transform.\n(Extend transform + heal)", 1, 2, 1, CardType::Metamorphosis, CardTheme::Green}},
         {"Predator's Maul", {"Predator's Maul", "Big bleed + Beast bonus.\nTransform: Extra bleed + Heal", 4, 6, 1, CardType::PredatorsMaul, CardTheme::Red}},
-        {"Hunter's Mark",   {"Hunter's Mark", "Deal damage + apply Damage Up + Bleed.\n(+ Apply Damage Down and heal)", 5, 3, 1, CardType::HuntersMark, CardTheme::Red}},
+        {"Hunter's Mark",   {"Hunter's Mark", "Deal Damage and gain Damage Up \nInflict Bleed (+ Apply Damage Down and heal)", 5, 3, 1, CardType::HuntersMark, CardTheme::Red}},
 
         // mage
         {"Unstable Volley", {"Unstable Volley", "Deal damage + gain 2 corruption, \nThen if you are at max: transform\n(+ Gain Overload)", 2, 4, 1, CardType::UnstableVolley, CardTheme::Purple}},
