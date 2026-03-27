@@ -28,6 +28,13 @@ target_link_libraries(card_engine
     sfml-system
 )
 
+# copy the assets map to build directory
+add_custom_command(TARGET card_engine POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+        "${CMAKE_CURRENT_SOURCE_DIR}/assets"
+        "$<TARGET_FILE_DIR:card_engine>/assets"
+)
+
 if(WIN32)
     # make sure the .exe doesnt open a command prompt
     set_target_properties(card_engine PROPERTIES WIN32_EXECUTABLE TRUE)
